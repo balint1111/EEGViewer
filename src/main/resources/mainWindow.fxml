@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.ScrollPane?>
+<?import com.sun.javafx.scene.control.IntegerField?>
+<HBox fx:id="root" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="root.main.MainController">
+    <VBox prefWidth="${root.width/30}" style="-fx-background-color: red">
+        <Button fx:id="previousBtn" onAction="#previousPage" text="previous Page" />
+        <Button fx:id="nextBtn" onAction="#nextPage" text="next Page" />
+        <IntegerField fx:id="pageSizeField"/>
+    </VBox>
+
+
+    <ScrollPane fx:id="scrollPane" hbarPolicy="AS_NEEDED" prefWidth="${root.width/30*29}">
+        <VBox alignment="CENTER_LEFT" prefHeight="${root.height}" prefWidth="${scrollPane.width}" style="-fx-background-color: #404040">
+            <AnchorPane fx:id="pane">
+
+            </AnchorPane>
+        </VBox>
+    </ScrollPane>
+
+<!--   <AnchorPane style="-fx-background-color: red" prefWidth="${root.width*0/6}">-->
+<!--      <padding>-->
+<!--         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />-->
+<!--      </padding>-->
+<!--   </AnchorPane>-->
+</HBox>

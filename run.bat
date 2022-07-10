@@ -1,0 +1,1 @@
+java -jar ./target/Spring_JavaFx-0.0.1-SNAPSHOT.jar
