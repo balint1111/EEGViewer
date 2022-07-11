@@ -73,8 +73,9 @@ public class MainController implements Initializable {
             DataModel dataModel = DataModel.get(maxQueueSize);
 
             VBox group = new VBox();
-            group.prefWidthProperty().bind(root.widthProperty().multiply(10/12));
+            group.prefWidthProperty().bind(root.widthProperty().multiply(10).divide(12));
             group.setStyle("-fx-background-color: pink;");
+
             pane.getChildren().add(group);
 
             UpdateHandler updateHandler = UpdateHandler.get(group);

@@ -45,6 +45,14 @@ public class MyPolyline extends HBox {
 
     private List<Double> yVector = new ArrayList<>();
 
+    public int getHorizontalResolution() {
+        return horizontalResolution.get();
+    }
+
+    public IntegerProperty horizontalResolutionProperty() {
+        return horizontalResolution;
+    }
+
     private IntegerProperty horizontalResolution = new SimpleIntegerProperty(0);
 
     private LineProperty lineProperty = new LineProperty();
@@ -83,8 +91,10 @@ public class MyPolyline extends HBox {
         //add elements to anchorPane
         vbox2.getChildren().addAll(new Group(polyline, line));
         vbox2.setAlignment(Pos.CENTER_LEFT);
-        vbox2.setFillWidth(true);
+        vbox2.prefWidthProperty().bind(this.widthProperty().subtract(vbox.widthProperty()));
+        horizontalResolution.bind(vbox2.prefWidthProperty());
         vbox2.setStyle("-fx-background-color: green;");
+        this.setStyle("-fx-background-color: yellow;");
         //add elements to VBox
         vbox.getChildren().addAll(button, label);
         vbox.setAlignment(Pos.TOP_LEFT);
