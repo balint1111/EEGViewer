@@ -5,6 +5,7 @@ import edffilereader.data.EEG_Data;
 import edffilereader.exceptions.UsupportedFileFormatException;
 import edffilereader.header.EEG_Header;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -32,6 +33,17 @@ public abstract class EEG_File {
         switch (extension){
             case "bdf" -> ret = new BDF_File(path);
             case "edf" -> ret = new EDF_File(path);
+            default -> throw new UsupportedFileFormatException("Unsupported extension: " + extension);
+        }
+        return ret;
+    }
+
+    public static EEG_File build(File file) throws UsupportedFileFormatException, FileNotFoundException{
+        String extension = file.getName().substring(file.getName().lastIndexOf(".")+1);
+        EEG_File ret;
+        switch (extension){
+            case "bdf" -> ret = new BDF_File(file.getName());
+            case "edf" -> ret = new EDF_File(file.getName());
             default -> throw new UsupportedFileFormatException("Unsupported extension: " + extension);
         }
         return ret;

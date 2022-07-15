@@ -1,20 +1,16 @@
 package root.main;
 
 import custom.component.MyPolyline;
-import javafx.scene.Group;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Data
+
 public class UpdateHandler {
 
-    private VBox group;
-
-    private Integer horizontalResolution;
+    private VBox vBox;
 
     private static UpdateHandler instance;
 
@@ -52,7 +48,7 @@ public class UpdateHandler {
 
 
     private UpdateHandler(VBox group) {
-        this.group = group;
+        this.vBox = group;
     }
 
     public List<MyPolyline> getMyPolylineList() {
@@ -76,9 +72,10 @@ public class UpdateHandler {
         myPolylineList = new ArrayList<>();
         this.numberOfChannels = numberOfChannels;
         for (int i = 0; i < numberOfChannels; i++) {
-            myPolylineList.add(new MyPolyline(i+1));
+            MyPolyline myPolyline = new MyPolyline(dataController, i + 1 , vBox);
+            myPolylineList.add(myPolyline);
         }
-        group.getChildren().setAll(myPolylineList);
+        vBox.getChildren().setAll(myPolylineList);
         setLineSpacing(lineSpacing);
     }
 
@@ -99,5 +96,9 @@ public class UpdateHandler {
 
     public void setDataController(DataController dataController) {
         this.dataController = dataController;
+    }
+
+    public Double getLineSpacing() {
+        return lineSpacing;
     }
 }

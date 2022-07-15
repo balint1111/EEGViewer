@@ -2,11 +2,13 @@ package custom.component;
 
 import custom.dialogs.ColorPickerDialog;
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
@@ -15,6 +17,7 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.Polyline;
 import lombok.Data;
 import org.springframework.stereotype.Component;
+import root.main.DataController;
 import root.main.UpdateHandler;
 
 import java.util.*;
@@ -25,6 +28,7 @@ public class MyPolyline extends HBox {
 
     private Polyline polyline = new Polyline();
     private Button button = new Button("hali");
+    private final DataController dataController;
     private Line line = new Line();
     private Label label = new Label();
 
@@ -53,21 +57,24 @@ public class MyPolyline extends HBox {
         return horizontalResolution;
     }
 
-    private IntegerProperty horizontalResolution = new SimpleIntegerProperty(0);
-
+    private IntegerProperty horizontalResolution;
     private LineProperty lineProperty = new LineProperty();
 
 
     private ObservableList<Double> polyLineList;
 
-    public MyPolyline(int number) {
+    public MyPolyline(DataController dataController, int number, VBox parent) {
+        this.dataController = dataController;
         this.number = number;
+
+
+
+        horizontalResolution = new PolylineHorizontalResolutionProperty(300l, dataController);
 
         button.setOnAction(this::buttonClick);
         line.setStartX(0);
         line.setStartY(0);
-        //line.setEndX(xVector.get(xVector.size()-1));
-        line.endXProperty().bind(horizontalResolution);
+        line.endXProperty().bind(vbox2.prefWidthProperty());
         line.setEndY(0);
         polyLineList = polyline.getPoints();
 
@@ -91,8 +98,10 @@ public class MyPolyline extends HBox {
         //add elements to anchorPane
         vbox2.getChildren().addAll(new Group(polyline, line));
         vbox2.setAlignment(Pos.CENTER_LEFT);
-        vbox2.prefWidthProperty().bind(this.widthProperty().subtract(vbox.widthProperty()));
+        vbox.prefWidthProperty().bind(this.prefWidthProperty().multiply(0.1d));
+        vbox2.prefWidthProperty().bind(this.prefWidthProperty().subtract(vbox.prefWidthProperty()));
         horizontalResolution.bind(vbox2.prefWidthProperty());
+
         vbox2.setStyle("-fx-background-color: green;");
         this.setStyle("-fx-background-color: yellow;");
         //add elements to VBox
@@ -105,6 +114,8 @@ public class MyPolyline extends HBox {
         polyline.getStyleClass().addAll(polylineStyleClasses);
         button.getStyleClass().addAll(buttonStyleClasses);
         this.getStylesheets().add("/myPolyline.css");
+        prefWidthProperty().bind(parent.prefWidthProperty());
+        parent.getChildren().add(this);
     }
 
     public void buttonClick(ActionEvent actionEvent) {
@@ -115,8 +126,8 @@ public class MyPolyline extends HBox {
 
     public void update() {
         List<Double> updateList = new ArrayList<>();
-        System.out.println("xvectorSize: " + xVector.size());
-        for (int i = 0; i < horizontalResolution.getValue(); i++) {
+        //System.out.println("xvectorSize: " + xVector.size());
+        for (int i = 0; i < xVector.size(); i++) {
             updateList.add(xVector.get(i));
             updateList.add(-yVector.get(i) * lineProperty.getAmplitude().getValue());
         }
@@ -129,7 +140,7 @@ public class MyPolyline extends HBox {
         for (int i = 0; i < yVector.size(); i++) {
             xVector.add((double) i);
         }
-        horizontalResolution.setValue(xVector.size());
+        //horizontalResolution.setValue(xVector.size());
         try {
             setYPosition(UpdateHandler.get().getLineSpacing() * number);
         } catch (Exception e) {

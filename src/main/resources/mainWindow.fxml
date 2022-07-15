@@ -9,19 +9,17 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import com.sun.javafx.scene.control.IntegerField?>
 <HBox fx:id="root" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="root.main.MainController">
-    <VBox prefWidth="${root.width/30}" style="-fx-background-color: red">
+    <VBox prefWidth="${root.width/12}" style="-fx-background-color: red">
         <Button fx:id="previousBtn" onAction="#previousPage" text="previous Page" />
         <Button fx:id="nextBtn" onAction="#nextPage" text="next Page" />
         <IntegerField fx:id="pageSizeField"/>
     </VBox>
 
 
-    <ScrollPane fx:id="scrollPane" hbarPolicy="AS_NEEDED" prefWidth="${root.width/30*29}">
-        <VBox alignment="CENTER_LEFT" prefHeight="${root.height}" prefWidth="${scrollPane.width}" style="-fx-background-color: #404040">
-            <AnchorPane fx:id="pane">
+    <ScrollPane fx:id="scrollPane" hbarPolicy="AS_NEEDED">
+            <AnchorPane fx:id="pane" prefWidth="${root.width/12*11}" style="-fx-background-color: #404040">
 
             </AnchorPane>
-        </VBox>
     </ScrollPane>
 
 <!--   <AnchorPane style="-fx-background-color: red" prefWidth="${root.width*0/6}">-->

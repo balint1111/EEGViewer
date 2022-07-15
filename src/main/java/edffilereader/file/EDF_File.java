@@ -5,6 +5,7 @@ import edffilereader.data.Channel;
 import edffilereader.data.EEG_Data;
 import edffilereader.header.EDF_Header;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -27,6 +28,16 @@ public class EDF_File extends EEG_File {
 
 
         header.setFileChannel(new FileInputStream(filename).getChannel());
+
+        readHeader();
+    }
+
+    public EDF_File(File file) throws FileNotFoundException {
+        header = new EDF_Header();
+        header.setFilename(file.getAbsolutePath());
+
+
+        header.setFileChannel(new FileInputStream(file).getChannel());
 
         readHeader();
     }

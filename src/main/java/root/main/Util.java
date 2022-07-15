@@ -2,11 +2,15 @@ package root.main;
 
 import com.github.ggalmazor.ltdownsampling.Point;
 import edffilereader.data.EEG_Data;
+import eu.bengreen.data.utility.LargestTriangleThreeBuckets;
+import org.rrd4j.graph.DownSampler;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.LongStream;
 
 public class Util {
 
@@ -26,6 +30,15 @@ public class Util {
             channelPoints.add(pointsOfChannels.get(j).getY().doubleValue());
         }
         return channelPoints;
+    }
+
+    public static List<Double> downSample(List<Double> doubles, int horizontalResolution) {
+        LargestTriangleThreeBuckets largestTriangleThreeBuckets = new LargestTriangleThreeBuckets(horizontalResolution);
+        double[] array = doubles.stream().mapToDouble(d -> d).map(d -> (double) d).toArray();
+        long[] timestamps = LongStream.range(0, doubles.size()).map(operand -> (long) operand).toArray();
+        DownSampler.DataSet downsize = largestTriangleThreeBuckets.downsize(timestamps, array);
+        doubles = Arrays.stream(downsize.values).boxed().collect(Collectors.toList());
+        return doubles;
     }
 
 }

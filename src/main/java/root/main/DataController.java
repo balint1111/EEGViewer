@@ -1,21 +1,24 @@
 package root.main;
 
-import com.github.ggalmazor.ltdownsampling.LTThreeBuckets;
-import edffilereader.data.EEG_Data;
+import edffilereader.data.Channel;
+import javafx.beans.property.SimpleLongProperty;
 import lombok.Data;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import root.async.AsyncExecutor;
 
 import java.io.IOException;
+import java.nio.channels.ClosedByInterruptException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.stream.Collectors;
 
 @Component
 @Data
+@Slf4j
 public class DataController {
 
     private UpdateHandler updateHandler;
@@ -24,9 +27,9 @@ public class DataController {
 
     private final AsyncExecutor asyncExecutor;
 
-    private final ExecutorService backgroundExecutor;
+    private final ThreadPoolExecutor backgroundExecutor;
 
-    public DataController(AsyncExecutor asyncExecutor, ExecutorService backgroundExecutor) {
+    public DataController(AsyncExecutor asyncExecutor, ThreadPoolExecutor backgroundExecutor) {
         this.asyncExecutor = asyncExecutor;
         this.backgroundExecutor = backgroundExecutor;
     }
@@ -45,55 +48,61 @@ public class DataController {
     private Thread thread;
 
 
-    public void showDataRecord(int from, int to) {
+    @SneakyThrows
+    public void showDataRecord(int from, int to, SimpleLongProperty lastUpdate) {
         if (thread != null && !thread.isInterrupted())
             thread.interrupt();
-        backgroundExecutor.submit(() -> {
-            try {
-                thread = Thread.currentThread();
-                preLoadInterrupt();
-                System.out.println("from: " + from + " to: " + to);
-                this.from = from;
-                this.to = to;
-                List<Double>[] myDoubleArray = new ArrayList[numberOfChannels];
 
-                List<DataRecord> dataRecordFromTo = dataModel.getDataRecordFromTo(from, to);
-                for (int i = 0; i < myDoubleArray.length; i++) {
-                    myDoubleArray[i] = new ArrayList<>();
-                    for (DataRecord dataRecord : dataRecordFromTo) {
-                        myDoubleArray[i].addAll(new ArrayList<>(Arrays.stream(dataRecord.getData().channels[i].getDoubleArray()).boxed().toList()));
+        if (backgroundExecutor.getQueue().isEmpty())
+        {
+            System.out.println("update start");
+            backgroundExecutor.execute(() -> {
+                try {
+                    thread = Thread.currentThread();
+                    preLoadInterrupt();
+                    System.out.println("from: " + from + " to: " + to);
+                    this.from = from;
+                    this.to = to;
+                    List<Double>[] myDoubleArray = new ArrayList[numberOfChannels];
+
+                    List<DataRecord> dataRecordFromTo = dataModel.getDataRecordFromTo(from, to);
+                    for (int i = 0; i < myDoubleArray.length; i++) {
+                        myDoubleArray[i] = new ArrayList<>();
+                        for (DataRecord dataRecord : dataRecordFromTo) {
+                            myDoubleArray[i].addAll(new ArrayList<>(Arrays.stream(dataRecord.getData().channels[i].getDoubleArray()).boxed().toList()));
+                        }
                     }
-                }
-//                for (int i = from; i <= to; i++) {
-//                    EEG_Data data = dataModel.getDataRecord(i);
-//                    double[][] doubleArray = data.getDoubleArray();
-//                    for (int j = 0; j < myDoubleArray.length; j++) {
-//                        myDoubleArray[j].addAll(new ArrayList<>(Arrays.stream(doubleArray[j]).boxed().toList()));
-//                    }
-//                }
-                List<Double>[] finalArray = new ArrayList[numberOfChannels];
-                for (int i = 0, myDoubleArrayLength = myDoubleArray.length; i < myDoubleArrayLength; i++) {
-                    List<Double> doubles = myDoubleArray[i];
-                    doubles = Util.convertPointsToDouble(LTThreeBuckets.sorted(Util.getPhysicalPoints(doubles), 998));
-                    finalArray[i] = doubles;
-                }
+                    List<Double>[] finalArray = new ArrayList[numberOfChannels];
+                    for (int i = 0, myDoubleArrayLength = myDoubleArray.length; i < myDoubleArrayLength; i++) {
+                        List<Double> doubles = myDoubleArray[i];
+                        int horizontalResolution = updateHandler.getMyPolylineList().get(i).getHorizontalResolution();
+                        doubles = Util.downSample(doubles, horizontalResolution);
+                        finalArray[i] = doubles;
+                    }
 
-                updateHandler.setYVectors(finalArray);
-                updateHandler.update();
-                //asyncExecutor.preLoadAroundPage(3);
-                System.out.println("ay");
-            } catch (InterruptedException e) {
-                System.out.println("Thread: " + Thread.currentThread() + " interrupted");
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        });
+                    updateHandler.setYVectors(finalArray);
+                    updateHandler.update();
+                    if (lastUpdate != null) {
+                        lastUpdate.setValue(System.currentTimeMillis());
+                    }
+                    //asyncExecutor.preLoadAroundPage(3);
+                    System.out.println("ay");
+                } catch (InterruptedException e) {
+                    System.out.println("Thread: " + Thread.currentThread() + " interrupted");
+                } catch (ClosedByInterruptException e) {
+                    System.out.println("ClosedByInterruptException: " + Thread.currentThread() + " interrupted");
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            });
+        }
     }
+
 
     @SneakyThrows
     public void showNextPage() {
         int range = to - from;
-        showDataRecord(to + 1, to + 1 + range);
+        showDataRecord(to + 1, to + 1 + range, null);
     }
 
     @SneakyThrows
@@ -101,13 +110,13 @@ public class DataController {
         int range = to - from;
         int newFrom = from - range - 1;
         if (newFrom > 0) {
-            showDataRecord(newFrom, from - 1);
+            showDataRecord(newFrom, from - 1, null);
         } else {
-            showDataRecord(0, range);
+            showDataRecord(0, range, null);
         }
     }
 
-    public void preLoadAroundPage(int numberOfPages) throws IOException, InterruptedException {
+    public void preLoadAroundPage(int numberOfPages) throws Exception {
         int range = to - from + 1;
         int loadFrom1 = from - (numberOfPages * range);
         int loadTo1 = from - 1;
@@ -123,22 +132,14 @@ public class DataController {
         preLoadRunning = false;
     }
 
-    public void preLoadDataRecord(int from, int to) throws IOException, InterruptedException {
+    public void preLoadDataRecord(int from, int to) throws Exception {
         preLoadRunning = true;
-        from = Math.max(from, 0);
-        System.out.println("preLoad from: " + from + " to: " + to);
-        for (int i = from; i <= to; i++) {
-            if (!preLoadRunning) {
-                System.out.println("preLoad from: " + from + " to: " + to + " interrupted");
-                return;
-            }
-            dataModel.getDataRecord(i);
-        }
+        dataModel.getDataRecordFromTo(from, to);
         preLoadRunning = false;
     }
 
     public void rangeChange(Integer range) throws IOException, InterruptedException {
-        showDataRecord(from, from + range - 1);
+        showDataRecord(from, from + range - 1, null);
     }
 
     public UpdateHandler getUpdateHandler() {

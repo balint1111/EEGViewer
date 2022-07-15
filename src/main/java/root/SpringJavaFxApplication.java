@@ -15,9 +15,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableAsync;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.*;
 
 @SpringBootApplication
 public class SpringJavaFxApplication extends Application {
@@ -61,9 +59,8 @@ public class SpringJavaFxApplication extends Application {
     }
 
     @Bean
-    ExecutorService backgroundExecutor() {
-        return Executors.newSingleThreadExecutor(
-                new ThreadFactoryBuilder().setNameFormat("backgroundThread").build());
+    ThreadPoolExecutor backgroundExecutor() {
+        return new ThreadPoolExecutor( 1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>() );
     }
 
     public static void main(String[] args) {

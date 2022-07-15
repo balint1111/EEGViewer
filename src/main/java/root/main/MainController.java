@@ -10,12 +10,17 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import lombok.SneakyThrows;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ResourceUtils;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -33,6 +38,8 @@ public class MainController implements Initializable {
     public HBox hBox;
     @FXML
     public HBox root;
+    @FXML
+    public ScrollPane scrollPane;
     @FXML
     public Button previousBtn;
     @FXML
@@ -62,18 +69,19 @@ public class MainController implements Initializable {
         this.dataController = dataController;
     }
 
+    @SneakyThrows
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        init("C:\\Users\\balin\\Desktop\\Git\\MavenDemo\\src\\main\\resources\\ma0844az_1-1+.edf",
-                3, 1, 60, 5000);
+        init(new File("/home/balint/Dokumentumok/EEGViewer/src/main/resources/ma0844az_1-1+.edf"),
+                1, 0.75, 300, 1);
     }
 
-    private void init(String filePath, int numberOfChannels, double amplitude, int pageSize, int maxQueueSize) {
+    private void init(File file, int numberOfChannels, double amplitude, int pageSize, int maxQueueSize) {
         try {
             DataModel dataModel = DataModel.get(maxQueueSize);
 
             VBox group = new VBox();
-            group.prefWidthProperty().bind(root.widthProperty().multiply(10).divide(12));
+            group.prefWidthProperty().bind(pane.prefWidthProperty());
             group.setStyle("-fx-background-color: pink;");
 
             pane.getChildren().add(group);
@@ -82,7 +90,7 @@ public class MainController implements Initializable {
 
 
             dataModel.setDataController(dataController);
-            dataModel.setEeg_file(new EDF_File(filePath));
+            dataModel.setEeg_file(new EDF_File(file));
 
             updateHandler.setDataController(dataController);
             updateHandler.setLineSpacing(100d);

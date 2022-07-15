@@ -1,5 +1,8 @@
 package edffilereader.header;
 
+import lombok.SneakyThrows;
+
+import java.io.FileInputStream;
 import java.nio.channels.FileChannel;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +35,11 @@ public abstract class EEG_Header {
         return extraParameters.entrySet().stream().map((entry) -> {return entry.getKey();}).collect(Collectors.toList());
     }
     
+    @SneakyThrows
     public FileChannel getFileChannel() {
+        if (!fileChannel.isOpen()) {
+            fileChannel = new FileInputStream(filename).getChannel();
+        }
         return fileChannel;
     }
 
