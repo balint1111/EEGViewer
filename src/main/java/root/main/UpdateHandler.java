@@ -1,24 +1,48 @@
 package root.main;
 
 import custom.component.MyPolyline;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import lombok.SneakyThrows;
+import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class UpdateHandler {
+@Component
+public class UpdateHandler extends ScrollPane {
 
-    private VBox vBox;
+    @FXML
+    public AnchorPane pane;
 
-    private static UpdateHandler instance;
+    @FXML
+    public VBox vBox;
 
     private List<MyPolyline> myPolylineList = new ArrayList<>();
 
     private Double lineSpacing = 0d;
 
     private int numberOfChannels;
+
+    @SneakyThrows
+    public UpdateHandler() {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/Chart.fxml"));
+        fxmlLoader.setRoot(this);
+        fxmlLoader.setController(this);
+
+        try {
+            fxmlLoader.load();
+        } catch (IOException exception) {
+            throw new RuntimeException(exception);
+        }
+
+    }
 
     public void setYVectors(List<Double>[] yVectors) {
         for (int i = 0; i < yVectors.length; i++) {
@@ -46,36 +70,19 @@ public class UpdateHandler {
 
     }
 
-
-    private UpdateHandler(VBox group) {
-        this.vBox = group;
-    }
-
     public List<MyPolyline> getMyPolylineList() {
         return myPolylineList;
     }
 
-    public static UpdateHandler get(VBox group) throws Exception {
-        if (instance == null) {
-            instance = new UpdateHandler(group);
-        }
-        return instance;
-    }
 
-    public static UpdateHandler get() throws Exception {
-        if (instance == null)
-            throw new Exception("NO_INSTANCE_OF_UPDATE_HANDLER");
-        return instance;
-    }
 
     public void setNumberOfChannels(int numberOfChannels) {
         myPolylineList = new ArrayList<>();
         this.numberOfChannels = numberOfChannels;
         for (int i = 0; i < numberOfChannels; i++) {
-            MyPolyline myPolyline = new MyPolyline(dataController, i + 1 , vBox);
+            MyPolyline myPolyline = new MyPolyline(dataController, i + 1, vBox, this);
             myPolylineList.add(myPolyline);
         }
-        vBox.getChildren().setAll(myPolylineList);
         setLineSpacing(lineSpacing);
     }
 

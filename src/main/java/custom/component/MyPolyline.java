@@ -1,16 +1,21 @@
 package custom.component;
 
 import custom.dialogs.ColorPickerDialog;
+import javafx.application.Platform;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
@@ -20,20 +25,33 @@ import org.springframework.stereotype.Component;
 import root.main.DataController;
 import root.main.UpdateHandler;
 
+import java.io.IOException;
+import java.net.URL;
 import java.util.*;
 
 @Data
 @Component
-public class MyPolyline extends HBox {
+public class MyPolyline extends HBox implements Initializable {
 
-    private Polyline polyline = new Polyline();
-    private Button button = new Button("hali");
+    @FXML
+    private Polyline polyline;
+
+    @FXML
+    private Line line;
+
+    @FXML
+    private VBox controlVbox;
+
+    @FXML
+    private VBox lineVbox;
+
+    @FXML
+    private Label amplitudeLabel;
+
+    @FXML
+    private Button button;
+
     private final DataController dataController;
-    private Line line = new Line();
-    private Label label = new Label();
-
-    private VBox vbox = new VBox();
-    private VBox vbox2 = new VBox();
 
     private final List<String> styleClasses = new ArrayList<>(Arrays.asList(
             "group"
@@ -49,73 +67,65 @@ public class MyPolyline extends HBox {
 
     private List<Double> yVector = new ArrayList<>();
 
-    public int getHorizontalResolution() {
-        return horizontalResolution.get();
-    }
-
-    public IntegerProperty horizontalResolutionProperty() {
-        return horizontalResolution;
-    }
-
     private IntegerProperty horizontalResolution;
     private LineProperty lineProperty = new LineProperty();
 
 
     private ObservableList<Double> polyLineList;
 
-    public MyPolyline(DataController dataController, int number, VBox parent) {
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+
+    }
+
+
+    public MyPolyline(DataController dataController, int number, VBox parent, ScrollPane sc) {
         this.dataController = dataController;
         this.number = number;
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/MyPolyline.fxml"));
+        fxmlLoader.setRoot(this);
+        fxmlLoader.setController(this);
+
+        try {
+            fxmlLoader.load();
+        } catch (IOException exception) {
+            throw new RuntimeException(exception);
+        }
+        parent.getChildren().add(this);
 
 
+        horizontalResolution = new PolylineHorizontalResolutionProperty(750l, dataController);
+        horizontalResolution.bind(lineVbox.prefWidthProperty());
 
-        horizontalResolution = new PolylineHorizontalResolutionProperty(300l, dataController);
-
-        button.setOnAction(this::buttonClick);
-        line.setStartX(0);
-        line.setStartY(0);
-        line.endXProperty().bind(vbox2.prefWidthProperty());
-        line.setEndY(0);
         polyLineList = polyline.getPoints();
 
 
-        //bindings
         lineProperty.setStrokeProperty(polyline.strokeProperty());
-        //amplitudeChange -> update()
-        lineProperty.getAmplitude().addListener((observable, oldValue, newValue) -> update());
-        //label text bind to amplitude
-        //label.textProperty().bind(lineProperty.getAmplitude().asString());
         lineProperty.getAmplitude().addListener((observable, oldValue, newValue) -> {
-            label.setText(newValue.toString());
+            update();
+            amplitudeLabel.setText(newValue.toString());
             try {
-                setYPosition(UpdateHandler.get().getLineSpacing() * number);
+                //setYPosition(UpdateHandler.get().getLineSpacing() * number);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         });
         line.strokeProperty().bindBidirectional(lineProperty.getStrokeProperty());
 
-        //add elements to anchorPane
-        vbox2.getChildren().addAll(new Group(polyline, line));
-        vbox2.setAlignment(Pos.CENTER_LEFT);
-        vbox.prefWidthProperty().bind(this.prefWidthProperty().multiply(0.1d));
-        vbox2.prefWidthProperty().bind(this.prefWidthProperty().subtract(vbox.prefWidthProperty()));
-        horizontalResolution.bind(vbox2.prefWidthProperty());
 
-        vbox2.setStyle("-fx-background-color: green;");
-        this.setStyle("-fx-background-color: yellow;");
-        //add elements to VBox
-        vbox.getChildren().addAll(button, label);
-        vbox.setAlignment(Pos.TOP_LEFT);
-        //add elements to HBox (this)
-        this.getChildren().addAll(vbox, vbox2);
-        //Set Style Classes
-        this.getStyleClass().addAll(styleClasses);
-        polyline.getStyleClass().addAll(polylineStyleClasses);
-        button.getStyleClass().addAll(buttonStyleClasses);
-        this.getStylesheets().add("/myPolyline.css");
-        prefWidthProperty().bind(parent.prefWidthProperty());
-        parent.getChildren().add(this);
+
+
+
+        //amplitudeChange -> update()
+        //label text bind to amplitude
+        //label.textProperty().bind(lineProperty.getAmplitude().asString());
+
+//
+//        this.getStyleClass().addAll(styleClasses);
+//        polyline.getStyleClass().addAll(polylineStyleClasses);
+        //button.getStyleClass().addAll(buttonStyleClasses);
+        //this.getStylesheets().add("/myPolyline.css");
+
     }
 
     public void buttonClick(ActionEvent actionEvent) {
@@ -131,7 +141,7 @@ public class MyPolyline extends HBox {
             updateList.add(xVector.get(i));
             updateList.add(-yVector.get(i) * lineProperty.getAmplitude().getValue());
         }
-        polyLineList.setAll(updateList);
+        Platform.runLater(() -> {polyLineList.setAll(updateList);});
     }
 
     public void setYVector(List<Double> yVector) {
@@ -142,7 +152,7 @@ public class MyPolyline extends HBox {
         }
         //horizontalResolution.setValue(xVector.size());
         try {
-            setYPosition(UpdateHandler.get().getLineSpacing() * number);
+            //setYPosition(UpdateHandler.get().getLineSpacing() * number);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -159,11 +169,9 @@ public class MyPolyline extends HBox {
 
     public void setAmplitude(Double amplitude) {
         lineProperty.getAmplitude().setValue(amplitude);
-        try {
-            setYPosition(UpdateHandler.get().getLineSpacing() * number);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        //setYPosition(UpdateHandler.get().getLineSpacing() * number);
+
     }
+
 
 }

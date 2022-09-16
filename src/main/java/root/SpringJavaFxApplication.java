@@ -63,6 +63,10 @@ public class SpringJavaFxApplication extends Application {
         return new ThreadPoolExecutor( 1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>() );
     }
 
+    public ConfigurableApplicationContext getApplicationContext() {
+        return applicationContext;
+    }
+
     public static void main(String[] args) {
         Application.launch(SpringJavaFxApplication.class, args);
     }

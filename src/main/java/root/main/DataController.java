@@ -50,11 +50,13 @@ public class DataController {
 
     @SneakyThrows
     public void showDataRecord(int from, int to, SimpleLongProperty lastUpdate) {
-        if (thread != null && !thread.isInterrupted())
+        if (thread != null && !thread.isInterrupted()) {
+            System.out.println("interruptRequest");
             thread.interrupt();
+        }
 
-        if (backgroundExecutor.getQueue().isEmpty())
-        {
+
+        if (backgroundExecutor.getQueue().isEmpty()) {
             System.out.println("update start");
             backgroundExecutor.execute(() -> {
                 try {
@@ -75,7 +77,8 @@ public class DataController {
                     List<Double>[] finalArray = new ArrayList[numberOfChannels];
                     for (int i = 0, myDoubleArrayLength = myDoubleArray.length; i < myDoubleArrayLength; i++) {
                         List<Double> doubles = myDoubleArray[i];
-                        int horizontalResolution = updateHandler.getMyPolylineList().get(i).getHorizontalResolution();
+                        int horizontalResolution = updateHandler.getMyPolylineList().get(i).getHorizontalResolution().get();
+                        horizontalResolution=800;
                         doubles = Util.downSample(doubles, horizontalResolution);
                         finalArray[i] = doubles;
                     }
@@ -90,6 +93,7 @@ public class DataController {
                 } catch (InterruptedException e) {
                     System.out.println("Thread: " + Thread.currentThread() + " interrupted");
                 } catch (ClosedByInterruptException e) {
+                    e.printStackTrace();
                     System.out.println("ClosedByInterruptException: " + Thread.currentThread() + " interrupted");
                 } catch (Exception ex) {
                     ex.printStackTrace();

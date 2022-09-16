@@ -7,11 +7,19 @@
 <?import javafx.scene.layout.*?>
 
 <?import javafx.scene.shape.Polyline?>
-<fx:root type="javafx.scene.layout.VBox" xmlns:fx="http://javafx.com/fxml">
-    <VBox>
+<?import javafx.scene.shape.Line?>
+<fx:root fx:id="myPolyLine" type="javafx.scene.layout.HBox" xmlns:fx="http://javafx.com/fxml"
+         style="-fx-background-color: yellow;">
+    <VBox fx:id="controlVbox" alignment="TOP_LEFT" prefWidth="${myPolyLine.prefWidth*0.1}">
+        <Button fx:id="button" text="hali" onAction="#buttonClick"></Button>
+        <Label fx:id="amplitudeLabel"></Label>
 
     </VBox>
-    <VBox>
-        <Polyline fx:id="polyline"></Polyline>
+    <VBox fx:id="lineVbox" alignment="CENTER_LEFT" prefWidth="${myPolyLine.prefWidth*0.9}"
+          style="-fx-background-color: green;">
+        <Group>
+            <Polyline fx:id="polyline"></Polyline>
+            <Line fx:id="line" startX="0" startY="0" endY="0" endX="${lineVbox.prefWidth}"></Line>
+        </Group>
     </VBox>
 </fx:root>
