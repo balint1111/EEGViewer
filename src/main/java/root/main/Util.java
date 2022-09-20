@@ -9,6 +9,9 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 
@@ -42,8 +45,16 @@ public class Util {
     }
 
     public static List<DataRecord> EEG_DataToDataRecords(EEG_Data eeg_data) {
-//        eeg_data.getRecordOfTheEEG_Data()
-        return null;
+        ArrayList<DataRecord> dataRecords = new ArrayList<>();
+        for (int j = 0; j < eeg_data.getStoredRecordNumber(); j++){
+            double[][] arr = new double[eeg_data.channels.length][];
+            for (int i = 0; i < eeg_data.channels.length; i++) {
+                int temp = i;
+                arr[temp] = eeg_data.channels[temp].getDoubleArrayOfRecord(j);
+            }
+            dataRecords.add(new DataRecord(arr, j));
+        }
+        return dataRecords;
     }
 
 }

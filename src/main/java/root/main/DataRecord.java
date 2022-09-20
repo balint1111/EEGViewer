@@ -8,7 +8,7 @@ import lombok.ToString;
 @ToString
 public class DataRecord {
 
-    private EEG_Data data;
+    private double[][] data;
 
     private Integer dataRecordNumber;
 
@@ -16,7 +16,7 @@ public class DataRecord {
 
     DataRecord(){};
 
-    DataRecord(EEG_Data data, Integer dataRecordNumber) {
+    DataRecord(double[][] data, Integer dataRecordNumber) {
         this.data = data;
         this.dataRecordNumber = dataRecordNumber;
     }
@@ -29,7 +29,7 @@ public class DataRecord {
         this.dataRecordNumber = dataRecordNumber;
     }
 
-    public EEG_Data getData() {
+    public double[][] getData() {
         lastRequestTime = System.currentTimeMillis();
         return data;
     }

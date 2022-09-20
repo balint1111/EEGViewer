@@ -71,7 +71,7 @@ public class DataController {
                     for (int i = 0; i < myDoubleArray.length; i++) {
                         myDoubleArray[i] = new ArrayList<>();
                         for (DataRecord dataRecord : dataRecordFromTo) {
-                            myDoubleArray[i].addAll(new ArrayList<>(Arrays.stream(dataRecord.getData().channels[i].getDoubleArray()).boxed().toList()));
+                            myDoubleArray[i].addAll(new ArrayList<>(Arrays.stream(dataRecord.getData()[i]).boxed().toList()));
                         }
                     }
                     List<Double>[] finalArray = new ArrayList[numberOfChannels];

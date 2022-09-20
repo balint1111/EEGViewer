@@ -15,6 +15,9 @@ import java.util.concurrent.TimeUnit;
 public class EEG_Data {
 
     public Channel[] channels;
+    int sampleLength;
+    int storedRecordNumber;
+
 
     public EEG_Data() {
 
@@ -50,6 +53,8 @@ public class EEG_Data {
             List<Integer> numberOfSamples,
             int sampleLength
     ) throws InterruptedException {
+        this.storedRecordNumber = storedRecordNumber;
+        this.sampleLength = sampleLength;
         channels = new Channel[channelNumber];
         ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         for (int i = 0; i < channelNumber; i++) {
@@ -107,4 +112,7 @@ public class EEG_Data {
     }
 
 
+    public int getStoredRecordNumber() {
+        return storedRecordNumber;
+    }
 }
