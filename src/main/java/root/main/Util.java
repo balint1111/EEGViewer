@@ -43,6 +43,7 @@ public class Util {
 
     public static List<DataRecord> EEG_DataToDataRecords(EEG_Data eeg_data) {
 //        eeg_data.getRecordOfTheEEG_Data()
+        return null;
     }
 
 }
