@@ -109,7 +109,7 @@ public class DataModel {
     }
 
 
-    private DataModel(int maxQueueSize) {
+    public DataModel(int maxQueueSize) {
         queue = MinMaxPriorityQueue.<DataRecord>orderedBy((o1, o2) -> o1.getLastRequestTime().compareTo(o2.getLastRequestTime()) * -1).maximumSize(maxQueueSize).create();
     }
 
@@ -129,19 +129,19 @@ public class DataModel {
         return toReturn;
     }
 
-    @SneakyThrows
-    public static DataModel get() {
-        if (instance == null)
-            throw new DataModelException("No instance of DataModel!");
-        return instance;
-    }
-
-    @SneakyThrows
-    public static DataModel get(int maxQueueSize) {
-        if (instance == null)
-            return instance = new DataModel(maxQueueSize);
-        throw new DataModelException("maxQueueSize cannot be modified!");
-    }
+//    @SneakyThrows
+//    public static DataModel get() {
+//        if (instance == null)
+//            throw new DataModelException("No instance of DataModel!");
+//        return instance;
+//    }
+//
+//    @SneakyThrows
+//    public static DataModel get(int maxQueueSize) {
+//        if (instance == null)
+//            return instance = new DataModel(maxQueueSize);
+//        throw new DataModelException("maxQueueSize cannot be modified!");
+//    }
 
     public EEG_File getEeg_file() {
         return eeg_file;

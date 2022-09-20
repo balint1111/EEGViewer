@@ -8,21 +8,20 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.concurrent.ExecutorService;
 
 @Component
 public class MainController implements Initializable {
@@ -43,6 +42,7 @@ public class MainController implements Initializable {
 
 
     private final DataController dataController;
+    private final DataModel dataModel;
 
 
     private final IntegerProperty pageSizeProperty = new SimpleIntegerProperty();
@@ -50,21 +50,22 @@ public class MainController implements Initializable {
     public UpdateHandler updateHandler;
 
 
-    public MainController(DataController dataController) {
+    public MainController(DataController dataController, DataModel dataModel) {
         this.dataController = dataController;
+        this.dataModel = dataModel;
     }
 
     @SneakyThrows
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        init(new File("/home/balint/Dokumentumok/EEGViewer/src/main/resources/ma0844az_1-1+.edf"),
-                5, 0.75, 300, 10000);
+//        open(null);
     }
 
-    private void init(File file, int numberOfChannels, double amplitude, int pageSize, int maxQueueSize) {
+    private void openNewFile(File file) {
+        int numberOfChannels = 5;
+        double amplitude = 0.75;
+        int pageSize = 300;
         try {
-            DataModel dataModel = DataModel.get(maxQueueSize);
-
 
             dataModel.setDataController(dataController);
             dataModel.setEeg_file(new EDF_File(file));
@@ -97,14 +98,18 @@ public class MainController implements Initializable {
         }
     }
 
-
-    public void previousPage(ActionEvent actionEvent){
+    public void previousPage(ActionEvent actionEvent) {
         dataController.showPreviousPage();
     }
 
-    public void nextPage(ActionEvent actionEvent){
+    public void nextPage(ActionEvent actionEvent) {
         dataController.showNextPage();
     }
 
 
+    public void open(ActionEvent actionEvent) throws FileNotFoundException {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open Resource File");
+        openNewFile(fileChooser.showOpenDialog(new Stage()));
+    }
 }

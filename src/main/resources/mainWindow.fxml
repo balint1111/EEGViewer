@@ -15,6 +15,7 @@
     <VBox fx:id="control" prefWidth="${root.width/12}" style="-fx-background-color: red" fillWidth="false">
         <Button fx:id="previousBtn" onAction="#previousPage" text="previous Page" />
         <Button fx:id="nextBtn" onAction="#nextPage" text="next Page" />
+        <Button fx:id="openBtn" onAction="#open" text="open" />
         <IntegerField fx:id="pageSizeField"/>
     </VBox>
 

@@ -14,6 +14,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableAsync;
+import root.main.DataModel;
 
 import java.util.concurrent.*;
 
@@ -56,6 +57,11 @@ public class SpringJavaFxApplication extends Application {
     @Bean
     ColorPicker colorPicker() {
         return new ColorPicker();
+    }
+
+    @Bean
+    DataModel dataModel() {
+        return new DataModel(10000);
     }
 
     @Bean

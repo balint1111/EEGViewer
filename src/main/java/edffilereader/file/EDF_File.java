@@ -162,7 +162,8 @@ public class EDF_File extends EEG_File {
 
     @Override
     public EEG_Data readRecordFromTo(int from, int to) throws IOException, InterruptedException {
-        //System.out.println("beolvasás " + "from: " + from + " to: " + to);
+        long startTime = System.currentTimeMillis();
+        System.out.println("beolvasás " + "from: " + from + " to: " + to);
         int length = to - from;
         int start = getHeader().getStartData() + from * getHeader().getDataRecordSize();
         ByteBuffer buffer = ByteBuffer.allocate(getHeader().getDataRecordSize() * (length));
