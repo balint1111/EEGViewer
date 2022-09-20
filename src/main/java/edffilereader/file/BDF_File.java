@@ -33,8 +33,8 @@ public class BDF_File extends EEG_File {
     }
 
     public BDF_File(File file) throws FileNotFoundException {
-        header = new EDF_Header();
-        header.setFilename(file.getName());
+        header = new BDF_Header();
+        header.setFilename(file.getAbsolutePath());
 
 
         header.setFileChannel(new FileInputStream(file).getChannel());
@@ -163,6 +163,13 @@ public class BDF_File extends EEG_File {
     public EEG_Data readRecordFromTo(int from, int to) throws IOException, InterruptedException {
         int length = to - from;
         int start = getHeader().getStartData() + from * getHeader().getDataRecordSize();
+        if (getHeader().getDataRecordSize() * (length) < 0) {
+            System.out.println("getHeader().getNumberOfDataRecords(): " + getHeader().getNumberOfDataRecords());
+            System.out.println("to: " + to);
+            System.out.println("from: " + from);
+            System.out.println("getHeader().getDataRecordSize(): " + getHeader().getDataRecordSize());
+            System.out.println("length: " + length);
+        }
         ByteBuffer buffer = ByteBuffer.allocate(getHeader().getDataRecordSize() * (length));
         header.getFileChannel().read(buffer, start);
         EEG_Data data = new EEG_Data(length, header.getNumberOfChannels(), header.getLabelsOfTheChannels(), header.getTransducerTypes(),

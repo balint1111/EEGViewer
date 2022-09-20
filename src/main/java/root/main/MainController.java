@@ -2,6 +2,7 @@ package root.main;
 
 import com.sun.javafx.scene.control.IntegerField;
 import edffilereader.file.EDF_File;
+import edffilereader.file.EEG_File;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.event.ActionEvent;
@@ -49,6 +50,8 @@ public class MainController implements Initializable {
     @FXML
     public UpdateHandler updateHandler;
 
+    private EEG_File eegFile;
+
 
     public MainController(DataController dataController, DataModel dataModel) {
         this.dataController = dataController;
@@ -63,12 +66,12 @@ public class MainController implements Initializable {
 
     private void openNewFile(File file) {
         int numberOfChannels = 5;
-        double amplitude = 0.75;
+        double amplitude = 0.0005;
         int pageSize = 100;
         try {
-
             dataModel.setDataController(dataController);
-            dataModel.setEeg_file(new EDF_File(file));
+            eegFile = EEG_File.build(file);
+            dataModel.setEeg_file(eegFile);
 
             updateHandler.setDataController(dataController);
             updateHandler.setLineSpacing(100d);
@@ -80,14 +83,20 @@ public class MainController implements Initializable {
 
             pageSizeProperty.bindBidirectional(pageSizeField.valueProperty());
             pageSizeProperty.addListener((observable, oldValue, newValue) -> {
-                if (((Integer) newValue).compareTo(1) >= 0)
-                    try {
+                try {
+                    Integer maxValue = eegFile.getHeader().getNumberOfDataRecords();
+                    if ((Integer) newValue > maxValue) {
+                        pageSizeField.setValue(maxValue);
+                        dataController.rangeChange(maxValue);
+                    } else if (((Integer) newValue).compareTo(1) >= 0) {
                         dataController.rangeChange(newValue.intValue());
-                    } catch (Exception e) {
-                        e.printStackTrace();
                     }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             });
             pageSizeProperty.setValue(pageSize);
+            dataController.showFirstPage(pageSize);
 
 
             updateHandler.setAmplitudes(amplitude);

@@ -78,7 +78,6 @@ public class DataController {
                     for (int i = 0, myDoubleArrayLength = myDoubleArray.length; i < myDoubleArrayLength; i++) {
                         List<Double> doubles = myDoubleArray[i];
                         int horizontalResolution = updateHandler.getMyPolylineList().get(i).getHorizontalResolution().get();
-                        horizontalResolution=800;
                         doubles = Util.downSample(doubles, horizontalResolution);
                         finalArray[i] = doubles;
                     }
@@ -118,6 +117,11 @@ public class DataController {
         } else {
             showDataRecord(0, range, null);
         }
+    }
+
+    @SneakyThrows
+    public void showFirstPage(int range) {
+        showDataRecord(0, range, null);
     }
 
     public void preLoadAroundPage(int numberOfPages) throws Exception {

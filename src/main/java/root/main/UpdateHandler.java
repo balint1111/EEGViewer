@@ -32,6 +32,10 @@ public class UpdateHandler extends ScrollPane {
 
     @SneakyThrows
     public UpdateHandler() {
+        load();
+    }
+
+    private void load() {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/Chart.fxml"));
         fxmlLoader.setRoot(this);
         fxmlLoader.setController(this);
@@ -41,7 +45,6 @@ public class UpdateHandler extends ScrollPane {
         } catch (IOException exception) {
             throw new RuntimeException(exception);
         }
-
     }
 
     public void setYVectors(List<Double>[] yVectors) {
@@ -77,6 +80,7 @@ public class UpdateHandler extends ScrollPane {
 
 
     public void setNumberOfChannels(int numberOfChannels) {
+        load();
         myPolylineList = new ArrayList<>();
         this.numberOfChannels = numberOfChannels;
         for (int i = 0; i < numberOfChannels; i++) {

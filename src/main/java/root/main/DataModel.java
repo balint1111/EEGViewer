@@ -101,7 +101,7 @@ public class DataModel {
             log.info("reload from: " + from + " to: " + to);
 
             EEG_Data eeg_data = eeg_file.readRecordFromTo(from, to);
-            loadedFromDisk.addAll(Util.EEG_DataToDataRecords(eeg_data));
+            loadedFromDisk.addAll(Util.EEG_DataToDataRecords(eeg_data, from));
             log.info("loadedFromDisk after: " + loadedFromDisk.size());
         }
     }
@@ -147,6 +147,7 @@ public class DataModel {
 
     public void setEeg_file(EEG_File eeg_file) {
         this.eeg_file = eeg_file;
+        queue.clear();
     }
 
     public void setDataController(DataController dataController) {

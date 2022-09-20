@@ -44,7 +44,7 @@ public class Util {
         return doubles;
     }
 
-    public static List<DataRecord> EEG_DataToDataRecords(EEG_Data eeg_data) {
+    public static List<DataRecord> EEG_DataToDataRecords(EEG_Data eeg_data, int from) {
         ArrayList<DataRecord> dataRecords = new ArrayList<>();
         for (int j = 0; j < eeg_data.getStoredRecordNumber(); j++){
             double[][] arr = new double[eeg_data.channels.length][];
@@ -52,7 +52,7 @@ public class Util {
                 int temp = i;
                 arr[temp] = eeg_data.channels[temp].getDoubleArrayOfRecord(j);
             }
-            dataRecords.add(new DataRecord(arr, j));
+            dataRecords.add(new DataRecord(arr,from + j));
         }
         return dataRecords;
     }

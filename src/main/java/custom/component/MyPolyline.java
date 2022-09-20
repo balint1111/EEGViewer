@@ -2,6 +2,7 @@ package custom.component;
 
 import custom.dialogs.ColorPickerDialog;
 import javafx.application.Platform;
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -91,11 +92,22 @@ public class MyPolyline extends HBox implements Initializable {
         } catch (IOException exception) {
             throw new RuntimeException(exception);
         }
+        this.prefWidthProperty().bind(parent.prefWidthProperty());
+        this.setId("myPolyline" + number);
         parent.getChildren().add(this);
 
 
         horizontalResolution = new PolylineHorizontalResolutionProperty(750l, dataController);
-        horizontalResolution.bind(lineVbox.prefWidthProperty());
+        SimpleIntegerProperty viewportWidth = new SimpleIntegerProperty();
+        sc.viewportBoundsProperty().addListener((observableValue, bounds, t1) -> {
+            int newWidth = (int)(t1.getMaxX() - t1.getMinX());
+            if (newWidth != viewportWidth.get()) {
+                viewportWidth.setValue(newWidth);
+                System.out.println("viewportWidth: " + viewportWidth.get());
+            }
+        });
+        viewportWidth.setValue(sc.getViewportBounds().getMaxX() - sc.getViewportBounds().getMinX());
+        horizontalResolution.bind(viewportWidth.subtract(controlVbox.widthProperty()).subtract(2));
 
         polyLineList = polyline.getPoints();
 
@@ -111,9 +123,6 @@ public class MyPolyline extends HBox implements Initializable {
             }
         });
         line.strokeProperty().bindBidirectional(lineProperty.getStrokeProperty());
-
-
-
 
 
         //amplitudeChange -> update()
@@ -141,7 +150,9 @@ public class MyPolyline extends HBox implements Initializable {
             updateList.add(xVector.get(i));
             updateList.add(-yVector.get(i) * lineProperty.getAmplitude().getValue());
         }
-        Platform.runLater(() -> {polyLineList.setAll(updateList);});
+        Platform.runLater(() -> {
+            polyLineList.setAll(updateList);
+        });
     }
 
     public void setYVector(List<Double> yVector) {
