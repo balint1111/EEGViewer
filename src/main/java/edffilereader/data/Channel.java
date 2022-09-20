@@ -71,8 +71,15 @@ public class Channel{
         }
         return arr;
     }
-    
-    
+
+    public double [] getDoubleArrayOfRecord(int relativeRecordNumber){
+        double [] arr = new double[numberOfSamples];
+        int recordStart = relativeRecordNumber * numberOfSamples;
+        for (int i = 0; i < arr.length; i++) {
+            arr[i] = bitValue * (offset + (double) getInt(recordStart + i));
+        }
+        return arr;
+    }
     
     public double [] getDoubleArray(){
         double [] arr = new double[data.length/sampleLength];

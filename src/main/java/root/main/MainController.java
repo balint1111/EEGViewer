@@ -64,7 +64,7 @@ public class MainController implements Initializable {
     private void openNewFile(File file) {
         int numberOfChannels = 5;
         double amplitude = 0.75;
-        int pageSize = 300;
+        int pageSize = 100;
         try {
 
             dataModel.setDataController(dataController);

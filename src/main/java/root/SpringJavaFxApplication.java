@@ -61,7 +61,7 @@ public class SpringJavaFxApplication extends Application {
 
     @Bean
     DataModel dataModel() {
-        return new DataModel(10000);
+        return new DataModel(1);
     }
 
     @Bean

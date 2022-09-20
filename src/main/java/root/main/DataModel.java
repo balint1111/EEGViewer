@@ -36,23 +36,23 @@ public class DataModel {
         return null;
     }
 
-    public EEG_Data getDataRecord(int dataRecordNumber) throws IOException, InterruptedException {
-        Optional<DataRecord> optional;
-        synchronized (queue) {
-            optional = queue.stream().filter(dataRecord -> dataRecord.getDataRecordNumber().equals(dataRecordNumber)).findFirst();
-        }
-        if (optional.isPresent()) {
-            return optional.get().getData();
-        } else {
-            EEG_Data eeg_data = eeg_file.readRecordFromTo(dataRecordNumber, dataRecordNumber + 1);
-            DataRecord dataRecord = new DataRecord(eeg_data, dataRecordNumber);
-            EEG_Data data = dataRecord.getData();
-            synchronized (queue) {
-                queue.add(dataRecord);
-            }
-            return data;
-        }
-    }
+//    public EEG_Data getDataRecord(int dataRecordNumber) throws IOException, InterruptedException {
+//        Optional<DataRecord> optional;
+//        synchronized (queue) {
+//            optional = queue.stream().filter(dataRecord -> dataRecord.getDataRecordNumber().equals(dataRecordNumber)).findFirst();
+//        }
+//        if (optional.isPresent()) {
+//            return optional.get().getData();
+//        } else {
+//            EEG_Data eeg_data = eeg_file.readRecordFromTo(dataRecordNumber, dataRecordNumber + 1);
+//            DataRecord dataRecord = new DataRecord(eeg_data, dataRecordNumber);
+//            EEG_Data data = dataRecord.getData();
+//            synchronized (queue) {
+//                queue.add(dataRecord);
+//            }
+//            return data;
+//        }
+//    }
 
     public List<DataRecord> getDataRecordFromTo(int from, int to) throws Exception {
         List<DataRecord> memoryList = new ArrayList<>();
@@ -101,9 +101,7 @@ public class DataModel {
             log.info("reload from: " + from + " to: " + to);
 
             EEG_Data eeg_data = eeg_file.readRecordFromTo(from, to);
-            for (int j = 0; j < numberOfRecords; j++) {
-                loadedFromDisk.add(new DataRecord(eeg_data.getRecordOfTheEEG_Data(j), from + j));
-            }
+            loadedFromDisk.addAll(Util.EEG_DataToDataRecords(eeg_data));
             log.info("loadedFromDisk after: " + loadedFromDisk.size());
         }
     }
