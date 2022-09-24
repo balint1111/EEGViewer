@@ -1,7 +1,5 @@
 package root.main;
 
-import edffilereader.data.Channel;
-import javafx.beans.property.SimpleLongProperty;
 import lombok.Data;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -10,11 +8,9 @@ import root.async.AsyncExecutor;
 
 import java.io.IOException;
 import java.nio.channels.ClosedByInterruptException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.stream.Collectors;
 
 @Component
 @Data
@@ -49,51 +45,36 @@ public class DataController {
 
 
     @SneakyThrows
-    public void showDataRecord(int from, int to, SimpleLongProperty lastUpdate) {
+    public void showDataRecord(int from, int to) {
+        //interupt the thread if running
         if (thread != null && !thread.isInterrupted()) {
-            System.out.println("interruptRequest");
             thread.interrupt();
         }
 
 
         if (backgroundExecutor.getQueue().isEmpty()) {
-            System.out.println("update start");
             backgroundExecutor.execute(() -> {
                 try {
                     thread = Thread.currentThread();
                     preLoadInterrupt();
-                    System.out.println("from: " + from + " to: " + to);
+//                    System.out.println("from: " + from + " to: " + to);
                     this.from = from;
                     this.to = to;
-                    List<Double>[] myDoubleArray = new ArrayList[numberOfChannels];
 
-                    List<DataRecord> dataRecordFromTo = dataModel.getDataRecordFromTo(from, to);
-                    for (int i = 0; i < myDoubleArray.length; i++) {
-                        myDoubleArray[i] = new ArrayList<>();
-                        for (DataRecord dataRecord : dataRecordFromTo) {
-                            myDoubleArray[i].addAll(new ArrayList<>(Arrays.stream(dataRecord.getData()[i]).boxed().toList()));
-                        }
-                    }
-                    List<Double>[] finalArray = new ArrayList[numberOfChannels];
-                    for (int i = 0, myDoubleArrayLength = myDoubleArray.length; i < myDoubleArrayLength; i++) {
-                        List<Double> doubles = myDoubleArray[i];
-                        int horizontalResolution = updateHandler.getMyPolylineList().get(i).getHorizontalResolution().get();
-                        doubles = Util.downSample(doubles, horizontalResolution);
-                        finalArray[i] = doubles;
-                    }
+                    List<DataRecord> dataRecordsFromTo = dataModel.getDataRecordFromTo(from, to);
 
-                    updateHandler.setYVectors(finalArray);
+                    List<Double>[] channelsOriginalRes = Util.dataRecordsRepackage(dataRecordsFromTo, i -> updateHandler.getMyPolylineList().stream().anyMatch(myPolyline -> myPolyline.getChannelNumber() == i));
+
+                    List<Double>[] downSampledChannels = Util.getLists(channelsOriginalRes,
+                            (i) -> i < numberOfChannels ? Optional.of(updateHandler.getMyPolylineList().get(i).getHorizontalResolution().get()) : Optional.empty());
+
+                    updateHandler.setYVectors(downSampledChannels);
                     updateHandler.update();
-                    if (lastUpdate != null) {
-                        lastUpdate.setValue(System.currentTimeMillis());
-                    }
                     //asyncExecutor.preLoadAroundPage(3);
-                    System.out.println("ay");
                 } catch (InterruptedException e) {
-                    System.out.println("Thread: " + Thread.currentThread() + " interrupted");
+                    log.info("Thread: " + Thread.currentThread() + " interrupted");
                 } catch (ClosedByInterruptException e) {
-                    e.printStackTrace();
-                    System.out.println("ClosedByInterruptException: " + Thread.currentThread() + " interrupted");
+                    log.info("ClosedByInterruptException: " + Thread.currentThread() + " interrupted");
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
@@ -105,7 +86,7 @@ public class DataController {
     @SneakyThrows
     public void showNextPage() {
         int range = to - from;
-        showDataRecord(to + 1, to + 1 + range, null);
+        showDataRecord(to + 1, to + 1 + range);
     }
 
     @SneakyThrows
@@ -113,15 +94,15 @@ public class DataController {
         int range = to - from;
         int newFrom = from - range - 1;
         if (newFrom > 0) {
-            showDataRecord(newFrom, from - 1, null);
+            showDataRecord(newFrom, from - 1);
         } else {
-            showDataRecord(0, range, null);
+            showDataRecord(0, range);
         }
     }
 
     @SneakyThrows
     public void showFirstPage(int range) {
-        showDataRecord(0, range, null);
+        showDataRecord(0, range);
     }
 
     public void preLoadAroundPage(int numberOfPages) throws Exception {
@@ -147,7 +128,7 @@ public class DataController {
     }
 
     public void rangeChange(Integer range) throws IOException, InterruptedException {
-        showDataRecord(from, from + range - 1, null);
+        showDataRecord(from, from + range - 1);
     }
 
     public UpdateHandler getUpdateHandler() {

@@ -4,12 +4,9 @@ import com.google.common.collect.MinMaxPriorityQueue;
 import com.google.common.collect.Range;
 import edffilereader.data.EEG_Data;
 import edffilereader.file.EEG_File;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.CollectionUtils;
-import root.exceptions.DataModelException;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -23,7 +20,7 @@ public class DataModel {
 
     private MinMaxPriorityQueue<DataRecord> queue;
 
-    private DataController dataController;
+    private final DataController dataController;
 
     private int pageNumber;
 
@@ -62,7 +59,6 @@ public class DataModel {
 
             memoryList.sort(Comparator.comparing(DataRecord::getDataRecordNumber));
             if (CollectionUtils.isEmpty(memoryList)) {
-                System.out.println("empty");
                 extracted(loadedFromDisk, from, to + 1);
             } else {
                 extracted(loadedFromDisk, from, memoryList.get(0).getDataRecordNumber());
@@ -96,19 +92,20 @@ public class DataModel {
     private void extracted(List<DataRecord> loadedFromDisk, Integer from, Integer to) throws Exception {
         int numberOfRecords = to - from;
         if (numberOfRecords >= 1) {
-            log.info("numberOfRecords: " + numberOfRecords);
-            log.info("loadedFromDisk before: " + loadedFromDisk.size());
-            log.info("reload from: " + from + " to: " + to);
+//            log.info("numberOfRecords: " + numberOfRecords);
+//            log.info("loadedFromDisk before: " + loadedFromDisk.size());
+//            log.info("reload from: " + from + " to: " + to);
 
             EEG_Data eeg_data = eeg_file.readRecordFromTo(from, to);
             loadedFromDisk.addAll(Util.EEG_DataToDataRecords(eeg_data, from));
-            log.info("loadedFromDisk after: " + loadedFromDisk.size());
+//            log.info("loadedFromDisk after: " + loadedFromDisk.size());
         }
     }
 
 
-    public DataModel(int maxQueueSize) {
+    public DataModel(int maxQueueSize, DataController dataController) {
         queue = MinMaxPriorityQueue.<DataRecord>orderedBy((o1, o2) -> o1.getLastRequestTime().compareTo(o2.getLastRequestTime()) * -1).maximumSize(maxQueueSize).create();
+        this.dataController = dataController;
     }
 
     private Integer getDistanceFromRange(DataRecord o1, Range<Integer> showedDataRecords) {
@@ -148,10 +145,6 @@ public class DataModel {
     public void setEeg_file(EEG_File eeg_file) {
         this.eeg_file = eeg_file;
         queue.clear();
-    }
-
-    public void setDataController(DataController dataController) {
-        this.dataController = dataController;
     }
 
 }

@@ -1,6 +1,5 @@
 package root;
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -9,11 +8,12 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.ColorPicker;
 import javafx.stage.Stage;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.scheduling.annotation.EnableAsync;
+import root.main.DataController;
 import root.main.DataModel;
 
 import java.util.concurrent.*;
@@ -24,6 +24,9 @@ public class SpringJavaFxApplication extends Application {
 
     private ConfigurableApplicationContext applicationContext;
     private Parent root;
+
+    @Autowired
+    private DataController dataController;
 
     @Override
     public void init() throws Exception {
@@ -61,7 +64,7 @@ public class SpringJavaFxApplication extends Application {
 
     @Bean
     DataModel dataModel() {
-        return new DataModel(1000);
+        return new DataModel(1000, dataController);
     }
 
     @Bean

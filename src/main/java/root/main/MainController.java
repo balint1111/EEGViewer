@@ -1,7 +1,6 @@
 package root.main;
 
 import com.sun.javafx.scene.control.IntegerField;
-import edffilereader.file.EDF_File;
 import edffilereader.file.EEG_File;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -14,6 +13,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import lombok.SneakyThrows;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -44,6 +44,7 @@ public class MainController implements Initializable {
 
     private final DataController dataController;
     private final DataModel dataModel;
+    private final AutowireCapableBeanFactory autowireCapableBeanFactory;
 
 
     private final IntegerProperty pageSizeProperty = new SimpleIntegerProperty();
@@ -53,9 +54,10 @@ public class MainController implements Initializable {
     private EEG_File eegFile;
 
 
-    public MainController(DataController dataController, DataModel dataModel) {
+    public MainController(DataController dataController, DataModel dataModel, AutowireCapableBeanFactory autowireCapableBeanFactory) {
         this.dataController = dataController;
         this.dataModel = dataModel;
+        this.autowireCapableBeanFactory = autowireCapableBeanFactory;
     }
 
     @SneakyThrows
@@ -65,15 +67,14 @@ public class MainController implements Initializable {
     }
 
     private void openNewFile(File file) {
-        int numberOfChannels = 5;
-        double amplitude = 0.0005;
+        int numberOfChannels = 10;
+        double amplitude = 0.05;
         int pageSize = 100;
         try {
-            dataModel.setDataController(dataController);
             eegFile = EEG_File.build(file);
             dataModel.setEeg_file(eegFile);
 
-            updateHandler.setDataController(dataController);
+            autowireCapableBeanFactory.autowireBean(updateHandler);
             updateHandler.setLineSpacing(100d);
 
             dataController.setUpdateHandler(updateHandler);

@@ -2,18 +2,13 @@ package custom.component;
 
 import custom.dialogs.ColorPickerDialog;
 import javafx.application.Platform;
-import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
-import javafx.scene.Group;
-import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -24,7 +19,6 @@ import javafx.scene.shape.Polyline;
 import lombok.Data;
 import org.springframework.stereotype.Component;
 import root.main.DataController;
-import root.main.UpdateHandler;
 
 import java.io.IOException;
 import java.net.URL;
@@ -52,7 +46,7 @@ public class MyPolyline extends HBox implements Initializable {
     @FXML
     private Button button;
 
-    private final DataController dataController;
+    private DataController dataController;
 
     private final List<String> styleClasses = new ArrayList<>(Arrays.asList(
             "group"
@@ -62,7 +56,7 @@ public class MyPolyline extends HBox implements Initializable {
     private final List<String> buttonStyleClasses = new ArrayList<>(Arrays.asList(
     ));
 
-    private int number;
+    private int channelNumber;
 
     private List<Double> xVector = new ArrayList<>();
 
@@ -80,9 +74,9 @@ public class MyPolyline extends HBox implements Initializable {
     }
 
 
-    public MyPolyline(DataController dataController, int number, VBox parent, ScrollPane sc) {
+    public MyPolyline(DataController dataController, int channelNumber, VBox parent, ScrollPane sc) {
         this.dataController = dataController;
-        this.number = number;
+        this.channelNumber = channelNumber;
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/MyPolyline.fxml"));
         fxmlLoader.setRoot(this);
         fxmlLoader.setController(this);
@@ -93,17 +87,16 @@ public class MyPolyline extends HBox implements Initializable {
             throw new RuntimeException(exception);
         }
         this.prefWidthProperty().bind(parent.prefWidthProperty());
-        this.setId("myPolyline" + number);
+        this.setId("myPolyline" + channelNumber);
         parent.getChildren().add(this);
 
 
-        horizontalResolution = new PolylineHorizontalResolutionProperty(750l, dataController);
+        horizontalResolution = new PolylineHorizontalResolutionProperty(dataController);
         SimpleIntegerProperty viewportWidth = new SimpleIntegerProperty();
         sc.viewportBoundsProperty().addListener((observableValue, bounds, t1) -> {
             int newWidth = (int)(t1.getMaxX() - t1.getMinX());
             if (newWidth != viewportWidth.get()) {
                 viewportWidth.setValue(newWidth);
-                System.out.println("viewportWidth: " + viewportWidth.get());
             }
         });
         viewportWidth.setValue(sc.getViewportBounds().getMaxX() - sc.getViewportBounds().getMinX());
@@ -117,7 +110,7 @@ public class MyPolyline extends HBox implements Initializable {
             update();
             amplitudeLabel.setText(newValue.toString());
             try {
-                //setYPosition(UpdateHandler.get().getLineSpacing() * number);
+                //setYPosition(UpdateHandler.get().getLineSpacing() * channelNumber);
             } catch (Exception e) {
                 e.printStackTrace();
             }

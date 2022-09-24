@@ -8,6 +8,8 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import lombok.SneakyThrows;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -30,10 +32,18 @@ public class UpdateHandler extends ScrollPane {
 
     private int numberOfChannels;
 
+    @Autowired
+    private DataController dataController;
+
+
+
+
     @SneakyThrows
     public UpdateHandler() {
         load();
     }
+
+
 
     private void load() {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/Chart.fxml"));
@@ -48,8 +58,9 @@ public class UpdateHandler extends ScrollPane {
     }
 
     public void setYVectors(List<Double>[] yVectors) {
-        for (int i = 0; i < yVectors.length; i++) {
-            myPolylineList.get(i).setYVector(yVectors[i]);
+        for (int i = 0; i < myPolylineList.size(); i++) {
+            MyPolyline myPolyline = myPolylineList.get(i);
+            myPolyline.setYVector(yVectors[myPolyline.getChannelNumber()]);
         }
     }
 
@@ -66,9 +77,6 @@ public class UpdateHandler extends ScrollPane {
         }
     }
 
-
-    private DataController dataController;
-
     public void pushNewData() {
 
     }
@@ -84,7 +92,7 @@ public class UpdateHandler extends ScrollPane {
         myPolylineList = new ArrayList<>();
         this.numberOfChannels = numberOfChannels;
         for (int i = 0; i < numberOfChannels; i++) {
-            MyPolyline myPolyline = new MyPolyline(dataController, i + 1, vBox, this);
+            MyPolyline myPolyline = new MyPolyline(dataController, i, vBox, this);
             myPolylineList.add(myPolyline);
         }
         setLineSpacing(lineSpacing);
@@ -103,10 +111,6 @@ public class UpdateHandler extends ScrollPane {
         for (MyPolyline myPolyline : myPolylineList) {
             myPolyline.setAmplitude(amplitude);
         }
-    }
-
-    public void setDataController(DataController dataController) {
-        this.dataController = dataController;
     }
 
     public Double getLineSpacing() {
