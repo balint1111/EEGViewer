@@ -15,6 +15,10 @@ import javafx.stage.Stage;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -24,7 +28,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
-@Component
+@Service
+@RestController
+@RequestMapping("/control")
 public class MainController implements Initializable {
     @FXML
     public HBox root;
@@ -108,10 +114,12 @@ public class MainController implements Initializable {
         }
     }
 
+    @PostMapping("/previous")
     public void previousPage(ActionEvent actionEvent) {
         dataController.showPreviousPage();
     }
 
+    @PostMapping("/next")
     public void nextPage(ActionEvent actionEvent) {
         dataController.showNextPage();
     }
