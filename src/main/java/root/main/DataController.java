@@ -1,8 +1,11 @@
 package root.main;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import lombok.Data;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import root.async.AsyncExecutor;
 
@@ -11,6 +14,7 @@ import java.nio.channels.ClosedByInterruptException;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.stream.Collectors;
 
 @Component
 @Data
@@ -18,31 +22,19 @@ import java.util.concurrent.ThreadPoolExecutor;
 public class DataController {
 
     private UpdateHandler updateHandler;
-
     private DataModel dataModel;
-
     private final AsyncExecutor asyncExecutor;
-
     private final ThreadPoolExecutor backgroundExecutor;
+    private ObservableList<Integer> selectedChannels;
+    private Integer from = 0;
+    private Integer to;
+    private Thread thread;
 
     public DataController(AsyncExecutor asyncExecutor, ThreadPoolExecutor backgroundExecutor) {
         this.asyncExecutor = asyncExecutor;
         this.backgroundExecutor = backgroundExecutor;
+        selectedChannels = FXCollections.observableArrayList();
     }
-
-
-    private Integer from = 0;
-    private Integer to;
-
-    public void setNumberOfChannels(Integer numberOfChannels) {
-        this.numberOfChannels = numberOfChannels;
-        updateHandler.setNumberOfChannels(numberOfChannels);
-    }
-
-    private Integer numberOfChannels;
-
-    private Thread thread;
-
 
     @SneakyThrows
     public void showDataRecord(int from, int to) {
@@ -50,7 +42,6 @@ public class DataController {
         if (thread != null && !thread.isInterrupted()) {
             thread.interrupt();
         }
-
 
         if (backgroundExecutor.getQueue().isEmpty()) {
             backgroundExecutor.execute(() -> {
@@ -63,13 +54,18 @@ public class DataController {
 
                     List<DataRecord> dataRecordsFromTo = dataModel.getDataRecordFromTo(from, to);
 
-                    List<Double>[] channelsOriginalRes = Util.dataRecordsRepackage(dataRecordsFromTo, i -> updateHandler.getMyPolylineList().stream().anyMatch(myPolyline -> myPolyline.getChannelNumber() == i));
+                    List<Double>[] downSampledChannels;
 
-                    List<Double>[] downSampledChannels = Util.getLists(channelsOriginalRes,
-                            (i) -> i < numberOfChannels ? Optional.of(updateHandler.getMyPolylineList().get(i).getHorizontalResolution().get()) : Optional.empty());
+                    synchronized (updateHandler.getMyPolylineList()) {
+                        List<Double>[] channelsOriginalRes = Util.dataRecordsRepackage(dataRecordsFromTo, i -> updateHandler.getMyPolylineList().parallelStream().anyMatch(myPolyline -> myPolyline.getChannelNumber().equals(i)));
 
-                    updateHandler.setYVectors(downSampledChannels);
-                    updateHandler.update();
+                        downSampledChannels = Util.getLists(channelsOriginalRes, (i) -> updateHandler.getMyPolylineList().stream().filter(myPolyline -> myPolyline.getChannelNumber().equals(i)).findFirst());
+                        updateHandler.setYVectors(downSampledChannels);
+                        updateHandler.update();
+                    }
+
+
+
                     //asyncExecutor.preLoadAroundPage(3);
                 } catch (InterruptedException e) {
                     log.info("Thread: " + Thread.currentThread() + " interrupted");
@@ -137,6 +133,7 @@ public class DataController {
 
     public void setUpdateHandler(UpdateHandler updateHandler) {
         this.updateHandler = updateHandler;
+        selectedChannels.addListener(updateHandler::onChangeSelectedChannels);
     }
 
     public void setDataModel(DataModel dataModel) {

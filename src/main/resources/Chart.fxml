@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.control.Button?>
-<fx:root fx:id="updateHandler" type="javafx.scene.control.ScrollPane" xmlns:fx="http://javafx.com/fxml" hbarPolicy="AS_NEEDED" fitToHeight="true" fitToWidth="true" pannable="true" style="-fx-background-color: pink">
-        <VBox fx:id="vBox" prefWidth="${updateHandler.prefWidth}" fillWidth="true" style="-fx-background-color: blue" >
+<?import javafx.scene.Group?>
+<?import javafx.scene.layout.Pane?>
+<fx:root fx:id="updateHandler" type="javafx.scene.control.ScrollPane" xmlns:fx="http://javafx.com/fxml" hbarPolicy="AS_NEEDED" style="-fx-background: grey">
 
-        </VBox>
+                <Pane fx:id="group" >
+
+                </Pane>
+
+
 
     <!--prefWidth="${root.width/12*11}"-->
 </fx:root>

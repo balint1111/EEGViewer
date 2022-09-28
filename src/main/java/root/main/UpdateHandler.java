@@ -1,10 +1,15 @@
 package root.main;
 
 import custom.component.MyPolyline;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Group;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import lombok.SneakyThrows;
@@ -15,35 +20,34 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Component
 public class UpdateHandler extends ScrollPane {
 
-    @FXML
-    public AnchorPane pane;
+//    @FXML
+//    public VBox vBox;
 
     @FXML
-    public VBox vBox;
+    public Pane group;
 
     private List<MyPolyline> myPolylineList = new ArrayList<>();
 
-    private Double lineSpacing = 0d;
+    public List<MyPolyline> getMyPolylineList() {
+        return myPolylineList;
+    }
 
-    private int numberOfChannels;
+    private Double lineSpacing = 0d;
 
     @Autowired
     private DataController dataController;
-
-
 
 
     @SneakyThrows
     public UpdateHandler() {
         load();
     }
-
-
 
     private void load() {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/Chart.fxml"));
@@ -52,68 +56,92 @@ public class UpdateHandler extends ScrollPane {
 
         try {
             fxmlLoader.load();
+
         } catch (IOException exception) {
             throw new RuntimeException(exception);
         }
     }
 
     public void setYVectors(List<Double>[] yVectors) {
-        for (int i = 0; i < myPolylineList.size(); i++) {
-            MyPolyline myPolyline = myPolylineList.get(i);
-            myPolyline.setYVector(yVectors[myPolyline.getChannelNumber()]);
+        synchronized (myPolylineList) {
+            for (int i = 0; i < myPolylineList.size(); i++) {
+                MyPolyline myPolyline = myPolylineList.get(i);
+                myPolyline.setYVector(yVectors[myPolyline.getChannelNumber()]);
+            }
         }
     }
 
     public void update() {
-        for (MyPolyline myPolyline : myPolylineList) {
-            myPolyline.update();
+        synchronized (myPolylineList) {
+            for (MyPolyline myPolyline : myPolylineList) {
+                myPolyline.update();
+            }
         }
     }
 
     public void setLineSpacing(Double spacing) {
         this.lineSpacing = spacing;
-        for (int i = 0; i < myPolylineList.size(); i++) {
-            myPolylineList.get(i).setYPosition((i + 1) * spacing);
+        synchronized (myPolylineList) {
+            for (int i = 0; i < myPolylineList.size(); i++) {
+                myPolylineList.get(i).setYPosition((i + 1) * spacing);
+            }
         }
     }
-
-    public void pushNewData() {
-
-    }
-
-    public List<MyPolyline> getMyPolylineList() {
-        return myPolylineList;
-    }
-
-
-
-    public void setNumberOfChannels(int numberOfChannels) {
-        load();
-        myPolylineList = new ArrayList<>();
-        this.numberOfChannels = numberOfChannels;
-        for (int i = 0; i < numberOfChannels; i++) {
-            MyPolyline myPolyline = new MyPolyline(dataController, i, vBox, this);
-            myPolylineList.add(myPolyline);
-        }
-        setLineSpacing(lineSpacing);
-    }
-
 
     public void setColors(List<Color> colors) {
-        for (int i = 0; i < myPolylineList.size(); i++) {
-            Color color = colors.get(i % colors.size());
-            if (color != null)
-                myPolylineList.get(i).getLineProperty().getStrokeProperty().setValue(color);
+        synchronized (myPolylineList) {
+            for (int i = 0; i < myPolylineList.size(); i++) {
+                Color color = colors.get(i % colors.size());
+                if (color != null)
+                    myPolylineList.get(i).getLineProperty().getStrokeProperty().setValue(color);
+            }
         }
     }
 
     public void setAmplitudes(Double amplitude) {
-        for (MyPolyline myPolyline : myPolylineList) {
-            myPolyline.setAmplitude(amplitude);
+        synchronized (myPolylineList) {
+            for (MyPolyline myPolyline : myPolylineList) {
+                myPolyline.setAmplitude(amplitude);
+            }
         }
     }
 
     public Double getLineSpacing() {
         return lineSpacing;
+    }
+
+    public void onChangeSelectedChannels(ListChangeListener.Change<? extends Integer> c) {
+        load();
+        synchronized (myPolylineList) {
+            myPolylineList.clear();
+            for (int i = 0; i < dataController.getSelectedChannels().size(); i++) {
+                MyPolyline myPolyline = new MyPolyline(dataController, c.getList().get(i), group, this);
+                myPolylineList.add(myPolyline);
+            }
+            setLineSpacing(lineSpacing);
+        }
+    }
+
+    public final SimpleDoubleProperty getViewportWidthProperty() {
+        SimpleDoubleProperty viewportWidth = new SimpleDoubleProperty();
+        this.viewportBoundsProperty().addListener((observableValue, bounds, t1) -> {
+            int newWidth = (int)(t1.getMaxX() - t1.getMinX());
+            if (newWidth != viewportWidth.get()) {
+                viewportWidth.setValue(newWidth);
+            }
+        });
+        viewportWidth.setValue(this.getViewportBounds().getMaxX() - this.getViewportBounds().getMinX());
+        return viewportWidth;
+    }
+    public final SimpleDoubleProperty getViewportHeightProperty() {
+        SimpleDoubleProperty viewportHeight = new SimpleDoubleProperty();
+        this.viewportBoundsProperty().addListener((observableValue, bounds, t1) -> {
+            int newHeiht = (int)(t1.getMaxY() - t1.getMinY());
+            if (newHeiht != viewportHeight.get()) {
+                viewportHeight.setValue(newHeiht);
+            }
+        });
+        viewportHeight.setValue(this.getViewportBounds().getMaxY() - this.getViewportBounds().getMinY());
+        return viewportHeight;
     }
 }

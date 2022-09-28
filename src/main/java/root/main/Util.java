@@ -1,6 +1,7 @@
 package root.main;
 
 import com.github.ggalmazor.ltdownsampling.Point;
+import custom.component.MyPolyline;
 import edffilereader.data.EEG_Data;
 import eu.bengreen.data.utility.LargestTriangleThreeBuckets;
 import org.rrd4j.graph.DownSampler;
@@ -73,12 +74,12 @@ public class Util {
         return channelsOriginalRes;
     }
 
-    public static List<Double>[] getLists(List<Double>[] channelsOriginalRes, Function<Integer, Optional<Integer>> resolution) {
+    public static List<Double>[] getLists(List<Double>[] channelsOriginalRes, Function<Integer, Optional<MyPolyline>> function) {
         List<Double>[] downSampledChannels = new ArrayList[channelsOriginalRes.length];
         for (int i = 0; i < channelsOriginalRes.length; i++) {
             int finalI = i;
-            resolution.apply(i).ifPresent(horizontalResolution -> {
-                List<Double> downSampledChannel = Util.downSample(channelsOriginalRes[finalI], horizontalResolution);
+            function.apply(i).ifPresent(myPolyline -> {
+                List<Double> downSampledChannel = Util.downSample(channelsOriginalRes[myPolyline.getChannelNumber()], myPolyline.getLineProperty().getHorizontalResolution().get());
                 downSampledChannels[finalI] = downSampledChannel;
             });
         }

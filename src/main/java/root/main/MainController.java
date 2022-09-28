@@ -1,9 +1,11 @@
 package root.main;
 
 import com.sun.javafx.scene.control.IntegerField;
+import custom.dialogs.ChannelPickerDialog;
 import edffilereader.file.EEG_File;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -39,6 +41,8 @@ public class MainController implements Initializable {
     @FXML
     public IntegerField pageSizeField;
 
+    double amplitude = 0.3;
+
     private final List<Color> colors = new ArrayList<>(Arrays.asList(
             Color.valueOf("yellow"),
             Color.valueOf("lightgreen"),
@@ -70,23 +74,25 @@ public class MainController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 //        open(null);
+        autowireCapableBeanFactory.autowireBean(updateHandler);
+        autowireCapableBeanFactory.autowireBean(dataController);
     }
 
     private void openNewFile(File file) {
         int numberOfChannels = 10;
-        double amplitude = 0.05;
+
         int pageSize = 100;
         try {
             eegFile = EEG_File.build(file);
             dataModel.setEeg_file(eegFile);
 
-            autowireCapableBeanFactory.autowireBean(updateHandler);
-            updateHandler.setLineSpacing(100d);
+
+
 
             dataController.setUpdateHandler(updateHandler);
             dataController.setDataModel(dataModel);
 
-            dataController.setNumberOfChannels(numberOfChannels);
+            pickChannel();
 
             pageSizeProperty.bindBidirectional(pageSizeField.valueProperty());
             pageSizeProperty.addListener((observable, oldValue, newValue) -> {
@@ -108,6 +114,7 @@ public class MainController implements Initializable {
 
             updateHandler.setAmplitudes(amplitude);
             updateHandler.setColors(colors);
+            updateHandler.setLineSpacing(50d);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -121,13 +128,22 @@ public class MainController implements Initializable {
 
     @PostMapping("/next")
     public void nextPage(ActionEvent actionEvent) {
+//        dataController.getSelectedChannels().addAll(4);
+//        updateHandler.setAmplitudes(amplitude);
+//        updateHandler.setColors(colors);
         dataController.showNextPage();
     }
 
 
-    public void open(ActionEvent actionEvent) throws FileNotFoundException {
+    public void open() throws FileNotFoundException {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Resource File");
         openNewFile(fileChooser.showOpenDialog(new Stage()));
+    }
+
+    public void pickChannel() {
+        dataController.getSelectedChannels().setAll(ChannelPickerDialog.display(dataModel.getEeg_file().getHeader().getLabelsOfTheChannels()));
+        updateHandler.setAmplitudes(amplitude);
+        updateHandler.setColors(colors);
     }
 }

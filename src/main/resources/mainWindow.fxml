@@ -16,10 +16,11 @@
         <Button fx:id="previousBtn" onAction="#previousPage" text="previous Page" />
         <Button fx:id="nextBtn" onAction="#nextPage" text="next Page" />
         <Button fx:id="openBtn" onAction="#open" text="open" />
+        <Button fx:id="channelPicker" onAction="#pickChannel" text="channelPicker" />
         <IntegerField fx:id="pageSizeField"/>
     </VBox>
 
-    <UpdateHandler fx:id="updateHandler" prefViewportWidth="${control.prefWidth*11}" />
+    <UpdateHandler fx:id="updateHandler" prefViewportWidth="${control.prefWidth*11}" prefHeight="${root.height}" minHeight="100" minWidth="100"/>
 
 
 <!--    <ScrollPane fx:id="scrollPane" hbarPolicy="AS_NEEDED">-->

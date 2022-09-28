@@ -8,18 +8,20 @@
 
 <?import javafx.scene.shape.Polyline?>
 <?import javafx.scene.shape.Line?>
-<fx:root fx:id="myPolyLine" type="javafx.scene.layout.HBox" xmlns:fx="http://javafx.com/fxml"
-         style="-fx-background-color: yellow;">
-    <VBox fx:id="controlVbox" alignment="TOP_LEFT" prefWidth="${myPolyLine.prefWidth*0.1}">
-        <Button fx:id="button" text="hali" onAction="#buttonClick"></Button>
-        <Label fx:id="amplitudeLabel"></Label>
+<fx:root fx:id="myPolyLine" type="javafx.scene.layout.HBox" xmlns:fx="http://javafx.com/fxml">
+<!--         style="-fx-background-color: yellow;">-->
+    <VBox fx:id="controlVbox" alignment="TOP_LEFT" prefWidth="${myPolyLine.prefWidth*0.2}" maxWidth="100" minWidth="50">
+<!--          style="-fx-background-color: blue;">-->
+<!--        <Button fx:id="button" text="hali" onAction="#buttonClick"></Button>-->
+<!--        <Label fx:id="amplitudeLabel"></Label>-->
+        <Label fx:id="nameLabel" style="-fx-text-inner-color: red"></Label>
 
     </VBox>
-    <VBox fx:id="lineVbox" alignment="CENTER_LEFT" prefWidth="${myPolyLine.prefWidth*0.9}"
-          style="-fx-background-color: green;">
-        <Group>
+<!--    <Group fx:id="lineVbox">-->
+<!--          style="-fx-background-color: green;">-->
+        <Pane>
             <Polyline fx:id="polyline"></Polyline>
-            <Line fx:id="line" startX="0" startY="0" endY="0" endX="${lineVbox.prefWidth}"></Line>
-        </Group>
-    </VBox>
+            <Line fx:id="line" startX="0" startY="0" endY="0"></Line>
+        </Pane>
+<!--    </Group>-->
 </fx:root>
