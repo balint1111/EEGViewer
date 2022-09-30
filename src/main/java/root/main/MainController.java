@@ -1,5 +1,6 @@
 package root.main;
 
+import com.sun.javafx.scene.control.DoubleField;
 import com.sun.javafx.scene.control.IntegerField;
 import custom.dialogs.ChannelPickerDialog;
 import edffilereader.file.EEG_File;
@@ -41,6 +42,11 @@ public class MainController implements Initializable {
     @FXML
     public IntegerField pageSizeField;
 
+    @FXML
+    public DoubleField amplitudeField;
+    @FXML
+    public DoubleField lineSpacingField;
+
     double amplitude = 0.3;
 
     private final List<Color> colors = new ArrayList<>(Arrays.asList(
@@ -73,21 +79,18 @@ public class MainController implements Initializable {
     @SneakyThrows
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        autowireCapableBeanFactory.autowireBean(updateHandler);
 //        open(null);
         autowireCapableBeanFactory.autowireBean(updateHandler);
         autowireCapableBeanFactory.autowireBean(dataController);
     }
 
     private void openNewFile(File file) {
-        int numberOfChannels = 10;
 
         int pageSize = 100;
         try {
             eegFile = EEG_File.build(file);
             dataModel.setEeg_file(eegFile);
-
-
-
 
             dataController.setUpdateHandler(updateHandler);
             dataController.setDataModel(dataModel);
@@ -107,6 +110,12 @@ public class MainController implements Initializable {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+            });
+            amplitudeField.valueProperty().addListener((observable, oldValue, newValue) -> {
+                updateHandler.setAmplitudes(newValue.doubleValue());
+            });
+            lineSpacingField.valueProperty().addListener((observable, oldValue, newValue) -> {
+                updateHandler.setLineSpacing(newValue.doubleValue());
             });
             pageSizeProperty.setValue(pageSize);
             dataController.showFirstPage(pageSize);

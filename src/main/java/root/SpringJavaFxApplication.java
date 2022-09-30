@@ -22,7 +22,8 @@ import java.util.concurrent.*;
 public class SpringJavaFxApplication extends Application {
 
 
-    private ConfigurableApplicationContext applicationContext;
+    private static ConfigurableApplicationContext applicationContext;
+
     private Parent root;
 
     @Autowired
@@ -72,7 +73,7 @@ public class SpringJavaFxApplication extends Application {
         return new ThreadPoolExecutor( 1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>() );
     }
 
-    public ConfigurableApplicationContext getApplicationContext() {
+    public static ConfigurableApplicationContext getApplicationContext() {
         return applicationContext;
     }
 

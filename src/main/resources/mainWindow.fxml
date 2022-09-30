@@ -11,6 +11,7 @@
 <?import custom.component.MyPolyline?>
 <?import root.main.ChartController?>
 <?import root.main.UpdateHandler?>
+<?import com.sun.javafx.scene.control.DoubleField?>
 <HBox fx:id="root" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="root.main.MainController">
     <VBox fx:id="control" prefWidth="${root.width/12}" style="-fx-background-color: red" fillWidth="false">
         <Button fx:id="previousBtn" onAction="#previousPage" text="previous Page" />
@@ -18,6 +19,8 @@
         <Button fx:id="openBtn" onAction="#open" text="open" />
         <Button fx:id="channelPicker" onAction="#pickChannel" text="channelPicker" />
         <IntegerField fx:id="pageSizeField"/>
+        <DoubleField fx:id="amplitudeField"/>
+        <DoubleField fx:id="lineSpacingField"/>
     </VBox>
 
     <UpdateHandler fx:id="updateHandler" prefViewportWidth="${control.prefWidth*11}" prefHeight="${root.height}" minHeight="100" minWidth="100"/>
