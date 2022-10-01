@@ -86,6 +86,12 @@ public class DataController {
     }
 
     @SneakyThrows
+    public void jumpToPosition(int value) {
+        int range = to - from;
+        showDataRecord(value , value + range);
+    }
+
+    @SneakyThrows
     public void showPreviousPage() {
         int range = to - from;
         int newFrom = from - range - 1;

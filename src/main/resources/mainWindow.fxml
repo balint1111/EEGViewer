@@ -1,17 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.HBox?>
-
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.control.ScrollPane?>
-<?import com.sun.javafx.scene.control.IntegerField?>
-<?import custom.component.MyPolyline?>
-<?import root.main.ChartController?>
-<?import root.main.UpdateHandler?>
 <?import com.sun.javafx.scene.control.DoubleField?>
+<?import com.sun.javafx.scene.control.IntegerField?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import root.main.UpdateHandler?>
+<?import custom.component.MyScrollBar?>
 <HBox fx:id="root" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="root.main.MainController">
     <VBox fx:id="control" prefWidth="${root.width/12}" style="-fx-background-color: red" fillWidth="false">
         <Button fx:id="previousBtn" onAction="#previousPage" text="previous Page" />
@@ -23,7 +19,16 @@
         <DoubleField fx:id="lineSpacingField"/>
     </VBox>
 
-    <UpdateHandler fx:id="updateHandler" prefViewportWidth="${control.prefWidth*11}" prefHeight="${root.height}" minHeight="100" minWidth="100"/>
+    <VBox fx:id="chart" prefWidth="${root.width*11/12}">
+        <Pane>
+            <Pane fx:id="background" style="-fx-background-color: brown" prefWidth="${chart.width}" prefHeight="${chart.height}">
+
+            </Pane>
+            <UpdateHandler fx:id="updateHandler" prefWidth="${chart.width}" prefHeight="${chart.height}" />
+        </Pane>
+        <MyScrollBar fx:id="myScrollBar" viewOrder="-Infinity"></MyScrollBar>
+    </VBox>
+
 
 
 <!--    <ScrollPane fx:id="scrollPane" hbarPolicy="AS_NEEDED">-->

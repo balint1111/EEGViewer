@@ -16,8 +16,6 @@ public class DataModel {
 
     private EEG_File eeg_file;
 
-    private static DataModel instance = null;
-
     private MinMaxPriorityQueue<DataRecord> queue;
 
     private final DataController dataController;
@@ -123,20 +121,6 @@ public class DataModel {
         //System.out.println("ret: " + toReturn);
         return toReturn;
     }
-
-//    @SneakyThrows
-//    public static DataModel get() {
-//        if (instance == null)
-//            throw new DataModelException("No instance of DataModel!");
-//        return instance;
-//    }
-//
-//    @SneakyThrows
-//    public static DataModel get(int maxQueueSize) {
-//        if (instance == null)
-//            return instance = new DataModel(maxQueueSize);
-//        throw new DataModelException("maxQueueSize cannot be modified!");
-//    }
 
     public EEG_File getEeg_file() {
         return eeg_file;

@@ -2,11 +2,11 @@ package root.main;
 
 import com.sun.javafx.scene.control.DoubleField;
 import com.sun.javafx.scene.control.IntegerField;
+import custom.component.MyScrollBar;
 import custom.dialogs.ChannelPickerDialog;
 import edffilereader.file.EEG_File;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -15,10 +15,10 @@ import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import lombok.Getter;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,8 +31,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
-@Service
 @RestController
+@Getter
 @RequestMapping("/control")
 public class MainController implements Initializable {
     @FXML
@@ -47,6 +47,9 @@ public class MainController implements Initializable {
     @FXML
     public DoubleField lineSpacingField;
 
+    @FXML
+    public MyScrollBar myScrollBar;
+
     double amplitude = 0.3;
 
     private final List<Color> colors = new ArrayList<>(Arrays.asList(
@@ -60,29 +63,33 @@ public class MainController implements Initializable {
 
     private final DataController dataController;
     private final DataModel dataModel;
+    private final ConfigurableApplicationContext applicationContext;
     private final AutowireCapableBeanFactory autowireCapableBeanFactory;
 
 
     private final IntegerProperty pageSizeProperty = new SimpleIntegerProperty();
+    private final IntegerProperty numberOfDateRecordsProperty = new SimpleIntegerProperty();
     @FXML
     public UpdateHandler updateHandler;
 
     private EEG_File eegFile;
 
 
-    public MainController(DataController dataController, DataModel dataModel, AutowireCapableBeanFactory autowireCapableBeanFactory) {
+    public MainController(DataController dataController, DataModel dataModel, ConfigurableApplicationContext applicationContext) {
         this.dataController = dataController;
         this.dataModel = dataModel;
-        this.autowireCapableBeanFactory = autowireCapableBeanFactory;
+        this.applicationContext = applicationContext;
+        this.autowireCapableBeanFactory = applicationContext.getAutowireCapableBeanFactory();
     }
 
     @SneakyThrows
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        autowireCapableBeanFactory.autowireBean(updateHandler);
 //        open(null);
         autowireCapableBeanFactory.autowireBean(updateHandler);
         autowireCapableBeanFactory.autowireBean(dataController);
+        autowireCapableBeanFactory.autowireBean(myScrollBar);
+        myScrollBar.setUpdateHandler(updateHandler);
     }
 
     private void openNewFile(File file) {
@@ -101,6 +108,7 @@ public class MainController implements Initializable {
             pageSizeProperty.addListener((observable, oldValue, newValue) -> {
                 try {
                     Integer maxValue = eegFile.getHeader().getNumberOfDataRecords();
+                    numberOfDateRecordsProperty.setValue(maxValue);
                     if ((Integer) newValue > maxValue) {
                         pageSizeField.setValue(maxValue);
                         dataController.rangeChange(maxValue);
@@ -144,7 +152,7 @@ public class MainController implements Initializable {
     }
 
 
-    public void open() throws FileNotFoundException {
+    public void open() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Resource File");
         openNewFile(fileChooser.showOpenDialog(new Stage()));

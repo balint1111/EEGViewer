@@ -31,7 +31,6 @@ import java.net.URL;
 import java.util.*;
 
 @Getter
-@Component
 public class MyPolyline extends HBox implements Initializable {
 
     @FXML
@@ -125,7 +124,6 @@ public class MyPolyline extends HBox implements Initializable {
 
 
         Tooltip t = new Tooltip(dataController.getDataModel().getEeg_file().getHeader().getLabelsOfTheChannels().get(channelNumber));
-        t.setGraphicTextGap(20);
         Tooltip.install(polyline, t);
 
 
