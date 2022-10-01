@@ -14,6 +14,7 @@ import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Component;
 import root.main.DataController;
 import root.main.UpdateHandler;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
@@ -95,6 +97,8 @@ public class MyPolyline extends HBox implements Initializable {
         this.setId("myPolyline" + channelNumber);
         parent.getChildren().add(this);
 
+        polyline.setStrokeWidth(3);
+
         SimpleDoubleProperty controlVboxWidthProperty = getControlVboxWidthProperty();
         SimpleDoubleProperty viewportWidthProperty = sc.getViewportWidthProperty();
         this.prefWidthProperty().bind(viewportWidthProperty);
@@ -118,6 +122,11 @@ public class MyPolyline extends HBox implements Initializable {
         //nameLabel
         if (nameLabel != null) nameLabel.textFillProperty().bind(lineProperty.getStrokeProperty());
         if (nameLabel != null) nameLabel.setText(dataController.getDataModel().getEeg_file().getHeader().getLabelsOfTheChannels().get(channelNumber));
+
+
+        Tooltip t = new Tooltip(dataController.getDataModel().getEeg_file().getHeader().getLabelsOfTheChannels().get(channelNumber));
+        t.setGraphicTextGap(20);
+        Tooltip.install(polyline, t);
 
 
         //amplitudeChange -> update()
@@ -175,7 +184,7 @@ public class MyPolyline extends HBox implements Initializable {
 
     public void setYPosition(Double yPosition) {
 //        Optional<Double> yMax = yVector.stream().map(aDouble -> -aDouble * lineProperty.getAmplitude().getValue()).max(Double::compareTo);
-        this.setLayoutY(yPosition);
+        this.setLayoutY(600 + yPosition);
     }
 
     public void setColor(Color color) {

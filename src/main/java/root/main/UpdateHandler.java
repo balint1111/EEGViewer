@@ -4,9 +4,11 @@ import custom.component.MyPolyline;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
@@ -32,11 +34,17 @@ public class UpdateHandler extends ScrollPane {
     @FXML
     public Pane group;
 
+    @FXML
+    public Pane background;
+
     private List<MyPolyline> myPolylineList = new ArrayList<>();
 
     public List<MyPolyline> getMyPolylineList() {
         return myPolylineList;
     }
+
+    private SimpleDoubleProperty viewportHeightProperty;
+    private SimpleDoubleProperty viewportWidthProperty;
 
     private Double lineSpacing = 0d;
 
@@ -56,10 +64,32 @@ public class UpdateHandler extends ScrollPane {
 
         try {
             fxmlLoader.load();
-
+            initViewPortProperties();
+            //hbar prop booleanprop
+            viewportWidthProperty.setValue(this.getViewportBounds().getMaxX() - this.getViewportBounds().getMinX());
+            background.prefWidthProperty().bind(viewportWidthProperty);
+            background.prefHeightProperty().bind(viewportHeightProperty);
         } catch (IOException exception) {
             throw new RuntimeException(exception);
         }
+    }
+
+    private void initViewPortProperties() {
+        viewportHeightProperty = new SimpleDoubleProperty();
+        this.viewportBoundsProperty().addListener((observableValue, bounds, t1) -> {
+            int newHeight = (int)(t1.getMaxY() - t1.getMinY());
+            if (newHeight != viewportHeightProperty.get()) {
+                viewportHeightProperty.setValue(newHeight);
+            }
+        });
+        viewportHeightProperty.setValue(this.getViewportBounds().getMaxY() - this.getViewportBounds().getMinY());
+        viewportWidthProperty = new SimpleDoubleProperty();
+        this.viewportBoundsProperty().addListener((observableValue, bounds, t1) -> {
+            int newWidth = (int)(t1.getMaxX() - t1.getMinX());
+            if (newWidth != viewportWidthProperty.get()) {
+                viewportWidthProperty.setValue(newWidth);
+            }
+        });
     }
 
     public void setYVectors(List<Double>[] yVectors) {
@@ -123,25 +153,14 @@ public class UpdateHandler extends ScrollPane {
     }
 
     public final SimpleDoubleProperty getViewportWidthProperty() {
-        SimpleDoubleProperty viewportWidth = new SimpleDoubleProperty();
-        this.viewportBoundsProperty().addListener((observableValue, bounds, t1) -> {
-            int newWidth = (int)(t1.getMaxX() - t1.getMinX());
-            if (newWidth != viewportWidth.get()) {
-                viewportWidth.setValue(newWidth);
-            }
-        });
-        viewportWidth.setValue(this.getViewportBounds().getMaxX() - this.getViewportBounds().getMinX());
-        return viewportWidth;
+        return viewportWidthProperty;
     }
     public final SimpleDoubleProperty getViewportHeightProperty() {
-        SimpleDoubleProperty viewportHeight = new SimpleDoubleProperty();
-        this.viewportBoundsProperty().addListener((observableValue, bounds, t1) -> {
-            int newHeiht = (int)(t1.getMaxY() - t1.getMinY());
-            if (newHeiht != viewportHeight.get()) {
-                viewportHeight.setValue(newHeiht);
-            }
-        });
-        viewportHeight.setValue(this.getViewportBounds().getMaxY() - this.getViewportBounds().getMinY());
-        return viewportHeight;
+        return viewportHeightProperty;
+    }
+
+    @Override
+    public ObservableList<Node> getChildren() {
+        return super.getChildren();
     }
 }
