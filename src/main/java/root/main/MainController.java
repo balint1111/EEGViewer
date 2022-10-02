@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -72,6 +71,8 @@ public class MainController implements Initializable {
     @FXML
     public UpdateHandler updateHandler;
 
+    private UpdateHandlerController updateHandlerController;
+
     private EEG_File eegFile;
 
 
@@ -86,10 +87,12 @@ public class MainController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 //        open(null);
+        updateHandlerController = updateHandler.getController();
         autowireCapableBeanFactory.autowireBean(updateHandler);
         autowireCapableBeanFactory.autowireBean(dataController);
         autowireCapableBeanFactory.autowireBean(myScrollBar);
-        myScrollBar.setUpdateHandler(updateHandler);
+        autowireCapableBeanFactory.autowireBean(updateHandlerController);
+        myScrollBar.setUpdateHandlerController(updateHandler);
     }
 
     private void openNewFile(File file) {
@@ -99,7 +102,7 @@ public class MainController implements Initializable {
             eegFile = EEG_File.build(file);
             dataModel.setEeg_file(eegFile);
 
-            dataController.setUpdateHandler(updateHandler);
+            dataController.setUpdateHandlerController(updateHandlerController);
             dataController.setDataModel(dataModel);
 
             pickChannel();
@@ -120,18 +123,18 @@ public class MainController implements Initializable {
                 }
             });
             amplitudeField.valueProperty().addListener((observable, oldValue, newValue) -> {
-                updateHandler.setAmplitudes(newValue.doubleValue());
+                updateHandlerController.setAmplitudes(newValue.doubleValue());
             });
             lineSpacingField.valueProperty().addListener((observable, oldValue, newValue) -> {
-                updateHandler.setLineSpacing(newValue.doubleValue());
+                updateHandlerController.setLineSpacing(newValue.doubleValue());
             });
             pageSizeProperty.setValue(pageSize);
             dataController.showFirstPage(pageSize);
 
 
-            updateHandler.setAmplitudes(amplitude);
-            updateHandler.setColors(colors);
-            updateHandler.setLineSpacing(50d);
+            updateHandlerController.setAmplitudes(amplitude);
+            updateHandlerController.setColors(colors);
+            updateHandlerController.setLineSpacing(50d);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -160,7 +163,7 @@ public class MainController implements Initializable {
 
     public void pickChannel() {
         dataController.getSelectedChannels().setAll(ChannelPickerDialog.display(dataModel.getEeg_file().getHeader().getLabelsOfTheChannels()));
-        updateHandler.setAmplitudes(amplitude);
-        updateHandler.setColors(colors);
+        updateHandlerController.setAmplitudes(amplitude);
+        updateHandlerController.setColors(colors);
     }
 }

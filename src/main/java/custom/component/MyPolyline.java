@@ -24,6 +24,7 @@ import lombok.Getter;
 import org.springframework.stereotype.Component;
 import root.main.DataController;
 import root.main.UpdateHandler;
+import root.main.UpdateHandlerController;
 
 import javax.swing.*;
 import java.io.IOException;

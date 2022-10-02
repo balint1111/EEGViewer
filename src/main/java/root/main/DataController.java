@@ -5,23 +5,20 @@ import javafx.collections.ObservableList;
 import lombok.Data;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import root.async.AsyncExecutor;
 
 import java.io.IOException;
 import java.nio.channels.ClosedByInterruptException;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.stream.Collectors;
 
 @Component
 @Data
 @Slf4j
 public class DataController {
 
-    private UpdateHandler updateHandler;
+    private UpdateHandlerController updateHandlerController;
     private DataModel dataModel;
     private final AsyncExecutor asyncExecutor;
     private final ThreadPoolExecutor backgroundExecutor;
@@ -56,12 +53,12 @@ public class DataController {
 
                     List<Double>[] downSampledChannels;
 
-                    synchronized (updateHandler.getMyPolylineList()) {
-                        List<Double>[] channelsOriginalRes = Util.dataRecordsRepackage(dataRecordsFromTo, i -> updateHandler.getMyPolylineList().parallelStream().anyMatch(myPolyline -> myPolyline.getChannelNumber().equals(i)));
+                    synchronized (updateHandlerController.getMyPolylineList()) {
+                        List<Double>[] channelsOriginalRes = Util.dataRecordsRepackage(dataRecordsFromTo, i -> updateHandlerController.getMyPolylineList().parallelStream().anyMatch(myPolyline -> myPolyline.getChannelNumber().equals(i)));
 
-                        downSampledChannels = Util.getLists(channelsOriginalRes, (i) -> updateHandler.getMyPolylineList().stream().filter(myPolyline -> myPolyline.getChannelNumber().equals(i)).findFirst());
-                        updateHandler.setYVectors(downSampledChannels);
-                        updateHandler.update();
+                        downSampledChannels = Util.getLists(channelsOriginalRes, (i) -> updateHandlerController.getMyPolylineList().stream().filter(myPolyline -> myPolyline.getChannelNumber().equals(i)).findFirst());
+                        updateHandlerController.setYVectors(downSampledChannels);
+                        updateHandlerController.update();
                     }
 
 
@@ -133,13 +130,10 @@ public class DataController {
         showDataRecord(from, from + range - 1);
     }
 
-    public UpdateHandler getUpdateHandler() {
-        return updateHandler;
-    }
 
-    public void setUpdateHandler(UpdateHandler updateHandler) {
-        this.updateHandler = updateHandler;
-        selectedChannels.addListener(updateHandler::onChangeSelectedChannels);
+    public void setUpdateHandlerController(UpdateHandlerController updateHandlerController) {
+        this.updateHandlerController = updateHandlerController;
+        selectedChannels.addListener(updateHandlerController::onChangeSelectedChannels);
     }
 
     public void setDataModel(DataModel dataModel) {
