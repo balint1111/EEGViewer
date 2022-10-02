@@ -4,11 +4,13 @@ import custom.component.MyPolyline;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import lombok.Getter;
@@ -99,9 +101,25 @@ public class UpdateHandlerController implements Initializable {
         }
     }
 
+    int i=0;
+    int j=0;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-
+        EventHandler<? super ScrollEvent> defaultScrollHandler = group.onScrollProperty().get();
+        updateHandler.addEventFilter(ScrollEvent.SCROLL,new EventHandler<ScrollEvent>() {
+            @Override
+            public void handle(ScrollEvent event) {
+                if (event.isShiftDown()) {
+                    event.consume();
+                }
+            }
+        });
+        updateHandler.onScrollProperty().set(event -> {
+            System.out.println("updateH:" + j++);
+        });
+        group.onScrollProperty().set(event -> {
+            System.out.println("scroll" + i++);
+        });
     }
 }
