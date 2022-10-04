@@ -2,9 +2,9 @@
 
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.Pane?>
-<fx:root fx:id="updateHandler" type="javafx.scene.control.ScrollPane" xmlns:fx="http://javafx.com/fxml" hbarPolicy="NEVER"
+<fx:root fx:id="updateHandler" type="javafx.scene.control.ScrollPane" xmlns:fx="http://javafx.com/fxml" hbarPolicy="AS_NEEDED"
          fx:controller="root.main.UpdateHandler"
          style="-fx-background: transparent; -fx-background-color: transparent">
-    <Pane fx:id="group">
+    <Pane fx:id="group" prefWidth="${updateHandler.viewportWidthProperty.get}">
     </Pane>
 </fx:root>

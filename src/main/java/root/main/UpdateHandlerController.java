@@ -1,26 +1,18 @@
 package root.main;
 
+import com.sun.javafx.fxml.expression.ExpressionValue;
 import custom.component.MyPolyline;
-import javafx.beans.property.SimpleDoubleProperty;
+import custom.component.MyScrollBar;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import lombok.Getter;
-import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.Lazy;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +34,8 @@ public class UpdateHandlerController implements Initializable {
 
     @Autowired
     private DataController dataController;
+    @Autowired
+    private MyScrollBar myScrollBar;
 
 
 
@@ -63,10 +57,9 @@ public class UpdateHandlerController implements Initializable {
     }
 
     public void setLineSpacing(Double spacing) {
-        this.lineSpacing = spacing;
         synchronized (myPolylineList) {
             for (int i = 0; i < myPolylineList.size(); i++) {
-                myPolylineList.get(i).setYPosition((i + 1) * spacing);
+                myPolylineList.get(i).layoutYProperty().set((i + 1) * spacing);
             }
         }
     }
@@ -84,7 +77,7 @@ public class UpdateHandlerController implements Initializable {
     public void setAmplitudes(Double amplitude) {
         synchronized (myPolylineList) {
             for (MyPolyline myPolyline : myPolylineList) {
-                myPolyline.setAmplitude(amplitude);
+                myPolyline.getLineProperty().getAmplitude().set(amplitude);
             }
         }
     }
@@ -97,7 +90,7 @@ public class UpdateHandlerController implements Initializable {
                 MyPolyline myPolyline = new MyPolyline(dataController, c.getList().get(i), group, updateHandler);
                 myPolylineList.add(myPolyline);
             }
-            setLineSpacing(lineSpacing);
+            setLineSpacings(updateHandler.getLineSpacingProperty().get());
         }
     }
 
@@ -106,20 +99,39 @@ public class UpdateHandlerController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        EventHandler<? super ScrollEvent> defaultScrollHandler = group.onScrollProperty().get();
-        updateHandler.addEventFilter(ScrollEvent.SCROLL,new EventHandler<ScrollEvent>() {
-            @Override
-            public void handle(ScrollEvent event) {
-                if (event.isShiftDown()) {
-                    event.consume();
-                }
+        updateHandler.addEventFilter(ScrollEvent.SCROLL, this::shiftDownFilter);
+        updateHandler.getLineSpacingProperty().addListener(this::lineSpacingChange);
+    }
+
+    private void scroll(ScrollEvent event) {
+        double newValue = myScrollBar.valueProperty().get() - event.getDeltaY();
+        double minValue = myScrollBar.minProperty().get();
+        double maxValue = myScrollBar.maxProperty().get();
+        if (minValue < newValue && newValue < maxValue) {
+            myScrollBar.valueProperty().setValue(newValue);
+        } else if (minValue > newValue) {
+            myScrollBar.valueProperty().setValue(minValue);
+        } else {
+            myScrollBar.valueProperty().setValue(maxValue);
+        }
+    }
+
+    private void setLineSpacings(Double newValue) {
+        synchronized (myPolylineList) {
+            for (int i = 0; i < myPolylineList.size(); i++) {
+                myPolylineList.get(i).layoutYProperty().set((i + 1) * newValue.doubleValue());
             }
-        });
-        updateHandler.onScrollProperty().set(event -> {
-            System.out.println("updateH:" + j++);
-        });
-        group.onScrollProperty().set(event -> {
-            System.out.println("scroll" + i++);
-        });
+        }
+    }
+
+    private void lineSpacingChange(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+        setLineSpacings(newValue.doubleValue());
+    }
+
+    private void shiftDownFilter(ScrollEvent event) {
+        if (event.isShiftDown()) {
+            scroll(event);
+            event.consume();
+        }
     }
 }

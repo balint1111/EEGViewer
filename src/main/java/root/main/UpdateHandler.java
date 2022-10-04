@@ -1,6 +1,10 @@
 package root.main;
 
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.beans.property.adapter.JavaBeanObjectPropertyBuilder;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -17,8 +21,9 @@ import java.io.IOException;
 public class UpdateHandler extends ScrollPane {
     private UpdateHandlerController controller;
 
-    private final SimpleDoubleProperty viewportHeightProperty = new SimpleDoubleProperty(0);
-    private final SimpleDoubleProperty viewportWidthProperty = new SimpleDoubleProperty(0);
+    private final DoubleProperty viewportHeightProperty = new SimpleDoubleProperty(0d);
+    private final DoubleProperty viewportWidthProperty = new SimpleDoubleProperty(0d);
+    private final DoubleProperty lineSpacingProperty = new SimpleDoubleProperty(0);
 
     @SneakyThrows
     public UpdateHandler() {
@@ -58,7 +63,7 @@ public class UpdateHandler extends ScrollPane {
     }
 
 
-    public SimpleDoubleProperty viewportHeightPropertyProperty() {
+    public DoubleProperty viewportHeightProperty() {
         return viewportHeightProperty;
     }
 
@@ -66,8 +71,12 @@ public class UpdateHandler extends ScrollPane {
         this.viewportHeightProperty.set(viewportHeightProperty);
     }
 
-    public SimpleDoubleProperty viewportWidthPropertyProperty() {
+    public DoubleProperty viewportWidthProperty() {
         return viewportWidthProperty;
+    }
+
+    public final double getViewportWidthPropertyValue() {
+        return viewportWidthProperty.get();
     }
 
     public void setViewportWidthProperty(double viewportWidthProperty) {

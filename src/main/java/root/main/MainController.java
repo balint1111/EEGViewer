@@ -5,6 +5,8 @@ import com.sun.javafx.scene.control.IntegerField;
 import custom.component.MyScrollBar;
 import custom.dialogs.ChannelPickerDialog;
 import edffilereader.file.EEG_File;
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.event.ActionEvent;
@@ -22,6 +24,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import root.SpringJavaFxApplication;
 
 import java.io.File;
 import java.net.URL;
@@ -49,7 +52,9 @@ public class MainController implements Initializable {
     @FXML
     public MyScrollBar myScrollBar;
 
-    double amplitude = 0.3;
+    private double amplitude = 0.3;
+
+    private Integer DEFAULT_PAGE_SIZE = 100;
 
     private final List<Color> colors = new ArrayList<>(Arrays.asList(
             Color.valueOf("yellow"),
@@ -67,20 +72,22 @@ public class MainController implements Initializable {
 
 
     private final IntegerProperty pageSizeProperty = new SimpleIntegerProperty();
-    private final IntegerProperty numberOfDateRecordsProperty = new SimpleIntegerProperty();
+    private final IntegerProperty numberOfDataRecordsProperty = new SimpleIntegerProperty();
     @FXML
     public UpdateHandler updateHandler;
 
     private UpdateHandlerController updateHandlerController;
 
-    private EEG_File eegFile;
 
-
-    public MainController(DataController dataController, DataModel dataModel, ConfigurableApplicationContext applicationContext) {
+    public MainController(DataController dataController,
+                          DataModel dataModel,
+                          ConfigurableApplicationContext applicationContext) {
         this.dataController = dataController;
         this.dataModel = dataModel;
         this.applicationContext = applicationContext;
         this.autowireCapableBeanFactory = applicationContext.getAutowireCapableBeanFactory();
+        applicationContext.getBeanFactory().registerSingleton(dataController.getClass().getCanonicalName(), dataController);
+
     }
 
     @SneakyThrows
@@ -90,51 +97,42 @@ public class MainController implements Initializable {
         updateHandlerController = updateHandler.getController();
         autowireCapableBeanFactory.autowireBean(updateHandler);
         autowireCapableBeanFactory.autowireBean(dataController);
+
+        applicationContext.getBeanFactory().registerSingleton(myScrollBar.getClass().getCanonicalName(), myScrollBar);
+        applicationContext.getBeanFactory().registerSingleton(updateHandlerController.getClass().getCanonicalName(), updateHandlerController);
         autowireCapableBeanFactory.autowireBean(myScrollBar);
         autowireCapableBeanFactory.autowireBean(updateHandlerController);
+        autowireCapableBeanFactory.autowireBean(dataController);
         myScrollBar.setUpdateHandlerController(updateHandler);
+        init();
+    }
+
+    private void init(){
+        pageSizeField.maxValueProperty().bind(numberOfDataRecordsProperty);
+        pageSizeProperty.bindBidirectional(pageSizeField.valueProperty());
+        pageSizeProperty.addListener((observable, oldValue, newValue) -> {
+            dataController.showDataRecord();
+        });
+        amplitudeField.valueProperty().addListener((observable, oldValue, newValue) -> {
+            updateHandlerController.setAmplitudes(newValue.doubleValue());
+        });
+        lineSpacingField.valueProperty().bindBidirectional(updateHandlerController.getUpdateHandler().getLineSpacingProperty());
+
+        updateHandlerController.getUpdateHandler().getLineSpacingProperty().setValue(50);
     }
 
     private void openNewFile(File file) {
-
-        int pageSize = 100;
         try {
-            eegFile = EEG_File.build(file);
-            dataModel.setEeg_file(eegFile);
+            dataModel.setEeg_file(EEG_File.build(file));
 
-            dataController.setUpdateHandlerController(updateHandlerController);
-            dataController.setDataModel(dataModel);
+            numberOfDataRecordsProperty.setValue(dataModel.getEeg_file().getHeader().getNumberOfDataRecords());
 
             pickChannel();
 
-            pageSizeProperty.bindBidirectional(pageSizeField.valueProperty());
-            pageSizeProperty.addListener((observable, oldValue, newValue) -> {
-                try {
-                    Integer maxValue = eegFile.getHeader().getNumberOfDataRecords();
-                    numberOfDateRecordsProperty.setValue(maxValue);
-                    if ((Integer) newValue > maxValue) {
-                        pageSizeField.setValue(maxValue);
-                        dataController.rangeChange(maxValue);
-                    } else if (((Integer) newValue).compareTo(1) >= 0) {
-                        dataController.rangeChange(newValue.intValue());
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            });
-            amplitudeField.valueProperty().addListener((observable, oldValue, newValue) -> {
-                updateHandlerController.setAmplitudes(newValue.doubleValue());
-            });
-            lineSpacingField.valueProperty().addListener((observable, oldValue, newValue) -> {
-                updateHandlerController.setLineSpacing(newValue.doubleValue());
-            });
-            pageSizeProperty.setValue(pageSize);
-            dataController.showFirstPage(pageSize);
-
+            pageSizeProperty.setValue(DEFAULT_PAGE_SIZE);
 
             updateHandlerController.setAmplitudes(amplitude);
             updateHandlerController.setColors(colors);
-            updateHandlerController.setLineSpacing(50d);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -143,7 +141,7 @@ public class MainController implements Initializable {
 
     @PostMapping("/previous")
     public void previousPage(ActionEvent actionEvent) {
-        dataController.showPreviousPage();
+        myScrollBar.setValue(myScrollBar.valueProperty().get() - pageSizeProperty.get());
     }
 
     @PostMapping("/next")
@@ -151,7 +149,7 @@ public class MainController implements Initializable {
 //        dataController.getSelectedChannels().addAll(4);
 //        updateHandler.setAmplitudes(amplitude);
 //        updateHandler.setColors(colors);
-        dataController.showNextPage();
+        myScrollBar.setValue(myScrollBar.valueProperty().get() + pageSizeProperty.get());
     }
 
 

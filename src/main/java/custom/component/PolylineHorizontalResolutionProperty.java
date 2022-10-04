@@ -10,11 +10,7 @@ public class PolylineHorizontalResolutionProperty extends SimpleIntegerProperty 
 
     PolylineHorizontalResolutionProperty(DataController dataController) {
         this.addListener((observableValue, oldValue, newValue) -> {
-            Integer to = dataController.getTo();
-            Integer from = dataController.getFrom();
-            if (from != null && to != null) {
-                dataController.showDataRecord(from, to);
-            }
+            dataController.showDataRecord();
         });
     }
 }

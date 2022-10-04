@@ -6,25 +6,46 @@
 package root.main.swing;
 
 
+import com.google.common.base.Supplier;
+import custom.component.JFormattedTextFieldProperty;
 import javafx.application.Platform;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import root.main.MainController;
 
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.DefaultFormatterFactory;
+import javax.swing.text.Document;
+import javax.swing.text.NumberFormatter;
 import java.io.FileNotFoundException;
+import java.text.NumberFormat;
+import java.util.function.Consumer;
 
 public class SwingController extends javax.swing.JPanel {
 
+    private MainController mainController;
+
     @Autowired
     @Lazy
-    private MainController mainController;
+    private void autowire(MainController mainController) {
+        this.mainController = mainController;
+        jFxIntegerField1.getMaxValue().bind(mainController.getNumberOfDataRecordsProperty());
+
+
+        mainController.getPageSizeProperty().bindBidirectional(jFxIntegerField1.getProp());
+    }
+
 
     /**
      * Creates new form NewJPanel
      */
     public SwingController() {
         initComponents();
+
+
     }
 
     /**
@@ -62,6 +83,7 @@ public class SwingController extends javax.swing.JPanel {
         open3DViewButton1 = new javax.swing.JButton();
         openVideoButton1 = new javax.swing.JButton();
         show3DVolumeCheckBox1 = new javax.swing.JCheckBox();
+        jFxIntegerField1 = new custom.component.JFxIntegerField();
 
         setMinimumSize(new java.awt.Dimension(0, 0));
         setPreferredSize(new java.awt.Dimension(250, 750));
@@ -207,6 +229,8 @@ public class SwingController extends javax.swing.JPanel {
             }
         });
 
+        jFxIntegerField1.setText("jFxIntegerField1");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -233,7 +257,7 @@ public class SwingController extends javax.swing.JPanel {
                         .addComponent(nextPageButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel6)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 47, Short.MAX_VALUE)
                         .addComponent(fpsLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(fpsSlider1, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -246,15 +270,22 @@ public class SwingController extends javax.swing.JPanel {
                     .addComponent(openMRIButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(open3DViewButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(openVideoButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(show3DVolumeCheckBox1)
-                    .addComponent(jLabel7)
-                    .addComponent(amplitudeRangeLabel1)
                     .addComponent(playToggleButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(openEEGFileButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(triggerBasedTrialsCheckBox1)))
+                        .addComponent(triggerBasedTrialsCheckBox1))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(show3DVolumeCheckBox1)
+                            .addComponent(jLabel7)
+                            .addComponent(amplitudeRangeLabel1))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jFxIntegerField1, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(60, 60, 60))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -307,9 +338,11 @@ public class SwingController extends javax.swing.JPanel {
                 .addComponent(open3DViewButton1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(show3DVolumeCheckBox1)
-                .addGap(41, 41, 41)
+                .addGap(3, 3, 3)
+                .addComponent(jFxIntegerField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addComponent(openVideoButton1)
-                .addContainerGap(15, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -382,6 +415,7 @@ public class SwingController extends javax.swing.JPanel {
     private javax.swing.JButton firstPageButton1;
     private javax.swing.JLabel fpsLabel1;
     private javax.swing.JSlider fpsSlider1;
+    private custom.component.JFxIntegerField jFxIntegerField1;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;

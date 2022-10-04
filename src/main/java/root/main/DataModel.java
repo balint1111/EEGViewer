@@ -4,7 +4,11 @@ import com.google.common.collect.MinMaxPriorityQueue;
 import com.google.common.collect.Range;
 import edffilereader.data.EEG_Data;
 import edffilereader.file.EEG_File;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
@@ -14,42 +18,21 @@ import java.util.stream.Stream;
 @Slf4j
 public class DataModel {
 
+    @Getter
     private EEG_File eeg_file;
+
+    public void setEeg_file(EEG_File eeg_file) {
+        this.eeg_file = eeg_file;
+        queue.clear();
+    }
 
     private MinMaxPriorityQueue<DataRecord> queue;
 
-    private final DataController dataController;
+    @Autowired
+    @Lazy
+    private MainController mainController;
 
-    private int pageNumber;
-
-    public EEG_Data nextPage() {
-        Integer rangeSize = dataController.getFrom() - dataController.getTo();
-        for (int i = 0; i < rangeSize; i++) {
-            int finalI = i;
-            Stream<DataRecord> dataRecordStream = queue.stream().filter(dataRecord -> dataRecord.getDataRecordNumber().equals(dataController.getTo() + finalI));
-        }
-        return null;
-    }
-
-//    public EEG_Data getDataRecord(int dataRecordNumber) throws IOException, InterruptedException {
-//        Optional<DataRecord> optional;
-//        synchronized (queue) {
-//            optional = queue.stream().filter(dataRecord -> dataRecord.getDataRecordNumber().equals(dataRecordNumber)).findFirst();
-//        }
-//        if (optional.isPresent()) {
-//            return optional.get().getData();
-//        } else {
-//            EEG_Data eeg_data = eeg_file.readRecordFromTo(dataRecordNumber, dataRecordNumber + 1);
-//            DataRecord dataRecord = new DataRecord(eeg_data, dataRecordNumber);
-//            EEG_Data data = dataRecord.getData();
-//            synchronized (queue) {
-//                queue.add(dataRecord);
-//            }
-//            return data;
-//        }
-//    }
-
-    public List<DataRecord> getDataRecordFromTo(int from, int to) throws Exception {
+    public List<DataRecord> getDataRecordsFromTo(int from, int to) throws Exception {
         List<DataRecord> memoryList = new ArrayList<>();
         List<DataRecord> loadedFromDisk = new ArrayList<>();
         synchronized (queue) {
@@ -101,9 +84,8 @@ public class DataModel {
     }
 
 
-    public DataModel(int maxQueueSize, DataController dataController) {
+    public DataModel(int maxQueueSize) {
         queue = MinMaxPriorityQueue.<DataRecord>orderedBy((o1, o2) -> o1.getLastRequestTime().compareTo(o2.getLastRequestTime()) * -1).maximumSize(maxQueueSize).create();
-        this.dataController = dataController;
     }
 
     private Integer getDistanceFromRange(DataRecord o1, Range<Integer> showedDataRecords) {
@@ -118,17 +100,7 @@ public class DataModel {
         } else {
             toReturn = 0;
         }
-        //System.out.println("ret: " + toReturn);
         return toReturn;
-    }
-
-    public EEG_File getEeg_file() {
-        return eeg_file;
-    }
-
-    public void setEeg_file(EEG_File eeg_file) {
-        this.eeg_file = eeg_file;
-        queue.clear();
     }
 
 }
