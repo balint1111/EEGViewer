@@ -1,41 +1,71 @@
 package root.main;
 
-import com.sun.javafx.fxml.expression.ExpressionValue;
+import custom.component.Modes;
 import custom.component.MyPolyline;
-import custom.component.MyScrollBar;
-import javafx.beans.value.ObservableValue;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Label;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import lombok.Getter;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
 
 @Getter
+@Controller
 public class UpdateHandlerController implements Initializable {
 
     @FXML
     private Pane group;
 
     @FXML
+    private Pane labels;
+
+    @FXML
+    private StackPane stack;
+
+    @FXML
     private UpdateHandler updateHandler;
 
-    private List<MyPolyline> myPolylineList = new ArrayList<>();
+    private final Properties properties;
+
+
+    private final ObservableList<Integer> selectedChannels = FXCollections.observableArrayList();
+    private final DoubleProperty viewportHeightProperty = new SimpleDoubleProperty(0d);
+    private final DoubleProperty viewportWidthProperty = new SimpleDoubleProperty(0d);
+    private final DoubleProperty lineSpacingProperty = new SimpleDoubleProperty(0);
+    private final DoubleProperty baseOffsetProperty = new SimpleDoubleProperty(0);
+    private final DoubleProperty amplitudeProperty = new SimpleDoubleProperty(1);
+
+    private final General general;
+
+    private ObjectProperty<Modes> modeProperty = new SimpleObjectProperty<>(Modes.NORMAL);
+
+    public UpdateHandlerController(Properties properties, DataController dataController, General general){
+        this.properties = properties;
+        this.general = general;
+        System.out.println("UpdateHandlerController");
+        this.dataController = dataController;
+    }
+
+    private ObservableList<MyPolyline> myPolylineList = FXCollections.observableArrayList();
 
     private Double lineSpacing = 0d;
 
-    @Autowired
-    private DataController dataController;
-    @Autowired
-    private MyScrollBar myScrollBar;
+    private final DataController dataController;
 
 
 
@@ -83,54 +113,45 @@ public class UpdateHandlerController implements Initializable {
     }
 
     public void onChangeSelectedChannels(ListChangeListener.Change<? extends Integer> c) {
-        group.getChildren().removeIf(node -> myPolylineList.stream().anyMatch(myPolyline -> myPolyline.equals(node)));
+        group.getChildren().clear();
         synchronized (myPolylineList) {
             myPolylineList.clear();
-            for (int i = 0; i < dataController.getSelectedChannels().size(); i++) {
+            for (int i = 0; i < selectedChannels.size(); i++) {
                 MyPolyline myPolyline = new MyPolyline(dataController, c.getList().get(i), group, updateHandler);
-                myPolylineList.add(myPolyline);
+                Label label = new Label(updateHandler.getController().getDataController().getDataModel().getEeg_file().getHeader().getLabelsOfTheChannels(c.getList().get(i)));
+                label.layoutYProperty().bind(updateHandler.getBaseOffsetProperty().add(updateHandler.getLineSpacingProperty().multiply(c.getList().get(i) + 1)).subtract(label.heightProperty().divide(2)));
+                labels.getChildren().add(label);
             }
-            setLineSpacings(updateHandler.getLineSpacingProperty().get());
         }
     }
-
-    int i=0;
-    int j=0;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         updateHandler.addEventFilter(ScrollEvent.SCROLL, this::shiftDownFilter);
-        updateHandler.getLineSpacingProperty().addListener(this::lineSpacingChange);
+        stack.prefWidthProperty().bind(viewportWidthProperty.subtract(labels.prefWidthProperty()));
+        labels.minHeightProperty().bind(viewportHeightProperty);
     }
 
-    private void scroll(ScrollEvent event) {
-        double newValue = myScrollBar.valueProperty().get() - event.getDeltaY();
-        double minValue = myScrollBar.minProperty().get();
-        double maxValue = myScrollBar.maxProperty().get();
-        if (minValue < newValue && newValue < maxValue) {
-            myScrollBar.valueProperty().setValue(newValue);
-        } else if (minValue > newValue) {
-            myScrollBar.valueProperty().setValue(minValue);
-        } else {
-            myScrollBar.valueProperty().setValue(maxValue);
-        }
-    }
+//    private void scroll(ScrollEvent event) {
+//        double newValue = general.getScrollBarValue().get() - event.getDeltaY();
+//        double minValue = general.getScrollBarValue().minProperty().get();
+//        double maxValue = general.getScrollBarValue().maxProperty().get();
+//        if (minValue < newValue && newValue < maxValue) {
+//
+//            general.getScrollBarValue().setValue(newValue);
+//            System.out.println("set: "+ myScrollBar.valueProperty().get());
+//        } else if (minValue > newValue) {
+//            myScrollBar.valueProperty().setValue(minValue);
+//        } else {
+//            myScrollBar.valueProperty().setValue(maxValue);
+//        }
+//    }
 
-    private void setLineSpacings(Double newValue) {
-        synchronized (myPolylineList) {
-            for (int i = 0; i < myPolylineList.size(); i++) {
-                myPolylineList.get(i).layoutYProperty().set((i + 1) * newValue.doubleValue());
-            }
-        }
-    }
-
-    private void lineSpacingChange(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-        setLineSpacings(newValue.doubleValue());
-    }
 
     private void shiftDownFilter(ScrollEvent event) {
         if (event.isShiftDown()) {
-            scroll(event);
+            general.getScrollBarValue().setValue(general.getScrollBarValue().get() - event.getDeltaY());
+//            scroll(event);
             event.consume();
         }
     }

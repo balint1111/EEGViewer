@@ -8,26 +8,30 @@
 <?import javafx.scene.layout.VBox?>
 <?import root.main.UpdateHandler?>
 <?import custom.component.MyScrollBar?>
-<HBox fx:id="root" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="root.main.MainController">
-    <VBox fx:id="control" prefWidth="${root.width/12}" style="-fx-background-color: red" fillWidth="false">
-        <Button fx:id="previousBtn" onAction="#previousPage" text="previous Page" />
-        <Button fx:id="nextBtn" onAction="#nextPage" text="next Page" />
-        <Button fx:id="openBtn" onAction="#open" text="open" />
-        <Button fx:id="channelPicker" onAction="#pickChannel" text="channelPicker" />
-        <IntegerField fx:id="pageSizeField"/>
-        <DoubleField fx:id="amplitudeField"/>
-        <DoubleField fx:id="lineSpacingField"/>
-    </VBox>
+<?import javafx.scene.control.ScrollBar?>
+<HBox fx:id="root" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml">
+<!--    <VBox fx:id="control" prefWidth="${root.width/12}" style="-fx-background-color: red" fillWidth="false">-->
+<!--&lt;!&ndash;        <Button fx:id="previousBtn" text="previous Page" />&ndash;&gt;-->
+<!--&lt;!&ndash;        <Button fx:id="nextBtn" text="next Page" />&ndash;&gt;-->
+<!--&lt;!&ndash;        <Button fx:id="openBtn"  text="open" />&ndash;&gt;-->
+<!--&lt;!&ndash;        <Button fx:id="channelPicker" text="channelPicker" />&ndash;&gt;-->
+<!--        <IntegerField fx:id="pageSizeField"/>-->
+<!--        <DoubleField fx:id="amplitudeField"/>-->
+<!--        <DoubleField fx:id="lineSpacingField"/>-->
+<!--    </VBox>-->
 
-    <VBox fx:id="chart" prefWidth="${root.width*11/12}">
-        <Pane>
-            <Pane fx:id="background" style="-fx-background-color: brown" prefWidth="${chart.width}" prefHeight="${chart.height}">
+    <VBox fx:id="chart" prefWidth="${root.width}">
+        <Pane fx:id="timeline" minHeight="30" viewOrder="-Infinity" style="-fx-background-color: grey"></Pane>
+        <Pane fx:id="pane" prefWidth="${chart.width}" prefHeight="${chart.height}">
+            <Pane fx:id="background" style="-fx-background-color: brown" prefWidth="${pane.width}" prefHeight="${pane.height}">
 
             </Pane>
-            <UpdateHandler fx:id="updateHandler" prefWidth="${chart.width}" prefHeight="${chart.height}" />
+            <UpdateHandler fx:id="updateHandler" prefWidth="${pane.width}" prefHeight="${pane.height}" />
         </Pane>
-        <MyScrollBar fx:id="myScrollBar" viewOrder="-Infinity"></MyScrollBar>
+        <MyScrollBar prefWidth="${updateHandler.viewportWidthProperty.get}" minHeight="50" fx:id="myScrollBar" viewOrder="-Infinity"></MyScrollBar>
+
     </VBox>
+<!--    <ScrollBar visible="false" orientation="VERTICAL" prefHeight="${chart.height}"></ScrollBar>-->
 
 
 

@@ -1,11 +1,12 @@
 package custom.component;
 
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import lombok.Getter;
 
 import javax.swing.*;
-import javax.swing.text.DefaultFormatterFactory;
-import javax.swing.text.NumberFormatter;
+import javax.swing.text.*;
 import java.text.NumberFormat;
 
 @Getter
@@ -16,6 +17,8 @@ public class JFxIntegerField extends JFormattedTextField {
 
     public JFxIntegerField() {
         super();
+
+
         prop = new JFormattedTextFieldProperty(this);
         maxValue = new SimpleIntegerProperty();
 
@@ -25,11 +28,23 @@ public class JFxIntegerField extends JFormattedTextField {
         formatter.setMinimum(0);
         formatter.setAllowsInvalid(false);
         formatter.setCommitsOnValidEdit(true);
+        formatter.setOverwriteMode(true);
 
         maxValue.addListener((observable, oldValue, newValue) -> {
             formatter.setMaximum(newValue.intValue());
         });
         setFormatterFactory(new DefaultFormatterFactory(formatter));
+//        ((AbstractDocument) getDocument ()).setDocumentFilter(new DocumentFilter() {
+//            @Override
+//            public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
+//                String textAfterReplacement = new StringBuilder (fb.getDocument ().getText (0, fb.getDocument ().getLength ())).replace (offset, offset + length, text).toString ();
+//                System.out.println("asd");
+//                int value = Integer.parseInt (textAfterReplacement);
+//                if (value < 0) value = 0;
+//                else if (value > maxValue.get()) value = maxValue.get();
+//                super.replace (fb, 0, fb.getDocument ().getLength (), String.valueOf (value), attrs);
+//            }
+//        });
 
     }
 }

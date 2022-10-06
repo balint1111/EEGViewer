@@ -6,36 +6,30 @@
 package root.main.swing;
 
 
-import com.google.common.base.Supplier;
-import custom.component.JFormattedTextFieldProperty;
 import javafx.application.Platform;
-import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Component;
+import root.main.General;
 import root.main.MainController;
-
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.text.DefaultFormatterFactory;
-import javax.swing.text.Document;
-import javax.swing.text.NumberFormatter;
-import java.io.FileNotFoundException;
-import java.text.NumberFormat;
-import java.util.function.Consumer;
+import root.main.Properties;
 
 public class SwingController extends javax.swing.JPanel {
 
     private MainController mainController;
+    private General general;
+
+    private Properties properties;
 
     @Autowired
     @Lazy
-    private void autowire(MainController mainController) {
-        this.mainController = mainController;
-        jFxIntegerField1.getMaxValue().bind(mainController.getNumberOfDataRecordsProperty());
+    private void autowire(General general, Properties properties) {
+        this.general = general;
+        this.properties = properties;
+        mainController = general.getMainController();
+        jFxIntegerField1.getMaxValue().bind(general.getNumberOfDataRecordsProperty());
+        general.getPageSizeProperty().bindBidirectional(jFxIntegerField1.getProp());
 
-
-        mainController.getPageSizeProperty().bindBidirectional(jFxIntegerField1.getProp());
+        jFxIntegerField2.getProp().bindBidirectional(properties.getLineSpacingProperty());
     }
 
 
@@ -84,6 +78,7 @@ public class SwingController extends javax.swing.JPanel {
         openVideoButton1 = new javax.swing.JButton();
         show3DVolumeCheckBox1 = new javax.swing.JCheckBox();
         jFxIntegerField1 = new custom.component.JFxIntegerField();
+        jFxIntegerField2 = new custom.component.JFxIntegerField();
 
         setMinimumSize(new java.awt.Dimension(0, 0));
         setPreferredSize(new java.awt.Dimension(250, 750));
@@ -229,7 +224,9 @@ public class SwingController extends javax.swing.JPanel {
             }
         });
 
-        jFxIntegerField1.setText("jFxIntegerField1");
+        jFxIntegerField1.setText("100");
+
+        jFxIntegerField2.setText("50");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -282,10 +279,15 @@ public class SwingController extends javax.swing.JPanel {
                             .addComponent(amplitudeRangeLabel1))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jFxIntegerField1, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(60, 60, 60))
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(49, 49, 49)
+                        .addComponent(jFxIntegerField1, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(49, 49, 49)
+                        .addComponent(jFxIntegerField2, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -338,16 +340,18 @@ public class SwingController extends javax.swing.JPanel {
                 .addComponent(open3DViewButton1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(show3DVolumeCheckBox1)
-                .addGap(3, 3, 3)
+                .addGap(41, 41, 41)
+                .addComponent(openVideoButton1)
+                .addGap(18, 18, 18)
                 .addComponent(jFxIntegerField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(openVideoButton1)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jFxIntegerField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(77, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void firstPageButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_firstPageButton1ActionPerformed
-        // TODO add your handling code here:
+        Platform.runLater(() -> general.getScrollBarValue().set(0));
     }//GEN-LAST:event_firstPageButton1ActionPerformed
 
     private void playToggleButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playToggleButton1ActionPerformed
@@ -355,19 +359,19 @@ public class SwingController extends javax.swing.JPanel {
     }//GEN-LAST:event_playToggleButton1ActionPerformed
 
     private void prevPageButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_prevPageButton1ActionPerformed
-        // TODO add your handling code here:
+        Platform.runLater(() -> general.previousPage(null));
     }//GEN-LAST:event_prevPageButton1ActionPerformed
 
     private void nextPageButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextPageButton1ActionPerformed
-        // TODO add your handling code here:
+        Platform.runLater(() -> general.nextPage(null));
     }//GEN-LAST:event_nextPageButton1ActionPerformed
 
     private void lastPageButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lastPageButton1ActionPerformed
-        // TODO add your handling code here:
+        Platform.runLater(() -> general.getScrollBarValue().set(general.getScrollBarValue().getMax().get()));
     }//GEN-LAST:event_lastPageButton1ActionPerformed
 
     private void openEEGFileButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openEEGFileButton1ActionPerformed
-        Platform.runLater(() -> mainController.open());
+        Platform.runLater(() -> general.open());
     }//GEN-LAST:event_openEEGFileButton1ActionPerformed
 
     private void openHeadModelButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openHeadModelButton1ActionPerformed
@@ -416,6 +420,7 @@ public class SwingController extends javax.swing.JPanel {
     private javax.swing.JLabel fpsLabel1;
     private javax.swing.JSlider fpsSlider1;
     private custom.component.JFxIntegerField jFxIntegerField1;
+    private custom.component.JFxIntegerField jFxIntegerField2;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;

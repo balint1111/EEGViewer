@@ -4,53 +4,46 @@
  */
 package root.main.swing;
 
+import root.main.KeyboardListener;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
-import lombok.SneakyThrows;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Controller;
 import root.SpringJavaFxApplication;
+import root.main.MainController;
 
 import javax.swing.*;
+import java.awt.*;
 
 /**
  * @author balin
  */
-@Service
+@Controller
 public class MainSwing extends javax.swing.JPanel {
 
     private final ConfigurableApplicationContext applicationContext;
     private final JFrame mainWindow;
+    private final MainController mainController;
 
-    public MainSwing(ConfigurableApplicationContext applicationContext, SpringJavaFxApplication mainWindow) {
+    public MainSwing(ConfigurableApplicationContext applicationContext,
+                     SpringJavaFxApplication mainWindow,
+                     MainController mainController,
+                     KeyboardListener keyboardListener
+    ) {
         this.applicationContext = applicationContext;
         this.mainWindow = mainWindow;
+        this.mainController = mainController;
         initComponents();
         this.mainWindow.add(this);
-        Platform.runLater(() -> {
-            initFx(jFXPanel1);
-        });
+        KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(keyboardListener);
+        Platform.runLater(() -> initFx(jFXPanel1));
     }
 
     public void initFx(JFXPanel fxPanel) {
         applicationContext.getAutowireCapableBeanFactory().autowireBean(swingController1);
-        Scene scene = createScene();
+        Scene scene = mainController.createScene();
         fxPanel.setScene(scene);
-    }
-
-    @SneakyThrows
-    public Scene createScene() {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/mainWindow.fxml"));
-        fxmlLoader.setControllerFactory(applicationContext::getBean);
-
-        Parent root = fxmlLoader.load();
-        Scene scene = new Scene(root, 1200, 700);
-        return scene;
-        //scene.getStylesheets().add("/style.css");
-//        scene.getStylesheets().add(BootstrapFX.bootstrapFXStylesheet());
     }
 
 

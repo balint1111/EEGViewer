@@ -2,9 +2,25 @@
 
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.Pane?>
-<fx:root fx:id="updateHandler" type="javafx.scene.control.ScrollPane" xmlns:fx="http://javafx.com/fxml" hbarPolicy="AS_NEEDED"
-         fx:controller="root.main.UpdateHandler"
-         style="-fx-background: transparent; -fx-background-color: transparent">
-    <Pane fx:id="group" prefWidth="${updateHandler.viewportWidthProperty.get}">
-    </Pane>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<fx:root fx:id="updateHandler" type="javafx.scene.control.ScrollPane" xmlns:fx="http://javafx.com/fxml"
+    style="-fx-background-color: grey">
+    <VBox>
+
+        <HBox>
+            <Pane fx:id="labels" prefWidth="80" style="-fx-background-color: grey;" viewOrder="-Infinity">
+            </Pane>
+
+            <StackPane fx:id="stack">
+                <Pane fx:id="background" style="-fx-background-color: white" prefWidth="${stack.prefWidth}"/>
+                <Pane fx:id="group" prefWidth="${stack.prefWidth}"/>
+                <!--            <Pane fx:id="foreground"  style="-fx-background-color: blue" prefWidth="${stack.prefWidth}"/>-->
+            </StackPane>
+
+
+        </HBox>
+    </VBox>
 </fx:root>

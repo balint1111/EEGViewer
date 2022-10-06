@@ -25,6 +25,7 @@ public class SpringJavaFxApplication extends JFrame {
 
             setLocationRelativeTo(null);
             setVisible(true);
+            setFocusable(true);
             setDefaultCloseOperation(EXIT_ON_CLOSE);
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {

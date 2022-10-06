@@ -7,6 +7,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Component;
 import root.async.AsyncExecutor;
 
 import java.nio.channels.ClosedByInterruptException;
@@ -15,36 +16,35 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 @Data
 @Slf4j
+@Component
 public class DataController {
 
     private UpdateHandlerController updateHandlerController;
     private DataModel dataModel;
     private AsyncExecutor asyncExecutor;
     private ThreadPoolExecutor backgroundExecutor;
-    private MainController mainController;
-    private ObservableList<Integer> selectedChannels;
+    private General general;
     private Thread thread;
 
     @Autowired
     private void init(AsyncExecutor asyncExecutor,
                       ThreadPoolExecutor backgroundExecutor,
-                      @Lazy MainController mainController,
+                      @Lazy General general,
                       @Lazy DataModel dataModel,
                       @Lazy UpdateHandlerController updateHandlerController) {
         this.asyncExecutor = asyncExecutor;
         this.backgroundExecutor = backgroundExecutor;
-        this.mainController = mainController;
+        this.general = general;
         this.dataModel = dataModel;
         this.updateHandlerController = updateHandlerController;
-        selectedChannels = FXCollections.observableArrayList();
-        selectedChannels.addListener(updateHandlerController::onChangeSelectedChannels);
+
 
     }
 
     @SneakyThrows
     public void showDataRecord() {
-        int from = (int) mainController.getMyScrollBar().getValue();
-        int to = from + mainController.getPageSizeProperty().get() - 1;
+        int from = (int) general.getScrollBarValue().get();
+        int to = from + general.getPageSizeProperty().get() - 1;
         if ((to - from) < 0) return;
 
         //interupt the thread if running

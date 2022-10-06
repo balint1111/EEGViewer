@@ -1,17 +1,17 @@
 package root.main;
 
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
-import javafx.beans.property.adapter.JavaBeanObjectPropertyBuilder;
+import custom.component.Modes;
+import custom.component.MyPolyline;
+import javafx.beans.property.*;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 
@@ -24,14 +24,34 @@ public class UpdateHandler extends ScrollPane {
     private final DoubleProperty viewportHeightProperty = new SimpleDoubleProperty(0d);
     private final DoubleProperty viewportWidthProperty = new SimpleDoubleProperty(0d);
     private final DoubleProperty lineSpacingProperty = new SimpleDoubleProperty(0);
+    private final DoubleProperty baseOffsetProperty = new SimpleDoubleProperty(0);
+    private final DoubleProperty amplitudeProperty = new SimpleDoubleProperty(1);
+    private final ObjectProperty<Modes> modeProperty = new SimpleObjectProperty<>(Modes.NORMAL);
+    private ObservableList<Integer> selectedChannels;
 
-    @SneakyThrows
+    private ObservableList<MyPolyline> myPolylineList;
+
+    private Properties props;
+
     public UpdateHandler() {
+        super();
+        System.out.println("update Handler");
+    }
+
+    @Autowired
+    private void setProps(Properties props){
+        this.props = props;
+        initProps();
+    }
+
+    @Autowired
+    private void asd(UpdateHandlerController updateHandlerController){
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/UpdateHandler.fxml"));
         fxmlLoader.setRoot(this);
-        fxmlLoader.setControllerFactory(param -> controller = new UpdateHandlerController());
+        fxmlLoader.setController(updateHandlerController);
+        controller = updateHandlerController;
         try {
-           fxmlLoader.load();
+            fxmlLoader.load();
 
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -41,7 +61,37 @@ public class UpdateHandler extends ScrollPane {
 
     public void init() {
         initViewPortProperties();
-        viewportWidthProperty.setValue(getViewportBounds().getMaxX() - getViewportBounds().getMinX());
+
+        myPolylineList = controller.getMyPolylineList();
+        selectedChannels = controller.getSelectedChannels();
+
+        controller.getLineSpacingProperty().bindBidirectional(lineSpacingProperty);
+        controller.getViewportWidthProperty().bindBidirectional(viewportWidthProperty);
+        controller.getViewportHeightProperty().bindBidirectional(viewportHeightProperty);
+        controller.getModeProperty().bindBidirectional(modeProperty);
+        controller.getAmplitudeProperty().bindBidirectional(amplitudeProperty);
+        controller.getBaseOffsetProperty().bindBidirectional(baseOffsetProperty);
+
+        selectedChannels.addListener(controller::onChangeSelectedChannels);
+
+        modeProperty.addListener(this::changeMode);
+    }
+
+
+    private void initProps() {
+        props.getBaseOffsetProperty().addListener((observable, oldValue, newValue) -> baseOffsetProperty.set(newValue.doubleValue()));
+        props.getLineSpacingProperty().addListener((observable, oldValue, newValue) -> lineSpacingProperty.set(newValue.doubleValue()));
+    }
+
+
+    private void changeMode(ObservableValue<? extends Modes> observable, Modes oldValue, Modes newValue) {
+        if (newValue.equals(Modes.BUTTERFLY)) {
+            lineSpacingProperty.set(0);
+            baseOffsetProperty.set(viewportHeightProperty.divide(2).get());
+        } else if (newValue.equals(Modes.NORMAL)) {
+            lineSpacingProperty.set(props.getLineSpacingProperty().get());
+            baseOffsetProperty.set(props.getBaseOffsetProperty().get());
+        }
     }
 
     private void initViewPortProperties() {
@@ -60,6 +110,7 @@ public class UpdateHandler extends ScrollPane {
                 viewportWidthProperty.setValue(newWidth);
             }
         });
+        viewportWidthProperty.setValue(getViewportBounds().getMaxX() - getViewportBounds().getMinX());
     }
 
 

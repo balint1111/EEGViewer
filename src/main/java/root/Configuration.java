@@ -11,10 +11,6 @@ import java.util.concurrent.TimeUnit;
 @org.springframework.context.annotation.Configuration
 public class Configuration {
 
-    @Bean
-    DataController dataController() {
-        return new DataController();
-    }
 
     @Bean
     DataModel dataModel() {

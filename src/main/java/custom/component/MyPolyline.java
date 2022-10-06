@@ -49,32 +49,37 @@ public class MyPolyline extends HBox {
 
     private Integer channelNumber;
 
-    private ObservableList<Double> xVector = FXCollections.observableArrayList();
+    private List<Double> xVector = new ArrayList<>();
 
-    private ObservableList<Double> yVector = FXCollections.observableArrayList();
+    private List<Double> yVector = new ArrayList<>();
 
     private LineProperty lineProperty;
 
 
     private ObservableList<Double> polyLineList;
 
+    private UpdateHandler updateHandler;
+
     public MyPolyline(DataController dataController,
                       Integer channelNumber,
                       Pane parent,
-                      UpdateHandler sc
+                      UpdateHandler updateHandler
     ) {
-        load(parent);
+        this.updateHandler = updateHandler;
         this.dataController = dataController;
         this.channelNumber = channelNumber;
+        load(parent);
         polyLineList = polyline.getPoints();
         polyline.setStrokeWidth(3);
 
+        layoutYProperty().bind(updateHandler.getBaseOffsetProperty().add(updateHandler.getLineSpacingProperty().multiply(channelNumber + 1)));
+
         DoubleProperty controlVboxWidthProperty = getControlVboxWidthProperty();
-        DoubleProperty viewportWidthProperty = sc.getViewportWidthProperty();
-        this.prefWidthProperty().bind(viewportWidthProperty);
+        DoubleProperty prefWidthProperty = updateHandler.getController().getGroup().prefWidthProperty();
+        this.prefWidthProperty().bind(prefWidthProperty);
         Tooltip t = new Tooltip(dataController.getDataModel().getEeg_file().getHeader().getLabelsOfTheChannels().get(channelNumber));
         Tooltip.install(polyline, t);
-        initLineProperty(controlVboxWidthProperty, viewportWidthProperty);
+        initLineProperty(controlVboxWidthProperty, prefWidthProperty);
         lineInit();
         nameLabelInit(dataController, channelNumber);
 //        setStyleClasses();
@@ -91,9 +96,10 @@ public class MyPolyline extends HBox {
             nameLabel.setText(dataController.getDataModel().getEeg_file().getHeader().getLabelsOfTheChannels().get(channelNumber));
     }
 
-    private void initLineProperty(DoubleProperty controlVboxWidthProperty, DoubleProperty viewportWidthProperty) {
+    private void initLineProperty(DoubleProperty controlVboxWidthProperty, DoubleProperty prefWidth) {
         lineProperty = new LineProperty(polyline.strokeProperty(), new SimpleDoubleProperty(0), null, new PolylineHorizontalResolutionProperty(dataController));
-        lineProperty.getHorizontalResolution().bind(viewportWidthProperty.subtract(controlVboxWidthProperty).subtract(2));
+        lineProperty.getHorizontalResolution().bind(prefWidth.subtract(2));
+        lineProperty.getAmplitude().bind(updateHandler.getAmplitudeProperty());
         lineProperty.getAmplitude().addListener(this::amplitudeListener);
     }
 
@@ -108,6 +114,7 @@ public class MyPolyline extends HBox {
             throw new RuntimeException(exception);
         }
         parent.getChildren().add(this);
+        updateHandler.getMyPolylineList().add(this);
     }
 
     private SimpleDoubleProperty getControlVboxWidthProperty() {
@@ -156,7 +163,8 @@ public class MyPolyline extends HBox {
 
     public void setYVector(List<Double> yVector) {
         if (yVector == null) return;
-        this.yVector.setAll(yVector);
+        this.yVector.clear();
+        this.yVector.addAll(yVector);
         xVector.clear();
         for (int i = 0; i < yVector.size(); i++) {
             xVector.add((double) i);
@@ -168,7 +176,7 @@ public class MyPolyline extends HBox {
         update();
         if (amplitudeLabel != null) amplitudeLabel.setText(newValue.toString());
         try {
-            //setYPosition(UpdateHandler.get().getLineSpacing() * channelNumber);
+//            setYPosition(UpdateHandler.get().getLineSpacing() * channelNumber);
         } catch (Exception e) {
             e.printStackTrace();
         }
