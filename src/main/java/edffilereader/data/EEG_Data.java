@@ -56,10 +56,10 @@ public class EEG_Data {
         this.storedRecordNumber = storedRecordNumber;
         this.sampleLength = sampleLength;
         channels = new Channel[channelNumber];
-        ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+//        ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         for (int i = 0; i < channelNumber; i++) {
             int temp = i;
-            Runnable task = () -> {
+//            Runnable task = () -> {
                 channels[temp] = new Channel(labelsOfTheChannels.get(temp),
                         transducerTypes.get(temp),
                         physicalDimensionOfChannels.get(temp),
@@ -72,12 +72,11 @@ public class EEG_Data {
                         storedRecordNumber,
                         sampleLength
                 );
-            };
-            executor.execute(task);
-
+//            };
+//            executor.execute(task);
         }
-        executor.shutdown();
-        executor.awaitTermination(1, TimeUnit.DAYS);
+//        executor.shutdown();
+//        executor.awaitTermination(1, TimeUnit.DAYS);
     }
 
     public int[][] getIntArray() {

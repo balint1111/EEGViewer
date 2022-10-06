@@ -14,7 +14,7 @@ public class Configuration {
 
     @Bean
     DataModel dataModel() {
-        return new DataModel(100000);
+        return new DataModel(600);
     }
 
     @Bean

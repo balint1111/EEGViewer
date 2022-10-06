@@ -33,4 +33,8 @@ public class DataRecord {
         lastRequestTime = System.currentTimeMillis();
         return data;
     }
+    public double[] getData(int i) {
+        lastRequestTime = System.currentTimeMillis();
+        return data[i];
+    }
 }

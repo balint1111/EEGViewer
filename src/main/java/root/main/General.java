@@ -128,5 +128,6 @@ public class General {
     public void pickChannel() {
         updateHandlerController.getSelectedChannels().setAll(ChannelPickerDialog.display(dataModel.getEeg_file().getHeader().getLabelsOfTheChannels()));
         updateHandlerController.setColors(colors);
+        dataController.showDataRecord();
     }
 }

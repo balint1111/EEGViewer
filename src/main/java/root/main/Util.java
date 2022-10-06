@@ -6,6 +6,7 @@ import edffilereader.data.EEG_Data;
 import eu.bengreen.data.utility.LargestTriangleThreeBuckets;
 import org.rrd4j.graph.DownSampler;
 
+import java.lang.ref.WeakReference;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,15 +36,16 @@ public class Util {
         return channelPoints;
     }
 
-    public static List<Double> downSample(List<Double> doubles, int horizontalResolution) {
+    public static List<Double> downSample(double[] doubles, int horizontalResolution) {
         LargestTriangleThreeBuckets largestTriangleThreeBuckets = new LargestTriangleThreeBuckets(horizontalResolution);
-        double[] array = doubles.stream().mapToDouble(d -> d).map(d -> (double) d).toArray();
-        long[] timestamps = LongStream.range(0, doubles.size()).map(operand -> (long) operand).toArray();
-        DownSampler.DataSet downsize = largestTriangleThreeBuckets.downsize(timestamps, array);
-        doubles = Arrays.stream(downsize.values).boxed().collect(Collectors.toList());
-        return doubles;
+//        double[] array = doubles.stream().mapToDouble(d -> d).map(d -> (double) d).toArray();
+        long[] timestamps = LongStream.range(0, doubles.length).map(operand -> (long) operand).toArray();
+        DownSampler.DataSet downsize = largestTriangleThreeBuckets.downsize(timestamps, doubles);
+        return Arrays.stream(downsize.values).boxed().collect(Collectors.toList());
     }
 
+
+    //diuble version
     public static List<DataRecord> EEG_DataToDataRecords(EEG_Data eeg_data, int from) {
         ArrayList<DataRecord> dataRecords = new ArrayList<>();
         for (int j = 0; j < eeg_data.getStoredRecordNumber(); j++) {
@@ -57,21 +59,46 @@ public class Util {
         return dataRecords;
     }
 
-    public static List<Double>[] dataRecordsRepackage(List<DataRecord> dataRecordsFromTo, Function<Integer, Boolean> predicate) {
+//    public static List<DataRecord> EEG_DataToDataRecords(EEG_Data eeg_data, int from) {
+//        ArrayList<DataRecord> dataRecords = new ArrayList<>();
+//        for (int j = 0; j < eeg_data.getStoredRecordNumber(); j++) {
+//            byte[][][] arr = new byte[eeg_data.channels.length][][];
+//            for (int i = 0; i < eeg_data.channels.length; i++) {
+//                int temp = i;
+//                arr[temp] = eeg_data.channels[temp].getByteArrayOfRecord(j);
+//            }
+//            dataRecords.add(new DataRecord(arr, from + j));
+//        }
+//        return dataRecords;
+//    }
+//
+
+    public static double[][] dataRecordsRepackage(List<DataRecord> dataRecordsFromTo, Function<Integer, Boolean> predicate) {
         int numberOfChannels = dataRecordsFromTo.get(0).getData().length;
-        List<Double>[] channelsOriginalRes = new ArrayList[numberOfChannels];
+        double[][] channelsOriginalRes = new double[numberOfChannels][];
         for (int i = 0; i < channelsOriginalRes.length; i++) {
             if (predicate.apply(i)) {
-                channelsOriginalRes[i] = new ArrayList<>();
-                for (DataRecord dataRecord : dataRecordsFromTo) {
-                    channelsOriginalRes[i].addAll(new ArrayList<>(Arrays.stream(dataRecord.getData()[i]).boxed().toList()));
-                }
+                channelsOriginalRes[i] = getChannel(dataRecordsFromTo, i);
             }
         }
         return channelsOriginalRes;
     }
 
-    public static List<Double>[] getLists(List<Double>[] channelsOriginalRes, Function<Integer, Optional<MyPolyline>> function) {
+    private static double[] getChannel(List<DataRecord> dataRecordsFromTo, int channelNUmber) {
+        List<double[]> collect = dataRecordsFromTo.stream().map(dataRecord -> dataRecord.getData(channelNUmber)).collect(Collectors.toList());
+        double[] finalList = new double[collect.stream().map(doubles -> doubles.length).reduce(0, Integer::sum)];
+        int start = 0;
+        for (int i = 0; i < collect.size(); i++) {
+            double[] record = collect.get(i);
+            for (int j = 0; j < record.length; j++) {
+                finalList[start + j] = record[j];
+            }
+            start += record.length;
+        }
+        return finalList;
+    }
+
+    public static List<Double>[] getLists(double[][] channelsOriginalRes, Function<Integer, Optional<MyPolyline>> function) {
         List<Double>[] downSampledChannels = new ArrayList[channelsOriginalRes.length];
         for (int i = 0; i < channelsOriginalRes.length; i++) {
             int finalI = i;
@@ -81,6 +108,15 @@ public class Util {
             });
         }
         return downSampledChannels;
+    }
+
+    public static void gc() {
+        Object obj = new Object();
+        WeakReference ref = new WeakReference<Object>(obj);
+        obj = null;
+        while (ref.get() != null) {
+            System.gc();
+        }
     }
 
 }

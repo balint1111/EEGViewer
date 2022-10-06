@@ -42,6 +42,8 @@ public class UpdateHandlerController implements Initializable {
 
     private final Properties properties;
 
+    private final SimpleDoubleProperty horizontalResolution = new SimpleDoubleProperty(0d);
+
 
     private final ObservableList<Integer> selectedChannels = FXCollections.observableArrayList();
     private final DoubleProperty viewportHeightProperty = new SimpleDoubleProperty(0d);
@@ -116,6 +118,7 @@ public class UpdateHandlerController implements Initializable {
         group.getChildren().clear();
         synchronized (myPolylineList) {
             myPolylineList.clear();
+            labels.getChildren().clear();
             for (int i = 0; i < selectedChannels.size(); i++) {
                 MyPolyline myPolyline = new MyPolyline(dataController, c.getList().get(i), group, updateHandler);
                 Label label = new Label(updateHandler.getController().getDataController().getDataModel().getEeg_file().getHeader().getLabelsOfTheChannels(c.getList().get(i)));
@@ -130,6 +133,9 @@ public class UpdateHandlerController implements Initializable {
         updateHandler.addEventFilter(ScrollEvent.SCROLL, this::shiftDownFilter);
         stack.prefWidthProperty().bind(viewportWidthProperty.subtract(labels.prefWidthProperty()));
         labels.minHeightProperty().bind(viewportHeightProperty);
+        horizontalResolution.addListener((observableValue, oldValue, newValue) -> {
+            dataController.showDataRecord();
+        });
     }
 
 //    private void scroll(ScrollEvent event) {

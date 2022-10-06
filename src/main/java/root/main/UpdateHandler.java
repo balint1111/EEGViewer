@@ -21,6 +21,8 @@ import java.io.IOException;
 public class UpdateHandler extends ScrollPane {
     private UpdateHandlerController controller;
 
+    private final SimpleDoubleProperty horizontalResolution = new SimpleDoubleProperty(0d);
+
     private final DoubleProperty viewportHeightProperty = new SimpleDoubleProperty(0d);
     private final DoubleProperty viewportWidthProperty = new SimpleDoubleProperty(0d);
     private final DoubleProperty lineSpacingProperty = new SimpleDoubleProperty(0);
@@ -65,6 +67,8 @@ public class UpdateHandler extends ScrollPane {
         myPolylineList = controller.getMyPolylineList();
         selectedChannels = controller.getSelectedChannels();
 
+        controller.getHorizontalResolution().bindBidirectional(horizontalResolution);
+        horizontalResolution.bind(controller.getGroup().prefWidthProperty().subtract(2));
         controller.getLineSpacingProperty().bindBidirectional(lineSpacingProperty);
         controller.getViewportWidthProperty().bindBidirectional(viewportWidthProperty);
         controller.getViewportHeightProperty().bindBidirectional(viewportHeightProperty);

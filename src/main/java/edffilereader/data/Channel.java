@@ -7,7 +7,7 @@ import java.nio.ByteBuffer;
  *
  * @author balin
  */
-public class Channel{ 
+public class Channel{
 
     String label;
     String transducerType;
@@ -26,9 +26,9 @@ public class Channel{
     int sampleLength;
 
     public byte[] data;
-    
+
     public Channel(){
-        
+
     }
 
     public static Channel copy(Channel original){
@@ -38,7 +38,7 @@ public class Channel{
                 original.storedRecordsOfTheChannel, original.sampleLength);
     }
 
-    public Channel(String label, 
+    public Channel(String label,
             String transducerType,
             String physicalDimension,
             Double physicalMinimum,
@@ -46,7 +46,7 @@ public class Channel{
             Double digitalMinimum,
             Double digitalMaximum,
             String preFiltering,
-            Integer numberOfSamples, 
+            Integer numberOfSamples,
             Integer storedRecordsOfTheChannel,
             int sampleLength) {
         this.label = label;
@@ -63,7 +63,7 @@ public class Channel{
         this.sampleLength = sampleLength;
         calculateValues();
     }
-    
+
     public int[] getIntArray(){
         int [] arr = new int[data.length/sampleLength];
         for (int i = 0; i < arr.length; i++) {
@@ -80,7 +80,16 @@ public class Channel{
         }
         return arr;
     }
-    
+
+    public byte[][] getByteArrayOfRecord(int relativeRecordNumber){
+        byte [][] arr = new byte[numberOfSamples*sampleLength][];
+        int recordStart = relativeRecordNumber * numberOfSamples;
+        for (int i = 0; i < arr.length; i++) {
+            arr[i] = getBytes(recordStart + i);
+        }
+        return arr;
+    }
+
     public double [] getDoubleArray(){
         double [] arr = new double[data.length/sampleLength];
         for (int i = 0; i < arr.length; i++) {
@@ -96,7 +105,15 @@ public class Channel{
         }
         return arr;
     }
-    
+
+    private byte[] getBytes(int sampleNumber){
+        byte[] value = new byte[sampleLength];
+        for(int i = 0;i < sampleLength-1 ;i++){
+            value[i] = data[sampleNumber*sampleLength + i];
+        }
+        return value;
+    }
+
     private Integer getInt(int sampleNumber){
         Integer value = 0;
         for(int i = 0;i < sampleLength-1 ;i++){

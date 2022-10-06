@@ -33,7 +33,8 @@ public class DataModel {
     private MainController mainController;
 
     public List<DataRecord> getDataRecordsFromTo(int from, int to) throws Exception {
-        List<DataRecord> memoryList = new ArrayList<>();
+        if (eeg_file == null) throw new Exception("eeg_file is null");
+        List<DataRecord> memoryList;
         List<DataRecord> loadedFromDisk = new ArrayList<>();
         synchronized (queue) {
             memoryList = queue.stream().filter(dataRecord -> dataRecord.getDataRecordNumber() >= from && dataRecord.getDataRecordNumber() <= to).collect(Collectors.toList());
@@ -58,15 +59,15 @@ public class DataModel {
         finalList.addAll(memoryList);
         finalList.addAll(loadedFromDisk);
         finalList.sort(Comparator.comparing(DataRecord::getDataRecordNumber));
-        for (int i = 1, finalListSize = finalList.size(); i < finalListSize; i++) {
-            if (finalList.get(i).getDataRecordNumber() - finalList.get(i - 1).getDataRecordNumber() != 1) {
-                System.out.println(finalList.get(i).getDataRecordNumber() + " " + finalList.get(i - 1).getDataRecordNumber());
-                int finalI = i;
-                long count = memoryList.stream().filter(dataRecord -> dataRecord.getDataRecordNumber().equals(finalList.get(finalI).getDataRecordNumber())).count();
-                System.out.println("count: " + count);
-                throw new Exception("baj");
-            }
-        }
+//        for (int i = 1, finalListSize = finalList.size(); i < finalListSize; i++) {
+//            if (finalList.get(i).getDataRecordNumber() - finalList.get(i - 1).getDataRecordNumber() != 1) {
+//                System.out.println(finalList.get(i).getDataRecordNumber() + " " + finalList.get(i - 1).getDataRecordNumber());
+//                int finalI = i;
+//                long count = memoryList.stream().filter(dataRecord -> dataRecord.getDataRecordNumber().equals(finalList.get(finalI).getDataRecordNumber())).count();
+//                System.out.println("count: " + count);
+//                throw new Exception("baj");
+//            }
+//        }
         return finalList;
     }
 

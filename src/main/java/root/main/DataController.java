@@ -1,7 +1,5 @@
 package root.main;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import lombok.Data;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +22,7 @@ public class DataController {
     private AsyncExecutor asyncExecutor;
     private ThreadPoolExecutor backgroundExecutor;
     private General general;
-    private Thread thread;
+    private Thread thread = new Thread();
 
     @Autowired
     private void init(AsyncExecutor asyncExecutor,
@@ -43,9 +41,6 @@ public class DataController {
 
     @SneakyThrows
     public void showDataRecord() {
-        int from = (int) general.getScrollBarValue().get();
-        int to = from + general.getPageSizeProperty().get() - 1;
-        if ((to - from) < 0) return;
 
         //interupt the thread if running
         if (thread != null && !thread.isInterrupted()) {
@@ -57,18 +52,26 @@ public class DataController {
                 try {
                     thread = Thread.currentThread();
                     preLoadInterrupt();
+                    int from = (int) general.getScrollBarValue().get();
+                    int to = from + general.getPageSizeProperty().get() - 1;
+                    if ((to - from) < 0) return;
 //                    System.out.println("from: " + from + " to: " + to);
 
 
                     List<DataRecord> dataRecordsFromTo = dataModel.getDataRecordsFromTo(from, to);
-
+                    if (Thread.interrupted()) throw new InterruptedException();
                     List<Double>[] downSampledChannels;
 
                     synchronized (updateHandlerController.getMyPolylineList()) {
-                        List<Double>[] channelsOriginalRes = Util.dataRecordsRepackage(dataRecordsFromTo, i -> updateHandlerController.getMyPolylineList().parallelStream().anyMatch(myPolyline -> myPolyline.getChannelNumber().equals(i)));
-
+                        double[][] channelsOriginalRes = Util.dataRecordsRepackage(dataRecordsFromTo, i -> updateHandlerController.getMyPolylineList().stream().anyMatch(myPolyline -> myPolyline.getChannelNumber().equals(i)));
+                        dataRecordsFromTo = null;
+                        if (Thread.interrupted()) throw new InterruptedException();
                         downSampledChannels = Util.getLists(channelsOriginalRes, (i) -> updateHandlerController.getMyPolylineList().stream().filter(myPolyline -> myPolyline.getChannelNumber().equals(i)).findFirst());
+                        channelsOriginalRes = null;
+                        if (Thread.interrupted()) throw new InterruptedException();
                         updateHandlerController.setYVectors(downSampledChannels);
+                        downSampledChannels = null;
+                        if (Thread.interrupted()) throw new InterruptedException();
                         updateHandlerController.update();
                     }
 

@@ -30,8 +30,9 @@ public class MyScrollBar extends ScrollBar implements Initializable {
     public void init(General mainController) {
         this.general = mainController;
         mainController.setScrollBarValue(minMaxProperty);
-        visibleAmountProperty().bind(mainController.getPageSizeProperty());
-        maxProperty().bind(mainController.getNumberOfDataRecordsProperty().subtract(visibleAmountProperty()));
+
+        maxProperty().bind(mainController.getNumberOfDataRecordsProperty().subtract(mainController.getPageSizeProperty()));
+        visibleAmountProperty().bind(mainController.getPageSizeProperty().divide(mainController.getNumberOfDataRecordsProperty().divide(maxProperty())));
         maxProperty().addListener((observable, oldValue, newMax) -> {
             if (newMax.doubleValue() < valueProperty().get()) {
                 valueProperty().setValue(newMax);
