@@ -1,23 +1,20 @@
-package root.main;
+package root.main.fx;
 
 import com.sun.javafx.scene.control.DoubleField;
 import com.sun.javafx.scene.control.IntegerField;
-import custom.component.MyScrollBar;
-import javafx.embed.swing.JFXPanel;
+import root.main.fx.custom.MyScrollBar;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.layout.HBox;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import root.main.*;
+import root.main.fx.custom.UpdateHandler;
 
 import java.net.URL;
 import java.util.ResourceBundle;

@@ -1,12 +1,11 @@
-package root.main;
+package root.main.common;
 
 import com.github.ggalmazor.ltdownsampling.Point;
-import custom.component.MyPolyline;
+import root.main.fx.custom.MyPolyline;
 import edffilereader.data.EEG_Data;
 import eu.bengreen.data.utility.LargestTriangleThreeBuckets;
 import org.rrd4j.graph.DownSampler;
 
-import java.lang.ref.WeakReference;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,12 +35,35 @@ public class Util {
         return channelPoints;
     }
 
-    public static List<Double> downSample(double[] doubles, int horizontalResolution) {
+    public static List<Double> downSample(float[] doubles, int horizontalResolution) {
+        doubles = upSample(doubles, horizontalResolution);
         LargestTriangleThreeBuckets largestTriangleThreeBuckets = new LargestTriangleThreeBuckets(horizontalResolution);
 //        double[] array = doubles.stream().mapToDouble(d -> d).map(d -> (double) d).toArray();
         long[] timestamps = LongStream.range(0, doubles.length).map(operand -> (long) operand).toArray();
-        DownSampler.DataSet downsize = largestTriangleThreeBuckets.downsize(timestamps, doubles);
+        DownSampler.DataSet downsize = largestTriangleThreeBuckets.downsize(timestamps, convert(doubles));
         return Arrays.stream(downsize.values).boxed().collect(Collectors.toList());
+    }
+
+    private static float[] upSample(float[] doubles, int horizontalResolution) {
+        if (horizontalResolution > doubles.length) {
+            int multiplier = (int) ((double) horizontalResolution / (double) doubles.length) + 1;
+            float[] newData = new float[doubles.length * multiplier];
+            for (int i = 0; i < doubles.length; i++) {
+                for (int j = 0; j < multiplier; j++) {
+                    newData[i*multiplier + j] = doubles[i];
+                }
+            }
+            doubles = newData;
+        }
+        return doubles;
+    }
+
+    private static double[] convert(float[] floats) {
+        double[] DoubleArray = new double[floats.length];
+        for (int i = 0; i < floats.length; i++) {
+            DoubleArray[i] = (double) floats[i];
+        }
+        return DoubleArray;
     }
 
 
@@ -49,7 +71,7 @@ public class Util {
     public static List<DataRecord> EEG_DataToDataRecords(EEG_Data eeg_data, int from) {
         ArrayList<DataRecord> dataRecords = new ArrayList<>();
         for (int j = 0; j < eeg_data.getStoredRecordNumber(); j++) {
-            double[][] arr = new double[eeg_data.channels.length][];
+            float[][] arr = new float[eeg_data.channels.length][];
             for (int i = 0; i < eeg_data.channels.length; i++) {
                 int temp = i;
                 arr[temp] = eeg_data.channels[temp].getDoubleArrayOfRecord(j);
@@ -59,23 +81,10 @@ public class Util {
         return dataRecords;
     }
 
-//    public static List<DataRecord> EEG_DataToDataRecords(EEG_Data eeg_data, int from) {
-//        ArrayList<DataRecord> dataRecords = new ArrayList<>();
-//        for (int j = 0; j < eeg_data.getStoredRecordNumber(); j++) {
-//            byte[][][] arr = new byte[eeg_data.channels.length][][];
-//            for (int i = 0; i < eeg_data.channels.length; i++) {
-//                int temp = i;
-//                arr[temp] = eeg_data.channels[temp].getByteArrayOfRecord(j);
-//            }
-//            dataRecords.add(new DataRecord(arr, from + j));
-//        }
-//        return dataRecords;
-//    }
-//
 
-    public static double[][] dataRecordsRepackage(List<DataRecord> dataRecordsFromTo, Function<Integer, Boolean> predicate) {
+    public static float[][] dataRecordsRepackage(List<DataRecord> dataRecordsFromTo, Function<Integer, Boolean> predicate) {
         int numberOfChannels = dataRecordsFromTo.get(0).getData().length;
-        double[][] channelsOriginalRes = new double[numberOfChannels][];
+        float[][] channelsOriginalRes = new float[numberOfChannels][];
         for (int i = 0; i < channelsOriginalRes.length; i++) {
             if (predicate.apply(i)) {
                 channelsOriginalRes[i] = getChannel(dataRecordsFromTo, i);
@@ -84,12 +93,30 @@ public class Util {
         return channelsOriginalRes;
     }
 
-    private static double[] getChannel(List<DataRecord> dataRecordsFromTo, int channelNUmber) {
-        List<double[]> collect = dataRecordsFromTo.stream().map(dataRecord -> dataRecord.getData(channelNUmber)).collect(Collectors.toList());
-        double[] finalList = new double[collect.stream().map(doubles -> doubles.length).reduce(0, Integer::sum)];
+    public static float[][] offsetData(float[][] data, int offset, List<Integer> numberOfSamples) {
+        Integer maxOffset = numberOfSamples.stream().max(Integer::compare).get();
+        double offsetMultiplier = (double) offset / (double) maxOffset;
+        for (int i = 0; i < data.length; i++) {
+            Integer numberOfSample = numberOfSamples.get(i);
+            int channelOffset = maxOffset.equals(numberOfSample) ? offset: (int)(numberOfSample * offsetMultiplier);
+            float[] channel = data[i];
+            if (channel != null) {
+                float[] newChannel = new float[channel.length - numberOfSample];
+                for (int j = 0; j < newChannel.length; j++) {
+                    newChannel[j] = channel[j + channelOffset];
+                }
+                data[i] = newChannel;
+            }
+        }
+        return data;
+    }
+
+    private static float[] getChannel(List<DataRecord> dataRecordsFromTo, int channelNUmber) {
+        List<float[]> collect = dataRecordsFromTo.stream().map(dataRecord -> dataRecord.getData(channelNUmber)).collect(Collectors.toList());
+        float[] finalList = new float[collect.stream().map(doubles -> doubles.length).reduce(0, Integer::sum)];
         int start = 0;
         for (int i = 0; i < collect.size(); i++) {
-            double[] record = collect.get(i);
+            float[] record = collect.get(i);
             for (int j = 0; j < record.length; j++) {
                 finalList[start + j] = record[j];
             }
@@ -98,7 +125,7 @@ public class Util {
         return finalList;
     }
 
-    public static List<Double>[] getLists(double[][] channelsOriginalRes, Function<Integer, Optional<MyPolyline>> function) {
+    public static List<Double>[] getLists(float[][] channelsOriginalRes, Function<Integer, Optional<MyPolyline>> function) {
         List<Double>[] downSampledChannels = new ArrayList[channelsOriginalRes.length];
         for (int i = 0; i < channelsOriginalRes.length; i++) {
             int finalI = i;
@@ -108,15 +135,6 @@ public class Util {
             });
         }
         return downSampledChannels;
-    }
-
-    public static void gc() {
-        Object obj = new Object();
-        WeakReference ref = new WeakReference<Object>(obj);
-        obj = null;
-        while (ref.get() != null) {
-            System.gc();
-        }
     }
 
 }

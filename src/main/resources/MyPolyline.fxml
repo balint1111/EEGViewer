@@ -22,7 +22,7 @@
 <!--          style="-fx-background-color: green;">-->
         <Pane>
             <Polyline fx:id="polyline"/>
-            <Line fx:id="line" startX="0" startY="0" endY="0"/>
+<!--            <Line fx:id="line" startX="0" startY="0" endY="0"/>-->
         </Pane>
 <!--    </Group>-->
 </fx:root>

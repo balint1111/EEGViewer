@@ -1,9 +1,8 @@
 package custom.component;
 
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import lombok.Getter;
+import root.main.fx.custom.JFormattedTextFieldProperty;
 
 import javax.swing.*;
 import javax.swing.text.*;

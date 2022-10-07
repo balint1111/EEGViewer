@@ -1,11 +1,12 @@
 package root.main;
 
-import custom.component.MinMaxProperty;
-import custom.dialogs.ChannelPickerDialog;
+import root.main.fx.custom.UpdateHandler;
+import root.main.fx.UpdateHandlerController;
+import root.main.fx.custom.MinMaxIntegerProperty;
+import root.main.fx.custom.ScrollProperty;
+import root.main.fx.custom.ChannelPickerDialog;
 import edffilereader.file.EEG_File;
-import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.event.ActionEvent;
 import javafx.scene.paint.Color;
@@ -18,9 +19,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
+import root.main.fx.MainController;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
@@ -42,8 +43,9 @@ public class General {
 
     private final IntegerProperty pageSizeProperty = new SimpleIntegerProperty();
     private final IntegerProperty numberOfDataRecordsProperty = new SimpleIntegerProperty();
+    private final IntegerProperty numberOfSamplesProperty = new SimpleIntegerProperty();
     @Setter
-    private MinMaxProperty scrollBarValue;
+    private ScrollProperty scrollBarValue;
     public UpdateHandler updateHandler;
 
     private final UpdateHandlerController updateHandlerController;
@@ -53,11 +55,12 @@ public class General {
     private Integer DEFAULT_PAGE_SIZE = 100;
 
     private final List<Color> colors = new ArrayList<>(Arrays.asList(
-            Color.valueOf("yellow"),
-            Color.valueOf("lightgreen"),
-            Color.valueOf("red"),
-            Color.valueOf("lightblue"),
-            Color.valueOf("violet")
+            Color.gray(0.05)
+//            Color.valueOf("yellow"),
+//            Color.valueOf("lightgreen"),
+//            Color.valueOf("red"),
+//            Color.valueOf("lightblue"),
+//            Color.valueOf("violet")
     ));
 
     public General(DataController dataController, DataModel dataModel,
@@ -95,8 +98,12 @@ public class General {
             dataModel.setEeg_file(EEG_File.build(file));
 
             numberOfDataRecordsProperty.setValue(dataModel.getEeg_file().getHeader().getNumberOfDataRecords());
+            numberOfSamplesProperty.setValue(dataModel.getEeg_file().getHeader().getNumberOfSamples().stream().max(Integer::compare).get());
 
             pickChannel();
+
+            updateHandlerController.getLineSpacingProperty().setValue(70);
+            updateHandlerController.getAmplitudeProperty().set(0.1);
 
             pageSizeProperty.setValue(DEFAULT_PAGE_SIZE);
 
@@ -107,7 +114,7 @@ public class General {
 
     @PostMapping("/previous")
     public void previousPage(ActionEvent actionEvent) {
-        scrollBarValue.setValue(scrollBarValue.get() - pageSizeProperty.get());
+        scrollBarValue.getRecordProperty().setValue(scrollBarValue.getRecordProperty().get() - pageSizeProperty.get());
     }
 
     @PostMapping("/next")
@@ -115,7 +122,7 @@ public class General {
 //        dataController.getSelectedChannels().addAll(4);
 //        updateHandler.setAmplitudes(amplitude);
 //        updateHandler.setColors(colors);
-        scrollBarValue.setValue(scrollBarValue.get() + pageSizeProperty.get());
+        scrollBarValue.getRecordProperty().setValue(scrollBarValue.getRecordProperty().get() + pageSizeProperty.get());
     }
 
 

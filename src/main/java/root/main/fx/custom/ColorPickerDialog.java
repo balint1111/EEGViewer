@@ -1,4 +1,4 @@
-package custom.dialogs;
+package root.main.fx.custom;
 
 import com.sun.javafx.scene.control.DoubleField;
 import javafx.geometry.Insets;
@@ -11,7 +11,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import custom.component.LineProperty;
+import root.main.fx.custom.LineProperty;
 
 public class ColorPickerDialog {
 

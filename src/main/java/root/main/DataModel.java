@@ -5,15 +5,17 @@ import com.google.common.collect.Range;
 import edffilereader.data.EEG_Data;
 import edffilereader.file.EEG_File;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.util.CollectionUtils;
+import root.exceptions.DataModelException;
+import root.main.common.DataRecord;
+import root.main.common.Util;
+import root.main.fx.MainController;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Slf4j
 public class DataModel {
@@ -33,7 +35,7 @@ public class DataModel {
     private MainController mainController;
 
     public List<DataRecord> getDataRecordsFromTo(int from, int to) throws Exception {
-        if (eeg_file == null) throw new Exception("eeg_file is null");
+        if (eeg_file == null) throw new DataModelException("eeg_file is null");
         List<DataRecord> memoryList;
         List<DataRecord> loadedFromDisk = new ArrayList<>();
         synchronized (queue) {

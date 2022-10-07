@@ -1,4 +1,4 @@
-package root.main;
+package root.main.common;
 
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;

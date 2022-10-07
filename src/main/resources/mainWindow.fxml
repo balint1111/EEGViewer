@@ -6,44 +6,45 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
-<?import root.main.UpdateHandler?>
-<?import custom.component.MyScrollBar?>
+<?import root.main.fx.custom.UpdateHandler?>
+<?import root.main.fx.custom.MyScrollBar?>
 <?import javafx.scene.control.ScrollBar?>
+<?import javafx.scene.layout.StackPane?>
 <HBox fx:id="root" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml">
-<!--    <VBox fx:id="control" prefWidth="${root.width/12}" style="-fx-background-color: red" fillWidth="false">-->
-<!--&lt;!&ndash;        <Button fx:id="previousBtn" text="previous Page" />&ndash;&gt;-->
-<!--&lt;!&ndash;        <Button fx:id="nextBtn" text="next Page" />&ndash;&gt;-->
-<!--&lt;!&ndash;        <Button fx:id="openBtn"  text="open" />&ndash;&gt;-->
-<!--&lt;!&ndash;        <Button fx:id="channelPicker" text="channelPicker" />&ndash;&gt;-->
-<!--        <IntegerField fx:id="pageSizeField"/>-->
-<!--        <DoubleField fx:id="amplitudeField"/>-->
-<!--        <DoubleField fx:id="lineSpacingField"/>-->
-<!--    </VBox>-->
+    <!--    <VBox fx:id="control" prefWidth="${root.width/12}" style="-fx-background-color: red" fillWidth="false">-->
+    <!--&lt;!&ndash;        <Button fx:id="previousBtn" text="previous Page" />&ndash;&gt;-->
+    <!--&lt;!&ndash;        <Button fx:id="nextBtn" text="next Page" />&ndash;&gt;-->
+    <!--&lt;!&ndash;        <Button fx:id="openBtn"  text="open" />&ndash;&gt;-->
+    <!--&lt;!&ndash;        <Button fx:id="channelPicker" text="channelPicker" />&ndash;&gt;-->
+    <!--        <IntegerField fx:id="pageSizeField"/>-->
+    <!--        <DoubleField fx:id="amplitudeField"/>-->
+    <!--        <DoubleField fx:id="lineSpacingField"/>-->
+    <!--    </VBox>-->
 
     <VBox fx:id="chart" prefWidth="${root.width}">
         <Pane fx:id="timeline" minHeight="30" viewOrder="-Infinity" style="-fx-background-color: grey"></Pane>
         <Pane fx:id="pane" prefWidth="${chart.width}" prefHeight="${chart.height}">
-            <Pane fx:id="background" style="-fx-background-color: brown" prefWidth="${pane.width}" prefHeight="${pane.height}">
+            <Pane fx:id="background" style="-fx-background-color: brown" prefWidth="${pane.width}"
+                  prefHeight="${pane.height}">
 
             </Pane>
-            <UpdateHandler fx:id="updateHandler" prefWidth="${pane.width}" prefHeight="${pane.height}" />
+            <UpdateHandler fx:id="updateHandler" prefWidth="${pane.width}" prefHeight="${pane.height}"/>
         </Pane>
-        <MyScrollBar prefWidth="${updateHandler.viewportWidthProperty.get}" minHeight="50" fx:id="myScrollBar" viewOrder="-Infinity"></MyScrollBar>
-
+        <MyScrollBar prefWidth="${updateHandler.viewportWidthProperty.get}" minHeight="50" fx:id="myScrollBar"
+                     viewOrder="-Infinity"/>
     </VBox>
-<!--    <ScrollBar visible="false" orientation="VERTICAL" prefHeight="${chart.height}"></ScrollBar>-->
+    <!--    <ScrollBar visible="false" orientation="VERTICAL" prefHeight="${chart.height}"></ScrollBar>-->
 
 
+    <!--    <ScrollPane fx:id="scrollPane" hbarPolicy="AS_NEEDED">-->
+    <!--            <AnchorPane fx:id="pane" prefWidth="${root.width/12*11}" style="-fx-background-color: #404040">-->
 
-<!--    <ScrollPane fx:id="scrollPane" hbarPolicy="AS_NEEDED">-->
-<!--            <AnchorPane fx:id="pane" prefWidth="${root.width/12*11}" style="-fx-background-color: #404040">-->
+    <!--            </AnchorPane>-->
+    <!--    </ScrollPane>-->
 
-<!--            </AnchorPane>-->
-<!--    </ScrollPane>-->
-
-<!--   <AnchorPane style="-fx-background-color: red" prefWidth="${root.width*0/6}">-->
-<!--      <padding>-->
-<!--         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />-->
-<!--      </padding>-->
-<!--   </AnchorPane>-->
+    <!--   <AnchorPane style="-fx-background-color: red" prefWidth="${root.width*0/6}">-->
+    <!--      <padding>-->
+    <!--         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />-->
+    <!--      </padding>-->
+    <!--   </AnchorPane>-->
 </HBox>

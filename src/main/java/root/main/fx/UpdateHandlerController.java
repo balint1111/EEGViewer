@@ -1,7 +1,9 @@
-package root.main;
+package root.main.fx;
 
-import custom.component.Modes;
-import custom.component.MyPolyline;
+import root.main.DataController;
+import root.main.General;
+import root.main.common.enums.Modes;
+import root.main.fx.custom.MyPolyline;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -18,6 +20,8 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import lombok.Getter;
 import org.springframework.stereotype.Controller;
+import root.main.common.Properties;
+import root.main.fx.custom.UpdateHandler;
 
 import java.net.URL;
 import java.util.List;
@@ -156,7 +160,7 @@ public class UpdateHandlerController implements Initializable {
 
     private void shiftDownFilter(ScrollEvent event) {
         if (event.isShiftDown()) {
-            general.getScrollBarValue().setValue(general.getScrollBarValue().get() - event.getDeltaY());
+            general.getScrollBarValue().getRecordProperty().setValue(general.getScrollBarValue().getRecordProperty().get() - event.getDeltaY());
 //            scroll(event);
             event.consume();
         }

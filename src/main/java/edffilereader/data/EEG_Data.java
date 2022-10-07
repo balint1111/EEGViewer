@@ -95,8 +95,8 @@ public class EEG_Data {
 //        return arr;
 //    }
 
-    public double[][] getDoubleArray() throws InterruptedException {
-        double[][] arr = new double[channels.length][];
+    public float[][] getDoubleArray() throws InterruptedException {
+        float[][] arr = new float[channels.length][];
         ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         for (int i = 0; i < channels.length; i++) {
             int temp = i;
