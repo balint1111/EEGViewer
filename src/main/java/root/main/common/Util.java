@@ -36,6 +36,15 @@ public class Util {
     }
 
     public static List<Double> downSample(float[] doubles, int horizontalResolution) {
+        doubles = upSample(doubles, horizontalResolution);
+        LargestTriangleThreeBuckets largestTriangleThreeBuckets = new LargestTriangleThreeBuckets(horizontalResolution);
+//        double[] array = doubles.stream().mapToDouble(d -> d).map(d -> (double) d).toArray();
+        long[] timestamps = LongStream.range(0, doubles.length).map(operand -> (long) operand).toArray();
+        DownSampler.DataSet downsize = largestTriangleThreeBuckets.downsize(timestamps, convert(doubles));
+        return Arrays.stream(downsize.values).boxed().collect(Collectors.toList());
+    }
+
+    private static float[] upSample(float[] doubles, int horizontalResolution) {
         if (horizontalResolution > doubles.length) {
             int multiplier = (int) ((double) horizontalResolution / (double) doubles.length) + 1;
             float[] newData = new float[doubles.length * multiplier];
@@ -46,11 +55,7 @@ public class Util {
             }
             doubles = newData;
         }
-        LargestTriangleThreeBuckets largestTriangleThreeBuckets = new LargestTriangleThreeBuckets(horizontalResolution);
-//        double[] array = doubles.stream().mapToDouble(d -> d).map(d -> (double) d).toArray();
-        long[] timestamps = LongStream.range(0, doubles.length).map(operand -> (long) operand).toArray();
-        DownSampler.DataSet downsize = largestTriangleThreeBuckets.downsize(timestamps, convert(doubles));
-        return Arrays.stream(downsize.values).boxed().collect(Collectors.toList());
+        return doubles;
     }
 
     private static double[] convert(float[] floats) {
