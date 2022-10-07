@@ -46,8 +46,6 @@ public class General {
     private final IntegerProperty numberOfSamplesProperty = new SimpleIntegerProperty();
     @Setter
     private ScrollProperty scrollBarValue;
-    @Setter
-    private MinMaxIntegerProperty offset;
     public UpdateHandler updateHandler;
 
     private final UpdateHandlerController updateHandlerController;

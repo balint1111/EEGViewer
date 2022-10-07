@@ -1,26 +1,18 @@
 package root.main.fx.custom;
 
-import javafx.fxml.Initializable;
 import javafx.scene.control.ScrollBar;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import root.main.General;
 
-import java.net.URL;
-import java.util.ResourceBundle;
-
-public class MyScrollBar extends ScrollBar implements Initializable {
+@Getter
+public class MyScrollBar extends ScrollBar {
 
     private General general;
-    private UpdateHandler updateHandler;
     private ScrollProperty scrollProperty;
 
     public MyScrollBar() {
         System.out.println("scrollbar");
-    }
-
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-
     }
 
     @Autowired
