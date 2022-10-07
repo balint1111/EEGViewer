@@ -57,7 +57,7 @@ public class General {
     private Integer DEFAULT_PAGE_SIZE = 100;
 
     private final List<Color> colors = new ArrayList<>(Arrays.asList(
-            Color.valueOf("black")
+            Color.gray(0.05)
 //            Color.valueOf("yellow"),
 //            Color.valueOf("lightgreen"),
 //            Color.valueOf("red"),

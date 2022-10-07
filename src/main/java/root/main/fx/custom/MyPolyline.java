@@ -66,7 +66,7 @@ public class MyPolyline extends HBox {
         this.channelNumber = channelNumber;
         load(parent);
         polyLineList = polyline.getPoints();
-        polyline.setStrokeWidth(3);
+        polyline.setStrokeWidth(0.8d);
 
         layoutYProperty().bind(updateHandler.getBaseOffsetProperty().add(updateHandler.getLineSpacingProperty().multiply(channelNumber + 1)));
 
@@ -76,7 +76,7 @@ public class MyPolyline extends HBox {
         Tooltip t = new Tooltip(dataController.getDataModel().getEeg_file().getHeader().getLabelsOfTheChannels().get(channelNumber));
         Tooltip.install(polyline, t);
         initLineProperty(controlVboxWidthProperty, prefWidthProperty);
-        lineInit();
+        //lineInit();
         nameLabelInit(dataController, channelNumber);
 //        setStyleClasses();
     }
