@@ -10,8 +10,8 @@ import javafx.application.Platform;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import root.main.General;
-import root.main.MainController;
-import root.main.Properties;
+import root.main.fx.MainController;
+import root.main.common.Properties;
 
 public class SwingController extends javax.swing.JPanel {
 
@@ -351,7 +351,7 @@ public class SwingController extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void firstPageButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_firstPageButton1ActionPerformed
-        Platform.runLater(() -> general.getScrollBarValue().set(0));
+        Platform.runLater(() -> general.getScrollBarValue().getRecordProperty().set(0));
     }//GEN-LAST:event_firstPageButton1ActionPerformed
 
     private void playToggleButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playToggleButton1ActionPerformed
@@ -367,7 +367,7 @@ public class SwingController extends javax.swing.JPanel {
     }//GEN-LAST:event_nextPageButton1ActionPerformed
 
     private void lastPageButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lastPageButton1ActionPerformed
-        Platform.runLater(() -> general.getScrollBarValue().set(general.getScrollBarValue().getMax().get()));
+        Platform.runLater(() -> general.getScrollBarValue().getRecordProperty().set(general.getScrollBarValue().getRecordProperty().getMax().get()));
     }//GEN-LAST:event_lastPageButton1ActionPerformed
 
     private void openEEGFileButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openEEGFileButton1ActionPerformed

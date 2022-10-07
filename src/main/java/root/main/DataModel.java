@@ -5,15 +5,16 @@ import com.google.common.collect.Range;
 import edffilereader.data.EEG_Data;
 import edffilereader.file.EEG_File;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.util.CollectionUtils;
+import root.main.common.DataRecord;
+import root.main.common.Util;
+import root.main.fx.MainController;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Slf4j
 public class DataModel {

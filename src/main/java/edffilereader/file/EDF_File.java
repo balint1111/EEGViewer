@@ -4,6 +4,7 @@ import com.github.ggalmazor.ltdownsampling.LTThreeBuckets;
 import edffilereader.data.Channel;
 import edffilereader.data.EEG_Data;
 import edffilereader.header.EDF_Header;
+import lombok.SneakyThrows;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,6 +12,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ClosedByInterruptException;
+import java.nio.channels.FileChannel;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -22,22 +24,28 @@ public class EDF_File extends EEG_File {
     private static final int SAMPLE_LENGTH = 2;
 
 
+    @SneakyThrows
     public EDF_File(String filename) throws FileNotFoundException {
         header = new EDF_Header();
         header.setFilename(filename);
 
 
         header.setFileChannel(new FileInputStream(filename).getChannel());
+        FileChannel fileChannel = header.getFileChannel();
+        header.setmBuffer(fileChannel.map(FileChannel.MapMode.READ_ONLY,0, fileChannel.size()));
 
         readHeader();
     }
 
+    @SneakyThrows
     public EDF_File(File file) throws FileNotFoundException {
         header = new EDF_Header();
         header.setFilename(file.getAbsolutePath());
 
 
         header.setFileChannel(new FileInputStream(file).getChannel());
+        FileChannel fileChannel = header.getFileChannel();
+        header.setmBuffer(fileChannel.map(FileChannel.MapMode.READ_ONLY,0, fileChannel.size()));
 
         readHeader();
     }

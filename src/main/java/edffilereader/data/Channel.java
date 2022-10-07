@@ -21,8 +21,8 @@ public class Channel{
 
 
     Integer storedRecordsOfTheChannel;
-    double bitValue;
-    double offset;
+    float bitValue;
+    float offset;
     int sampleLength;
 
     public byte[] data;
@@ -72,11 +72,11 @@ public class Channel{
         return arr;
     }
 
-    public double [] getDoubleArrayOfRecord(int relativeRecordNumber){
-        double [] arr = new double[numberOfSamples];
+    public float [] getDoubleArrayOfRecord(int relativeRecordNumber){
+        float [] arr = new float[numberOfSamples];
         int recordStart = relativeRecordNumber * numberOfSamples;
         for (int i = 0; i < arr.length; i++) {
-            arr[i] = bitValue * (offset + (double) getInt(recordStart + i));
+            arr[i] = bitValue * (offset + (float) getInt(recordStart + i));
         }
         return arr;
     }
@@ -90,18 +90,18 @@ public class Channel{
         return arr;
     }
 
-    public double [] getDoubleArray(){
-        double [] arr = new double[data.length/sampleLength];
+    public float [] getDoubleArray(){
+        float [] arr = new float[data.length/sampleLength];
         for (int i = 0; i < arr.length; i++) {
-            arr[i] = bitValue * (offset + (double) getInt(i));
+            arr[i] = bitValue * (offset + (float) getInt(i));
         }
         return arr;
     }
 
-    public Double [] getDoubleArrayObject(){
-        Double [] arr = new Double[data.length/sampleLength];
+    public Float [] getDoubleArrayObject(){
+        Float [] arr = new Float[data.length/sampleLength];
         for (int i = 0; i < arr.length; i++) {
-            arr[i] = bitValue * (offset + (double) getInt(i));
+            arr[i] = bitValue * (offset + (float) getInt(i));
         }
         return arr;
     }
@@ -124,8 +124,8 @@ public class Channel{
     }
 
     public void calculateValues() {
-        bitValue = ((double) (physicalMaximum - physicalMinimum)) / ((double)(digitalMaximum - digitalMinimum));
-        offset = ((double)physicalMaximum) / bitValue - ((double)digitalMaximum);
+        bitValue = ((float) (physicalMaximum - physicalMinimum)) / ((float)(digitalMaximum - digitalMinimum));
+        offset = ((float)physicalMaximum.floatValue()) / bitValue - ((float)digitalMaximum.floatValue());
     }
 
     public Channel getRecordOfTheChanel(int relativeRecordNumber) throws Exception {

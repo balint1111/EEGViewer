@@ -7,6 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import root.async.AsyncExecutor;
+import root.main.common.DataRecord;
+import root.main.common.Util;
+import root.main.fx.UpdateHandlerController;
 
 import java.nio.channels.ClosedByInterruptException;
 import java.util.List;
@@ -52,8 +55,9 @@ public class DataController {
                 try {
                     thread = Thread.currentThread();
                     preLoadInterrupt();
-                    int from = (int) general.getScrollBarValue().get();
-                    int to = from + general.getPageSizeProperty().get() - 1;
+                    int offset = general.getScrollBarValue().getOffsetProperty().get();
+                    int from = (int) general.getScrollBarValue().getRecordProperty().get();
+                    int to = from + general.getPageSizeProperty().get() - 1 + (offset != 0 ? 1 : 0);
                     if ((to - from) < 0) return;
 //                    System.out.println("from: " + from + " to: " + to);
 
@@ -63,7 +67,8 @@ public class DataController {
                     List<Double>[] downSampledChannels;
 
                     synchronized (updateHandlerController.getMyPolylineList()) {
-                        double[][] channelsOriginalRes = Util.dataRecordsRepackage(dataRecordsFromTo, i -> updateHandlerController.getMyPolylineList().stream().anyMatch(myPolyline -> myPolyline.getChannelNumber().equals(i)));
+                        float[][] channelsOriginalRes = Util.dataRecordsRepackage(dataRecordsFromTo, i -> updateHandlerController.getMyPolylineList().stream().anyMatch(myPolyline -> myPolyline.getChannelNumber().equals(i)));
+                        if (offset != 0) Util.offsetData(channelsOriginalRes, offset, dataModel.getEeg_file().getHeader().getNumberOfSamples());
                         dataRecordsFromTo = null;
                         if (Thread.interrupted()) throw new InterruptedException();
                         downSampledChannels = Util.getLists(channelsOriginalRes, (i) -> updateHandlerController.getMyPolylineList().stream().filter(myPolyline -> myPolyline.getChannelNumber().equals(i)).findFirst());

@@ -1,17 +1,17 @@
-package root.main;
+package root.main.fx.custom;
 
-import custom.component.Modes;
-import custom.component.MyPolyline;
+import root.main.common.enums.Modes;
+import root.main.fx.UpdateHandlerController;
+import root.main.fx.custom.MyPolyline;
 import javafx.beans.property.*;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ScrollPane;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
+import root.main.common.Properties;
 
 import java.io.IOException;
 

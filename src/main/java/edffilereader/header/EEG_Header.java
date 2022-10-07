@@ -3,6 +3,7 @@ package edffilereader.header;
 import lombok.SneakyThrows;
 
 import java.io.FileInputStream;
+import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +16,8 @@ import java.util.stream.Collectors;
 public abstract class EEG_Header {
     
     protected FileChannel fileChannel;
+
+    protected MappedByteBuffer mBuffer;
 
     protected String filename;
     protected Integer numberOfDataRecords;
@@ -41,6 +44,14 @@ public abstract class EEG_Header {
             fileChannel = new FileInputStream(filename).getChannel();
         }
         return fileChannel;
+    }
+
+    public MappedByteBuffer getmBuffer() {
+        return mBuffer;
+    }
+
+    public void setmBuffer(MappedByteBuffer mBuffer) {
+        this.mBuffer = mBuffer;
     }
 
     public void setFileChannel(FileChannel fileChannel) {

@@ -6,8 +6,8 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
-<?import root.main.UpdateHandler?>
-<?import custom.component.MyScrollBar?>
+<?import root.main.fx.custom.UpdateHandler?>
+<?import root.main.fx.custom.MyScrollBar?>
 <?import javafx.scene.control.ScrollBar?>
 <HBox fx:id="root" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml">
 <!--    <VBox fx:id="control" prefWidth="${root.width/12}" style="-fx-background-color: red" fillWidth="false">-->

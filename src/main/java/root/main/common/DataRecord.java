@@ -1,4 +1,4 @@
-package root.main;
+package root.main.common;
 
 import edffilereader.data.EEG_Data;
 import lombok.Data;
@@ -8,7 +8,7 @@ import lombok.ToString;
 @ToString
 public class DataRecord {
 
-    private double[][] data;
+    private float[][] data;
 
     private Integer dataRecordNumber;
 
@@ -16,7 +16,7 @@ public class DataRecord {
 
     DataRecord(){};
 
-    DataRecord(double[][] data, Integer dataRecordNumber) {
+    public DataRecord(float[][] data, Integer dataRecordNumber) {
         this.data = data;
         this.dataRecordNumber = dataRecordNumber;
     }
@@ -29,11 +29,11 @@ public class DataRecord {
         this.dataRecordNumber = dataRecordNumber;
     }
 
-    public double[][] getData() {
+    public float[][] getData() {
         lastRequestTime = System.currentTimeMillis();
         return data;
     }
-    public double[] getData(int i) {
+    public float[] getData(int i) {
         lastRequestTime = System.currentTimeMillis();
         return data[i];
     }

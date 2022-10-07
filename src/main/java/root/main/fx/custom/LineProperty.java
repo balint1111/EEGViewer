@@ -1,4 +1,4 @@
-package custom.component;
+package root.main.fx.custom;
 
 import javafx.beans.property.*;
 import javafx.scene.paint.Paint;

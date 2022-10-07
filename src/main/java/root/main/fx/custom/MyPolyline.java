@@ -1,11 +1,9 @@
-package custom.component;
+package root.main.fx.custom;
 
-import custom.dialogs.ColorPickerDialog;
 import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -14,12 +12,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polyline;
 import lombok.Getter;
 import root.main.DataController;
-import root.main.UpdateHandler;
 
 import java.io.IOException;
 import java.util.*;

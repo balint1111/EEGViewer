@@ -1,4 +1,4 @@
-package custom.component;
+package root.main.fx.custom;
 
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
@@ -6,12 +6,12 @@ import javafx.beans.property.SimpleDoubleProperty;
 import lombok.Getter;
 
 @Getter
-public class MinMaxProperty extends SimpleDoubleProperty {
+public class MinMaxDoubleProperty extends SimpleDoubleProperty {
 
     private final DoubleProperty max;
     private final DoubleProperty min;
 
-    public MinMaxProperty(DoubleProperty max, DoubleProperty min) {
+    public MinMaxDoubleProperty(DoubleProperty max, DoubleProperty min) {
         super();
         this.max = max;
         this.min = min;

@@ -4,14 +4,14 @@
  */
 package root.main.swing;
 
-import root.main.KeyboardListener;
+import root.main.common.KeyboardListener;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.Scene;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Controller;
 import root.SpringJavaFxApplication;
-import root.main.MainController;
+import root.main.fx.MainController;
 
 import javax.swing.*;
 import java.awt.*;

@@ -1,4 +1,4 @@
-package custom.component;
+package root.main.fx.custom;
 
 import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
