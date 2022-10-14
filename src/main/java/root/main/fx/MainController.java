@@ -31,9 +31,6 @@ public class MainController implements Initializable {
     @FXML
     public DoubleField lineSpacingField;
 
-    @FXML
-    public MyScrollBar myScrollBar;
-
 
     private final DataController dataController;
     private final DataModel dataModel;
@@ -76,8 +73,6 @@ public class MainController implements Initializable {
         autowireCapableBeanFactory.autowireBean(updateHandler);
         applicationContext.getBeanFactory().registerSingleton(updateHandler.getClass().getCanonicalName(), updateHandler);
         updateHandlerController = updateHandler.getController();
-        autowireCapableBeanFactory.autowireBean(myScrollBar);
-        applicationContext.getBeanFactory().registerSingleton(myScrollBar.getClass().getCanonicalName(), myScrollBar);
         init();
     }
 

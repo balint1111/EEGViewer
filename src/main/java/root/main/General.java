@@ -1,12 +1,9 @@
 package root.main;
 
-import root.main.fx.custom.UpdateHandler;
-import root.main.fx.UpdateHandlerController;
-import root.main.fx.custom.MinMaxIntegerProperty;
-import root.main.fx.custom.ScrollProperty;
-import root.main.fx.custom.ChannelPickerDialog;
 import edffilereader.file.EEG_File;
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.event.ActionEvent;
 import javafx.scene.paint.Color;
@@ -21,7 +18,12 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import root.main.fx.MainController;
+import root.main.fx.UpdateHandlerController;
+import root.main.fx.custom.ChannelPickerDialog;
+import root.main.fx.custom.ScrollProperty;
+import root.main.fx.custom.UpdateHandler;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
@@ -32,6 +34,7 @@ import java.util.List;
 @Slf4j
 @Controller
 @Getter
+@RequestMapping("/control")
 public class General {
     private MainController mainController;
 
@@ -44,6 +47,7 @@ public class General {
     private final IntegerProperty pageSizeProperty = new SimpleIntegerProperty();
     private final IntegerProperty numberOfDataRecordsProperty = new SimpleIntegerProperty();
     private final IntegerProperty numberOfSamplesProperty = new SimpleIntegerProperty();
+    private final DoubleProperty durationOfDataRecordProperty = new SimpleDoubleProperty();
     @Setter
     private ScrollProperty scrollBarValue;
     public UpdateHandler updateHandler;
@@ -96,7 +100,8 @@ public class General {
     private void openNewFile(File file) {
         try {
             dataModel.setEeg_file(EEG_File.build(file));
-
+//            durationOfDataRecordProperty.set((Double) dataModel.getEeg_file().getHeader().getExtraParameters().get("durationOfDataRecordProperty"));
+            System.out.println(":" + dataModel.getEeg_file().getHeader().getExtraParameters().keySet());
             numberOfDataRecordsProperty.setValue(dataModel.getEeg_file().getHeader().getNumberOfDataRecords());
             numberOfSamplesProperty.setValue(dataModel.getEeg_file().getHeader().getNumberOfSamples().stream().max(Integer::compare).get());
 
@@ -114,7 +119,7 @@ public class General {
 
     @PostMapping("/previous")
     public void previousPage(ActionEvent actionEvent) {
-        scrollBarValue.getRecordProperty().setValue(scrollBarValue.getRecordProperty().get() - pageSizeProperty.get());
+        scrollBarValue.getPosition().getRecordProperty().setValue(scrollBarValue.getPosition().getRecordProperty().get() - pageSizeProperty.get());
     }
 
     @PostMapping("/next")
@@ -122,7 +127,7 @@ public class General {
 //        dataController.getSelectedChannels().addAll(4);
 //        updateHandler.setAmplitudes(amplitude);
 //        updateHandler.setColors(colors);
-        scrollBarValue.getRecordProperty().setValue(scrollBarValue.getRecordProperty().get() + pageSizeProperty.get());
+        scrollBarValue.getPosition().getRecordProperty().setValue(scrollBarValue.getPosition().getRecordProperty().get() + pageSizeProperty.get());
     }
 
 

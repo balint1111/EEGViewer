@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 import root.main.General;
 import root.main.fx.UpdateHandlerController;
 import root.main.common.enums.Modes;
+import root.main.fx.custom.MinMaxIntegerProperty;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -12,6 +13,7 @@ import java.awt.event.KeyEvent;
 public class KeyboardListener implements KeyEventDispatcher {
     private final UpdateHandlerController updateHandlerController;
     private final General general;
+
     public KeyboardListener(UpdateHandlerController updateHandlerController, General general) {
         this.updateHandlerController = updateHandlerController;
         this.general = general;
@@ -32,18 +34,18 @@ public class KeyboardListener implements KeyEventDispatcher {
             } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
                 updateHandlerController.getAmplitudeProperty().set(updateHandlerController.getAmplitudeProperty().get() - 0.01);
             } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-                if ((general.getScrollBarValue().getOffsetProperty().get() + 1) >= general.getScrollBarValue().getOffsetProperty().getMax().get()) {
-                    general.getScrollBarValue().getOffsetProperty().set(0);
-                    general.getScrollBarValue().getRecordProperty().set(general.getScrollBarValue().getRecordProperty().get() + 1);
+                if ((general.getScrollBarValue().getPosition().getOffsetProperty().get() + 1) >= ((MinMaxIntegerProperty) general.getScrollBarValue().getPosition().getOffsetProperty()).getMax().get()) {
+                    general.getScrollBarValue().getPosition().getOffsetProperty().set(0);
+                    general.getScrollBarValue().getPosition().getRecordProperty().set(general.getScrollBarValue().getPosition().getRecordProperty().get() + 1);
                 } else {
-                    general.getScrollBarValue().getOffsetProperty().set(general.getScrollBarValue().getOffsetProperty().get() + 1);
+                    general.getScrollBarValue().getPosition().getOffsetProperty().set(general.getScrollBarValue().getPosition().getOffsetProperty().get() + 1);
                 }
             } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-                if ((general.getScrollBarValue().getOffsetProperty().get() - 1) < 0) {
-                    general.getScrollBarValue().getOffsetProperty().set(general.getScrollBarValue().getOffsetProperty().getMax().get() - 1);
-                    general.getScrollBarValue().getRecordProperty().set(general.getScrollBarValue().getRecordProperty().get() - 1);
+                if ((general.getScrollBarValue().getPosition().getOffsetProperty().get() - 1) < 0) {
+                    general.getScrollBarValue().getPosition().getOffsetProperty().set(((MinMaxIntegerProperty) general.getScrollBarValue().getPosition().getOffsetProperty()).getMax().get() - 1);
+                    general.getScrollBarValue().getPosition().getRecordProperty().set(general.getScrollBarValue().getPosition().getRecordProperty().get() - 1);
                 } else {
-                    general.getScrollBarValue().getOffsetProperty().set(general.getScrollBarValue().getOffsetProperty().get() - 1);
+                    general.getScrollBarValue().getPosition().getOffsetProperty().set(general.getScrollBarValue().getPosition().getOffsetProperty().get() - 1);
                 }
             }
         }

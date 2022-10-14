@@ -17,8 +17,8 @@ public class ScrollProperty extends PositionProperty {
         super(recordMax, offsetMax);
         this.onChange = onChange;
 
-        recordProperty.addListener(this::positionChange);
-        offsetProperty.addListener(this::positionChange);
+        position.getRecordProperty().addListener(this::positionChange);
+        position.getOffsetProperty().addListener(this::positionChange);
     }
 
     public void setDoubleProperty(DoubleProperty property) {
@@ -29,7 +29,7 @@ public class ScrollProperty extends PositionProperty {
     private void positionChange(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
         if (!recursive) {
             recursive = true;
-            doubleProperty.setValue(recordProperty.get() + offsetProperty.get() * (1 / offsetProperty.getMax().get()));
+            doubleProperty.setValue(position.getRecordProperty().get() + position.getOffsetProperty().get() * (1 / ((MinMaxIntegerProperty) position.getOffsetProperty()).getMax().get()));
         } else {
             recursive = false;
         }
@@ -40,9 +40,9 @@ public class ScrollProperty extends PositionProperty {
     private void doublePropertyChange(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
         if (!recursive) {
             recursive = true;
-            recordProperty.set(newValue.intValue());
-            offsetProperty.set((int) (((newValue.doubleValue() - newValue.intValue())
-                    / (1d / (double) offsetProperty.getMax().get())))
+            position.getRecordProperty().set(newValue.intValue());
+            position.getOffsetProperty().set((int) (((newValue.doubleValue() - newValue.intValue())
+                    / (1d / (double) ((MinMaxIntegerProperty) position.getOffsetProperty()).getMax().get())))
             );
         } else {
             recursive = false;

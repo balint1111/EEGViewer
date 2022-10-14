@@ -25,7 +25,7 @@ public class MyScrollBar extends ScrollBar {
         scrollProperty.setDoubleProperty(valueProperty());
         general.setScrollBarValue(scrollProperty);
 
-        maxProperty().bind(scrollProperty.getRecordProperty().getMax());
+        maxProperty().bind(((MinMaxIntegerProperty)scrollProperty.getPosition().getRecordProperty()).getMax());
         visibleAmountProperty().bind(general.getPageSizeProperty().divide(general.getNumberOfDataRecordsProperty().divide(maxProperty())));
         maxProperty().addListener((observable, oldValue, newMax) -> {
             if (newMax.doubleValue() < valueProperty().get()) {

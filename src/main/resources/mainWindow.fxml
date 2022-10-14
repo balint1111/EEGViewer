@@ -21,18 +21,18 @@
     <!--        <DoubleField fx:id="lineSpacingField"/>-->
     <!--    </VBox>-->
 
-    <VBox fx:id="chart" prefWidth="${root.width}">
-        <Pane fx:id="timeline" minHeight="30" viewOrder="-Infinity" style="-fx-background-color: grey"></Pane>
-        <Pane fx:id="pane" prefWidth="${chart.width}" prefHeight="${chart.height}">
-            <Pane fx:id="background" style="-fx-background-color: brown" prefWidth="${pane.width}"
-                  prefHeight="${pane.height}">
+<!--    <VBox fx:id="chart" prefWidth="${root.width}">-->
+<!--        <Pane fx:id="timeline" minHeight="30" viewOrder="-Infinity" style="-fx-background-color: grey"></Pane>-->
+<!--        <Pane fx:id="pane" prefWidth="${chart.width}" prefHeight="${chart.height}">-->
+<!--            <Pane fx:id="background" style="-fx-background-color: brown" prefWidth="${pane.width}"-->
+<!--                  prefHeight="${pane.height}">-->
 
-            </Pane>
-            <UpdateHandler fx:id="updateHandler" prefWidth="${pane.width}" prefHeight="${pane.height}"/>
-        </Pane>
-        <MyScrollBar prefWidth="${updateHandler.viewportWidthProperty.get}" minHeight="50" fx:id="myScrollBar"
-                     viewOrder="-Infinity"/>
-    </VBox>
+<!--            </Pane>-->
+            <UpdateHandler fx:id="updateHandler" prefWidth="${root.width}" prefHeight="${root.height}"/>
+<!--        </Pane>-->
+<!--        <MyScrollBar prefWidth="${updateHandler.viewportWidthProperty.get}" minHeight="50" fx:id="myScrollBar"-->
+<!--                     viewOrder="-Infinity"/>-->
+<!--    </VBox>-->
     <!--    <ScrollBar visible="false" orientation="VERTICAL" prefHeight="${chart.height}"></ScrollBar>-->
 
 

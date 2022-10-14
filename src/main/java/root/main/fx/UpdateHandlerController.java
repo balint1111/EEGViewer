@@ -1,9 +1,14 @@
 package root.main.fx;
 
+import javafx.application.Platform;
+import javafx.scene.control.ScrollPane;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.context.ConfigurableApplicationContext;
 import root.main.DataController;
 import root.main.General;
 import root.main.common.enums.Modes;
-import root.main.fx.custom.MyPolyline;
+import root.main.fx.custom.*;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -21,7 +26,7 @@ import javafx.scene.paint.Color;
 import lombok.Getter;
 import org.springframework.stereotype.Controller;
 import root.main.common.Properties;
-import root.main.fx.custom.UpdateHandler;
+import root.main.fx.custom.builders.PositionPropertyBuilder;
 
 import java.net.URL;
 import java.util.List;
@@ -31,6 +36,8 @@ import java.util.ResourceBundle;
 @Getter
 @Controller
 public class UpdateHandlerController implements Initializable {
+
+    private ConfigurableApplicationContext applicationContext;
 
     @FXML
     private Pane group;
@@ -43,6 +50,15 @@ public class UpdateHandlerController implements Initializable {
 
     @FXML
     private UpdateHandler updateHandler;
+
+    @FXML
+    private ScrollPane scrollPane;
+
+    @FXML
+    public MyScrollBar myScrollBar;
+
+    @FXML
+    private Pane backgroundLayer;
 
     private final Properties properties;
 
@@ -60,20 +76,21 @@ public class UpdateHandlerController implements Initializable {
 
     private ObjectProperty<Modes> modeProperty = new SimpleObjectProperty<>(Modes.NORMAL);
 
-    public UpdateHandlerController(Properties properties, DataController dataController, General general){
-        this.properties = properties;
-        this.general = general;
-        System.out.println("UpdateHandlerController");
-        this.dataController = dataController;
-    }
-
     private ObservableList<MyPolyline> myPolylineList = FXCollections.observableArrayList();
+    private ObservableList<MyLine> myLines = FXCollections.observableArrayList();
 
     private Double lineSpacing = 0d;
 
     private final DataController dataController;
+    private final PositionPropertyBuilder positionPropertyBuilder;
 
-
+    public UpdateHandlerController(Properties properties, DataController dataController, General general, PositionPropertyBuilder positionPropertyBuilder) {
+        this.properties = properties;
+        this.general = general;
+        this.dataController = dataController;
+        this.positionPropertyBuilder = positionPropertyBuilder;
+        System.out.println("UpdateHandlerController");
+    }
 
     public void setYVectors(List<Double>[] yVectors) {
         synchronized (myPolylineList) {
@@ -132,14 +149,45 @@ public class UpdateHandlerController implements Initializable {
         }
     }
 
+    Position relative;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        updateHandler.init();
         updateHandler.addEventFilter(ScrollEvent.SCROLL, this::shiftDownFilter);
         stack.prefWidthProperty().bind(viewportWidthProperty.subtract(labels.prefWidthProperty()));
         labels.minHeightProperty().bind(viewportHeightProperty);
         horizontalResolution.addListener((observableValue, oldValue, newValue) -> {
             dataController.showDataRecord();
         });
+        AutowireCapableBeanFactory autowireCapableBeanFactory = applicationContext.getAutowireCapableBeanFactory();
+        autowireCapableBeanFactory.autowireBean(myScrollBar);
+        applicationContext.getBeanFactory().registerSingleton(myScrollBar.getClass().getCanonicalName(), myScrollBar);
+
+
+//        relative = positionPropertyBuilder.relative(general.getScrollBarValue().getPosition(), new Position(100, 0));
+//        relative.getRecordProperty().addListener((observable, oldValue, newValue) -> {
+//            System.out.println(":" + newValue);
+//        });
+
+        general.getNumberOfDataRecordsProperty().addListener((observable, oldValue, newValue) -> {
+            Platform.runLater(() -> {
+                synchronized (myLines) {
+                    myLines.clear();
+                    for (int i = 0; i < newValue.intValue(); i++) {
+                        myLines.add(new MyLine(positionPropertyBuilder.build(new Position(i, 0)), updateHandler.viewportHeightProperty(), labels.prefWidthProperty(), backgroundLayer,
+                                horizontalResolution.divide(general.getPageSizeProperty().multiply(general.getNumberOfSamplesProperty())), general.getScrollBarValue().getPosition(), positionPropertyBuilder.relative(general.getScrollBarValue().getPosition(), new Position(100, 0)), general.getNumberOfSamplesProperty()));
+                    }
+                }
+
+            });
+        });
+    }
+
+    @Autowired
+    private void autowire(ConfigurableApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+
     }
 
 //    private void scroll(ScrollEvent event) {
@@ -160,7 +208,7 @@ public class UpdateHandlerController implements Initializable {
 
     private void shiftDownFilter(ScrollEvent event) {
         if (event.isShiftDown()) {
-            general.getScrollBarValue().getRecordProperty().setValue(general.getScrollBarValue().getRecordProperty().get() - event.getDeltaY());
+            general.getScrollBarValue().getPosition().getRecordProperty().setValue(general.getScrollBarValue().getPosition().getRecordProperty().get() - event.getDeltaY());
 //            scroll(event);
             event.consume();
         }

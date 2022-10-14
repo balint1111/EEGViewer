@@ -1,5 +1,8 @@
 package root.main.fx.custom;
 
+import javafx.fxml.FXML;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import root.main.common.enums.Modes;
 import root.main.fx.UpdateHandlerController;
 import root.main.fx.custom.MyPolyline;
@@ -18,8 +21,14 @@ import java.io.IOException;
 
 @Getter
 @Setter
-public class UpdateHandler extends ScrollPane {
+public class UpdateHandler extends VBox {
     private UpdateHandlerController controller;
+
+    @FXML
+    private ScrollPane scrollPane;
+
+    @FXML
+    private Pane backgroundLayer;
 
     private final SimpleDoubleProperty horizontalResolution = new SimpleDoubleProperty(0d);
 
@@ -58,14 +67,13 @@ public class UpdateHandler extends ScrollPane {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-        init();
     }
 
     public void init() {
-        initViewPortProperties();
-
         myPolylineList = controller.getMyPolylineList();
         selectedChannels = controller.getSelectedChannels();
+        scrollPane = controller.getScrollPane();
+        initViewPortProperties();
 
         controller.getHorizontalResolution().bindBidirectional(horizontalResolution);
         horizontalResolution.bind(controller.getGroup().prefWidthProperty().subtract(2));
@@ -79,6 +87,7 @@ public class UpdateHandler extends ScrollPane {
         selectedChannels.addListener(controller::onChangeSelectedChannels);
 
         modeProperty.addListener(this::changeMode);
+
     }
 
 
@@ -98,23 +107,23 @@ public class UpdateHandler extends ScrollPane {
         }
     }
 
-    private void initViewPortProperties() {
+    public void initViewPortProperties() {
 
-        viewportBoundsProperty().addListener((observableValue, bounds, t1) -> {
+        scrollPane.viewportBoundsProperty().addListener((observableValue, bounds, t1) -> {
             int newHeight = (int) (t1.getMaxY() - t1.getMinY());
             if (newHeight != viewportHeightProperty.get()) {
                 viewportHeightProperty.setValue(newHeight);
             }
         });
-        viewportHeightProperty.setValue(getViewportBounds().getMaxY() - getViewportBounds().getMinY());
+        viewportHeightProperty.setValue(scrollPane.getViewportBounds().getMaxY() - scrollPane.getViewportBounds().getMinY());
 
-        viewportBoundsProperty().addListener((observableValue, bounds, t1) -> {
+        scrollPane.viewportBoundsProperty().addListener((observableValue, bounds, t1) -> {
             int newWidth = (int) (t1.getMaxX() - t1.getMinX());
             if (newWidth != viewportWidthProperty.get()) {
                 viewportWidthProperty.setValue(newWidth);
             }
         });
-        viewportWidthProperty.setValue(getViewportBounds().getMaxX() - getViewportBounds().getMinX());
+        viewportWidthProperty.setValue(scrollPane.getViewportBounds().getMaxX() - scrollPane.getViewportBounds().getMinX());
     }
 
 

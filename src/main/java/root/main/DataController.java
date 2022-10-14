@@ -58,10 +58,10 @@ public class DataController {
             backgroundExecutor.execute(() -> {
                 try {
                     thread = Thread.currentThread();
-                    preLoadInterrupt();
+//                    preLoadInterrupt();
                     ScrollProperty scrollProperty = Optional.ofNullable(general.getScrollBarValue()).orElseThrow(() -> new DataControllerException("scrollBarValue is Null"));
-                    int offset = scrollProperty.getOffsetProperty().get();
-                    int from = scrollProperty.getRecordProperty().get();
+                    int offset = scrollProperty.getPosition().getOffsetProperty().get();
+                    int from = scrollProperty.getPosition().getRecordProperty().get();
                     int to = from + general.getPageSizeProperty().get() - 1 + (offset != 0 ? 1 : 0);
                     if ((to - from) < 0) return;
 //                    System.out.println("from: " + from + " to: " + to);

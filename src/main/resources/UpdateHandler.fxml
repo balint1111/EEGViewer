@@ -6,21 +6,37 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<fx:root fx:id="updateHandler" type="javafx.scene.control.ScrollPane" xmlns:fx="http://javafx.com/fxml"
-    style="-fx-background-color: grey">
-    <VBox>
+<?import root.main.fx.custom.MyScrollBar?>
+<?import javafx.scene.shape.Line?>
+<fx:root fx:id="updateHandler" type="root.main.fx.custom.UpdateHandler" xmlns:fx="http://javafx.com/fxml"
+         style="-fx-background-color: grey">
+    <Pane fx:id="timeline" minHeight="30" viewOrder="-Infinity" style="-fx-background-color: grey"></Pane>
+    <Pane fx:id="pane" prefWidth="${updateHandler.width}" prefHeight="${updateHandler.height}">
+        <Pane fx:id="backgroundLayer" style="-fx-background-color: white" prefWidth="${pane.width}"
+              prefHeight="${pane.height}">
+        </Pane>
+        <ScrollPane fx:id="scrollPane" prefWidth="${updateHandler.width}" prefHeight="${updateHandler.height}"
+                    style="-fx-background-color: transparent; -fx-background: transparent">
+            <VBox>
 
-        <HBox>
-            <Pane fx:id="labels" prefWidth="80" style="-fx-background-color: grey;" viewOrder="-Infinity">
-            </Pane>
+                <HBox>
+                    <Pane fx:id="labels" prefWidth="80" style="-fx-background-color: grey;" viewOrder="-Infinity">
+                    </Pane>
 
-            <StackPane fx:id="stack">
-                <Pane fx:id="background" style="-fx-background-color: white" prefWidth="${stack.prefWidth}"/>
-                <Pane fx:id="group" prefWidth="${stack.prefWidth}"/>
-                <!--            <Pane fx:id="foreground"  style="-fx-background-color: blue" prefWidth="${stack.prefWidth}"/>-->
-            </StackPane>
+                    <StackPane fx:id="stack">
+                        <!--                    <Pane fx:id="background" style="-fx-background-color: white" prefWidth="${stack.prefWidth}"/>-->
+                        <Pane fx:id="group" prefWidth="${stack.prefWidth}"/>
+                        <!--            <Pane fx:id="foreground"  style="-fx-background-color: blue" prefWidth="${stack.prefWidth}"/>-->
+                    </StackPane>
 
 
-        </HBox>
-    </VBox>
+                </HBox>
+            </VBox>
+        </ScrollPane>
+
+    </Pane>
+    <MyScrollBar prefWidth="${updateHandler.viewportWidthProperty.get}" minHeight="50" fx:id="myScrollBar"
+                 viewOrder="-Infinity"/>
+
+
 </fx:root>
