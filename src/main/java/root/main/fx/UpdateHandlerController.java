@@ -1,6 +1,7 @@
 package root.main.fx;
 
 import javafx.application.Platform;
+import javafx.beans.property.*;
 import javafx.scene.control.ScrollPane;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
@@ -9,10 +10,6 @@ import root.main.DataController;
 import root.main.General;
 import root.main.common.enums.Modes;
 import root.main.fx.custom.*;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -176,7 +173,7 @@ public class UpdateHandlerController implements Initializable {
                     myLines.clear();
                     for (int i = 0; i < newValue.intValue(); i++) {
                         myLines.add(new MyLine(positionPropertyBuilder.build(new Position(i, 0)), updateHandler.viewportHeightProperty(), labels.prefWidthProperty(), backgroundLayer,
-                                horizontalResolution.divide(general.getPageSizeProperty().multiply(general.getNumberOfSamplesProperty())), general.getScrollBarValue().getPosition(), positionPropertyBuilder.relative(general.getScrollBarValue().getPosition(), new Position(100, 0)), general.getNumberOfSamplesProperty()));
+                                horizontalResolution.divide(general.getPageSizeProperty().multiply(general.getNumberOfSamplesProperty())), general.getScrollBarValue().getPosition(), positionPropertyBuilder.relative(general.getScrollBarValue().getPosition(), new Position(general.getPageSizeProperty(), new ReadOnlyIntegerWrapper(0))), general.getNumberOfSamplesProperty()));
                     }
                 }
 
