@@ -74,7 +74,7 @@ public class UpdateHandlerController implements Initializable {
     private ObjectProperty<Modes> modeProperty = new SimpleObjectProperty<>(Modes.NORMAL);
 
     private ObservableList<MyPolyline> myPolylineList = FXCollections.observableArrayList();
-    private ObservableList<MyLine> myLines = FXCollections.observableArrayList();
+    private final ObservableList<MyLine> myLines = FXCollections.observableArrayList();
 
     private Double lineSpacing = 0d;
 
