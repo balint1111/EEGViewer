@@ -1,10 +1,7 @@
 package root.main;
 
 import edffilereader.file.EEG_File;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.*;
 import javafx.event.ActionEvent;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
@@ -22,8 +19,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import root.main.fx.MainController;
 import root.main.fx.UpdateHandlerController;
 import root.main.fx.custom.ChannelPickerDialog;
+import root.main.fx.custom.Position;
 import root.main.fx.custom.ScrollProperty;
 import root.main.fx.custom.UpdateHandler;
+import root.main.fx.custom.builders.PositionPropertyBuilder;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
@@ -37,6 +36,7 @@ import java.util.List;
 @RequestMapping("/control")
 public class General {
     private MainController mainController;
+    private PositionPropertyBuilder positionPropertyBuilder;
 
     private final DataController dataController;
     private final DataModel dataModel;
@@ -48,8 +48,17 @@ public class General {
     private final IntegerProperty numberOfDataRecordsProperty = new SimpleIntegerProperty();
     private final IntegerProperty numberOfSamplesProperty = new SimpleIntegerProperty();
     private final DoubleProperty durationOfDataRecordProperty = new SimpleDoubleProperty();
-    @Setter
+
     private ScrollProperty scrollBarValue;
+
+    public void setScrollBarValue(ScrollProperty scrollBarValue) {
+        this.scrollBarValue = scrollBarValue;
+        pageEndPosition = positionPropertyBuilder.relative(scrollBarValue.getPosition(), new Position(pageSizeProperty, new ReadOnlyIntegerWrapper(0)));
+    }
+
+
+    private Position pageEndPosition;
+
     public UpdateHandler updateHandler;
 
     private final UpdateHandlerController updateHandlerController;
@@ -67,11 +76,14 @@ public class General {
 //            Color.valueOf("violet")
     ));
 
-    public General(DataController dataController, DataModel dataModel,
+    public General(@Lazy PositionPropertyBuilder positionPropertyBuilder,
+                   DataController dataController,
+                   DataModel dataModel,
                    ConfigurableApplicationContext applicationContext,
                    AutowireCapableBeanFactory autowireCapableBeanFactory,
                    @Lazy UpdateHandlerController updateHandlerController
     ) {
+        this.positionPropertyBuilder = positionPropertyBuilder;
         this.dataController = dataController;
         this.dataModel = dataModel;
         this.applicationContext = applicationContext;
@@ -100,8 +112,9 @@ public class General {
     private void openNewFile(File file) {
         try {
             dataModel.setEeg_file(EEG_File.build(file));
-//            durationOfDataRecordProperty.set((Double) dataModel.getEeg_file().getHeader().getExtraParameters().get("durationOfDataRecordProperty"));
-            System.out.println(":" + dataModel.getEeg_file().getHeader().getExtraParameters().keySet());
+            durationOfDataRecordProperty.set((Double) dataModel.getEeg_file().getHeader().getExtraParameters().get("durationOfDataRecord"));
+            System.out.println("duratiom: " + durationOfDataRecordProperty.get());
+//            System.out.println(":" + dataModel.getEeg_file().getHeader().getExtraParameters().keySet());
             numberOfDataRecordsProperty.setValue(dataModel.getEeg_file().getHeader().getNumberOfDataRecords());
             numberOfSamplesProperty.setValue(dataModel.getEeg_file().getHeader().getNumberOfSamples().stream().max(Integer::compare).get());
 

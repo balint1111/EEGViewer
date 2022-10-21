@@ -37,16 +37,15 @@ public class KeyboardListener implements KeyEventDispatcher {
                     updateHandlerController.getAmplitudeProperty().set(updateHandlerController.getAmplitudeProperty().get() - 0.01);
                 } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
                     if ((general.getScrollBarValue().getPosition().getOffsetProperty().get() + 1) >= ((MinMaxIntegerProperty) general.getScrollBarValue().getPosition().getOffsetProperty()).getMax().get()) {
-
-                        general.getScrollBarValue().getPosition().getRecordProperty().set(general.getScrollBarValue().getPosition().getRecordProperty().get() + 1);
                         general.getScrollBarValue().getPosition().getOffsetProperty().set(0);
+                        general.getScrollBarValue().getPosition().getRecordProperty().set(general.getScrollBarValue().getPosition().getRecordProperty().get() + 1);
                     } else {
                         general.getScrollBarValue().getPosition().getOffsetProperty().set(general.getScrollBarValue().getPosition().getOffsetProperty().get() + 1);
                     }
                 } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
                     if ((general.getScrollBarValue().getPosition().getOffsetProperty().get() - 1) < 0) {
-                        general.getScrollBarValue().getPosition().getRecordProperty().set(general.getScrollBarValue().getPosition().getRecordProperty().get() - 1);
                         general.getScrollBarValue().getPosition().getOffsetProperty().set(((MinMaxIntegerProperty) general.getScrollBarValue().getPosition().getOffsetProperty()).getMax().get() - 1);
+                        general.getScrollBarValue().getPosition().getRecordProperty().set(general.getScrollBarValue().getPosition().getRecordProperty().get() - 1);
                     } else {
                         general.getScrollBarValue().getPosition().getOffsetProperty().set(general.getScrollBarValue().getPosition().getOffsetProperty().get() - 1);
                     }

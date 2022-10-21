@@ -22,6 +22,8 @@ import java.io.IOException;
 @Getter
 @Setter
 public class UpdateHandler extends VBox {
+    @FXML
+    public Pane timeline;
     private UpdateHandlerController controller;
 
     @FXML

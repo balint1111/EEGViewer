@@ -15,4 +15,17 @@ public class Position {
         this.recordProperty = new ReadOnlyIntegerWrapper(recordProperty);
         this.offsetProperty = new ReadOnlyIntegerWrapper(offsetProperty);
     }
+
+    public boolean equals(Position o) {
+        if (o == this) {
+            return true;
+        }
+        if (!(o instanceof Position)) {
+            return false;
+        }
+        Position c = (Position) o;
+
+        return Integer.compare(recordProperty.get(), c.recordProperty.get()) == 0
+                && Integer.compare(offsetProperty.get(), c.offsetProperty.get()) == 0;
+    }
 }

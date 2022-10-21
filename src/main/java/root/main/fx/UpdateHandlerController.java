@@ -40,6 +40,9 @@ public class UpdateHandlerController implements Initializable {
     private Pane group;
 
     @FXML
+    private Pane timeLine;
+
+    @FXML
     private Pane labels;
 
     @FXML
@@ -60,6 +63,7 @@ public class UpdateHandlerController implements Initializable {
     private final Properties properties;
 
     private final SimpleDoubleProperty horizontalResolution = new SimpleDoubleProperty(0d);
+    private final DoubleProperty pixelPerMilliSecond = new SimpleDoubleProperty();
 
 
     private final ObservableList<Integer> selectedChannels = FXCollections.observableArrayList();
@@ -151,6 +155,7 @@ public class UpdateHandlerController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         updateHandler.init();
+        pixelPerMilliSecond.bind(horizontalResolution.divide(general.getDurationOfDataRecordProperty().multiply(general.getNumberOfDataRecordsProperty())));
         updateHandler.addEventFilter(ScrollEvent.SCROLL, this::shiftDownFilter);
         stack.prefWidthProperty().bind(viewportWidthProperty.subtract(labels.prefWidthProperty()));
         labels.minHeightProperty().bind(viewportHeightProperty);
@@ -161,23 +166,11 @@ public class UpdateHandlerController implements Initializable {
         autowireCapableBeanFactory.autowireBean(myScrollBar);
         applicationContext.getBeanFactory().registerSingleton(myScrollBar.getClass().getCanonicalName(), myScrollBar);
 
-
-//        relative = positionPropertyBuilder.relative(general.getScrollBarValue().getPosition(), new Position(100, 0));
-//        relative.getRecordProperty().addListener((observable, oldValue, newValue) -> {
-//            System.out.println(":" + newValue);
-//        });
-
-        general.getNumberOfDataRecordsProperty().addListener((observable, oldValue, newValue) -> {
-            Platform.runLater(() -> {
-                synchronized (myLines) {
-                    myLines.clear();
-                    for (int i = 0; i < newValue.intValue(); i++) {
-                        myLines.add(new MyLine(positionPropertyBuilder.build(new Position(i, 0)), updateHandler.viewportHeightProperty(), labels.prefWidthProperty(), backgroundLayer,
-                                horizontalResolution.divide(general.getPageSizeProperty().multiply(general.getNumberOfSamplesProperty())), general.getScrollBarValue().getPosition(), positionPropertyBuilder.relative(general.getScrollBarValue().getPosition(), new Position(general.getPageSizeProperty(), new ReadOnlyIntegerWrapper(0))), general.getNumberOfSamplesProperty()));
-                    }
-                }
-
-            });
+        general.getPageEndPosition().getRecordProperty().addListener((observable, oldValue, newValue) -> {
+            for (int i = general.getScrollBarValue().get().getRecordProperty().get(); i <= general.getPageEndPosition().getRecordProperty().get(); i++) {
+                new MyLine(positionPropertyBuilder.build(new Position(i, 0)), updateHandler.viewportHeightProperty(), labels.prefWidthProperty(), backgroundLayer, timeLine,
+                        horizontalResolution.divide(general.getPageSizeProperty().multiply(general.getNumberOfSamplesProperty())), general.getScrollBarValue().getPosition(), general.getPageEndPosition(), general.getNumberOfSamplesProperty(), i * 1000l);
+            }
         });
     }
 
@@ -186,22 +179,6 @@ public class UpdateHandlerController implements Initializable {
         this.applicationContext = applicationContext;
 
     }
-
-//    private void scroll(ScrollEvent event) {
-//        double newValue = general.getScrollBarValue().get() - event.getDeltaY();
-//        double minValue = general.getScrollBarValue().minProperty().get();
-//        double maxValue = general.getScrollBarValue().maxProperty().get();
-//        if (minValue < newValue && newValue < maxValue) {
-//
-//            general.getScrollBarValue().setValue(newValue);
-//            System.out.println("set: "+ myScrollBar.valueProperty().get());
-//        } else if (minValue > newValue) {
-//            myScrollBar.valueProperty().setValue(minValue);
-//        } else {
-//            myScrollBar.valueProperty().setValue(maxValue);
-//        }
-//    }
-
 
     private void shiftDownFilter(ScrollEvent event) {
         if (event.isShiftDown()) {

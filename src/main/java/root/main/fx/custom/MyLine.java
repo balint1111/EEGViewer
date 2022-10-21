@@ -7,27 +7,39 @@ import javafx.beans.property.*;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import lombok.Getter;
+import org.apache.commons.lang3.time.DurationFormatUtils;
 
 @Getter
-public class MyLine extends Line {
-    private final PositionProperty position;
+public class MyLine extends Line{
+    private final PositionProperty positionProperty;
     private final DoubleProperty xPosition;
     private final BooleanProperty shouldBeVisible;
     private final Pane parentPane;
+    private final Pane parentLabelPane;
+    private final Label label;
 
-    public MyLine(PositionProperty position, DoubleProperty endYProperty, DoubleProperty baseOffset, Pane parentPane, DoubleBinding pixelPerSample, Position firstVisible, Position lastVisible, IntegerProperty numberOfSamples) {
+    public MyLine(PositionProperty positionProperty, DoubleProperty endYProperty, DoubleProperty baseOffset, Pane parentPane, Pane parentLabelPane, DoubleBinding pixelPerSample, Position firstVisible, Position lastVisible, IntegerProperty numberOfSamples, Long labelMs) {
         super();
-        this.position = position;
+        this.positionProperty = positionProperty;
         this.parentPane = parentPane;
+        this.parentLabelPane = parentLabelPane;
+        this.label = new Label();
+
+        label.setText(DurationFormatUtils.formatDuration(labelMs, "ssss"));
         shouldBeVisible = new SimpleBooleanProperty(false);
         xPosition = new SimpleDoubleProperty();
-        NumberBinding offsetFromStart = (position.getPosition().getRecordProperty().subtract(firstVisible.getRecordProperty())).multiply(numberOfSamples)
-                .add(position.getPosition().getOffsetProperty()).subtract(firstVisible.getOffsetProperty());
+        NumberBinding offsetFromStart = (positionProperty.getPosition().getRecordProperty().subtract(firstVisible.getRecordProperty())).multiply(numberOfSamples)
+                .add(positionProperty.getPosition().getOffsetProperty()).subtract(firstVisible.getOffsetProperty());
         xPosition.bind(baseOffset.add(offsetFromStart.multiply(pixelPerSample)));
+
+        label.layoutXProperty().bind(xPosition.subtract(label.widthProperty().divide(2)));
+        label.layoutYProperty().set(0);
+
         setStroke(Color.BLUE);
         startXProperty().bind(xPosition);
         endXProperty().bind(xPosition);
@@ -35,7 +47,7 @@ public class MyLine extends Line {
         endYProperty().bind(endYProperty);
 
         shouldBeVisible.addListener(this::shouldBeVisibleListener);
-        shouldBeVisible.bind(position.greaterThanOrEqual(firstVisible).and(position.lessThanOrEqual(lastVisible)));
+        shouldBeVisible.bind(positionProperty.greaterThanOrEqual(firstVisible).and(positionProperty.lessThanOrEqual(lastVisible)));
 
     }
 
@@ -43,10 +55,14 @@ public class MyLine extends Line {
         Platform.runLater(() -> {
             try {
                 ObservableList<Node> children = parentPane.getChildren();
-                    if (!oldValue && newValue && !children.contains(this)) {
+                    if (!oldValue && newValue && children.stream().noneMatch(node -> node.getClass().equals(MyLine.class) && ((MyLine)node).positionProperty.getPosition().equals(positionProperty.getPosition()))) {
                         children.add(this);
+                        parentLabelPane.getChildren().add(label);
+                        System.out.println("add");
                     } else if (oldValue && !newValue) {
                         children.remove(this);
+                        parentLabelPane.getChildren().remove(label);
+                        System.out.println("remove");
                     }
             } catch (Exception e) {
                 e.printStackTrace();

@@ -10,7 +10,7 @@
 <?import javafx.scene.shape.Line?>
 <fx:root fx:id="updateHandler" type="root.main.fx.custom.UpdateHandler" xmlns:fx="http://javafx.com/fxml"
          style="-fx-background-color: grey">
-    <Pane fx:id="timeline" minHeight="30" viewOrder="-Infinity" style="-fx-background-color: grey"></Pane>
+    <Pane fx:id="timeLine" minHeight="30" viewOrder="-Infinity" style="-fx-background-color: grey"></Pane>
     <Pane fx:id="pane" prefWidth="${updateHandler.width}" prefHeight="${updateHandler.height}">
         <Pane fx:id="backgroundLayer" style="-fx-background-color: white" prefWidth="${pane.width}"
               prefHeight="${pane.height}">
