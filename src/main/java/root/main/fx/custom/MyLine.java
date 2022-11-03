@@ -29,8 +29,15 @@ public class MyLine extends Line{
         this.parentPane = parentPane;
         this.parentLabelPane = parentLabelPane;
         this.label = new Label();
-
-        label.setText(DurationFormatUtils.formatDuration(labelMs, "ssss"));
+        String formatStr;
+        if (labelMs < 60000) {
+            formatStr = "s";
+        } else if (labelMs < 3600000) {
+            formatStr = "m:s";
+        } else {
+            formatStr = "H:m:s";
+        }
+        label.setText(DurationFormatUtils.formatDuration(labelMs, formatStr));
         shouldBeVisible = new SimpleBooleanProperty(false);
         xPosition = new SimpleDoubleProperty();
         NumberBinding offsetFromStart = (positionProperty.getPosition().getRecordProperty().subtract(firstVisible.getRecordProperty())).multiply(numberOfSamples)
@@ -58,11 +65,9 @@ public class MyLine extends Line{
                     if (!oldValue && newValue && children.stream().noneMatch(node -> node.getClass().equals(MyLine.class) && ((MyLine)node).positionProperty.getPosition().equals(positionProperty.getPosition()))) {
                         children.add(this);
                         parentLabelPane.getChildren().add(label);
-                        System.out.println("add");
                     } else if (oldValue && !newValue) {
                         children.remove(this);
                         parentLabelPane.getChildren().remove(label);
-                        System.out.println("remove");
                     }
             } catch (Exception e) {
                 e.printStackTrace();
