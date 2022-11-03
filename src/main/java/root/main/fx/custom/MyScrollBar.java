@@ -21,11 +21,14 @@ public class MyScrollBar extends ScrollBar {
         scrollProperty = new ScrollProperty(
                 PropertyUtils.toIntegerProperty(general.getNumberOfDataRecordsProperty().subtract(general.getPageSizeProperty())),
                 general.getNumberOfSamplesProperty(),
-                () -> this.general.getDataController().jumpToPosition());
+                () -> {
+                    general.getDataController().jumpToPosition();
+                    general.getCurrentValuesProperty().set(general.getDataController().getDataModel().getDataAtPosition(scrollProperty.position));
+                });
         scrollProperty.setDoubleProperty(valueProperty());
         general.setScrollBarValue(scrollProperty);
 
-        maxProperty().bind(((MinMaxIntegerProperty)scrollProperty.getPosition().getRecordProperty()).getMax());
+        maxProperty().bind(((MinMaxIntegerProperty) scrollProperty.getPosition().getRecordProperty()).getMax());
         visibleAmountProperty().bind(general.getPageSizeProperty().divide(general.getNumberOfDataRecordsProperty().divide(maxProperty())));
         maxProperty().addListener((observable, oldValue, newMax) -> {
             if (newMax.doubleValue() < valueProperty().get()) {
@@ -33,7 +36,6 @@ public class MyScrollBar extends ScrollBar {
             }
         });
     }
-
 
 
 }

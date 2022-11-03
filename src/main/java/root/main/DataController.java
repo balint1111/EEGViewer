@@ -1,5 +1,6 @@
 package root.main;
 
+import javafx.application.Platform;
 import lombok.Data;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +19,7 @@ import java.nio.channels.ClosedByInterruptException;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.function.Supplier;
 
 @Data
 @Slf4j
@@ -42,8 +44,6 @@ public class DataController {
         this.general = general;
         this.dataModel = dataModel;
         this.updateHandlerController = updateHandlerController;
-
-
     }
 
     @SneakyThrows
@@ -100,6 +100,8 @@ public class DataController {
             });
         }
     }
+
+
 
     @SneakyThrows
     public void jumpToPosition() {

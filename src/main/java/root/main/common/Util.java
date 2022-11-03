@@ -112,7 +112,7 @@ public class Util {
     }
 
     private static float[] getChannel(List<DataRecord> dataRecordsFromTo, int channelNUmber) {
-        List<float[]> collect = dataRecordsFromTo.stream().map(dataRecord -> dataRecord.getData(channelNUmber)).collect(Collectors.toList());
+        List<float[]> collect = dataRecordsFromTo.stream().map(dataRecord -> dataRecord.getChannelData(channelNUmber)).collect(Collectors.toList());
         float[] finalList = new float[collect.stream().map(doubles -> doubles.length).reduce(0, Integer::sum)];
         int start = 0;
         for (int i = 0; i < collect.size(); i++) {

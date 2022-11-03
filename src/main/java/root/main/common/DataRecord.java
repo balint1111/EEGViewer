@@ -33,7 +33,7 @@ public class DataRecord {
         lastRequestTime = System.currentTimeMillis();
         return data;
     }
-    public float[] getData(int i) {
+    public float[] getChannelData(int i) {
         lastRequestTime = System.currentTimeMillis();
         return data[i];
     }

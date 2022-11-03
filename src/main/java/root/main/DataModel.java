@@ -5,6 +5,7 @@ import com.google.common.collect.Range;
 import edffilereader.data.EEG_Data;
 import edffilereader.file.EEG_File;
 import lombok.Getter;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -13,6 +14,7 @@ import root.exceptions.DataModelException;
 import root.main.common.DataRecord;
 import root.main.common.Util;
 import root.main.fx.MainController;
+import root.main.fx.custom.Position;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -30,9 +32,13 @@ public class DataModel {
 
     private MinMaxPriorityQueue<DataRecord> queue;
 
-    @Autowired
-    @Lazy
-    private MainController mainController;
+    @SneakyThrows
+    public List<Float> getDataAtPosition(Position position) {
+            float[][] data = getDataRecordsFromTo(position.getRecordProperty().get(), position.getRecordProperty().get()).get(0).getData();
+            int maxOffset = Arrays.stream(data).map(floats -> floats.length).max(Integer::compareTo).get();
+            double offsetMultiplier = (double) position.getOffsetProperty().get() / (double) maxOffset;
+            return Arrays.stream(data).map(floats -> floats[(int)(floats.length * offsetMultiplier)]).collect(Collectors.toList());
+    }
 
     public List<DataRecord> getDataRecordsFromTo(int from, int to) throws Exception {
         if (eeg_file == null) throw new DataModelException("eeg_file is null");
@@ -90,20 +96,4 @@ public class DataModel {
     public DataModel(int maxQueueSize) {
         queue = MinMaxPriorityQueue.<DataRecord>orderedBy((o1, o2) -> o1.getLastRequestTime().compareTo(o2.getLastRequestTime()) * -1).maximumSize(maxQueueSize).create();
     }
-
-    private Integer getDistanceFromRange(DataRecord o1, Range<Integer> showedDataRecords) {
-        Integer dataRecordNumberO1 = o1.getDataRecordNumber();
-        Integer lowerEndpoint = showedDataRecords.lowerEndpoint();
-        Integer upperEndpoint = showedDataRecords.upperEndpoint();
-        Integer toReturn;
-        if (dataRecordNumberO1.compareTo(lowerEndpoint) < 0) {
-            toReturn = lowerEndpoint - dataRecordNumberO1;
-        } else if (dataRecordNumberO1.compareTo(upperEndpoint) > 0) {
-            toReturn = dataRecordNumberO1 - upperEndpoint;
-        } else {
-            toReturn = 0;
-        }
-        return toReturn;
-    }
-
 }

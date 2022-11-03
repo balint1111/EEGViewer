@@ -36,9 +36,10 @@ public class UpdateHandler extends VBox {
 
     private final DoubleProperty viewportHeightProperty = new SimpleDoubleProperty(0d);
     private final DoubleProperty viewportWidthProperty = new SimpleDoubleProperty(0d);
-    private final DoubleProperty lineSpacingProperty = new SimpleDoubleProperty(0);
+    private final DoubleProperty lineSpacingProperty = new SimpleDoubleProperty(70);
     private final DoubleProperty baseOffsetProperty = new SimpleDoubleProperty(0);
     private final DoubleProperty amplitudeProperty = new SimpleDoubleProperty(1);
+    private final BooleanProperty playProperty = new SimpleBooleanProperty(false);
     private final ObjectProperty<Modes> modeProperty = new SimpleObjectProperty<>(Modes.NORMAL);
     private ObservableList<Integer> selectedChannels;
 
@@ -84,6 +85,7 @@ public class UpdateHandler extends VBox {
         controller.getViewportHeightProperty().bindBidirectional(viewportHeightProperty);
         controller.getModeProperty().bindBidirectional(modeProperty);
         controller.getAmplitudeProperty().bindBidirectional(amplitudeProperty);
+        controller.getPlayProperty().bindBidirectional(playProperty);
         controller.getBaseOffsetProperty().bindBidirectional(baseOffsetProperty);
 
         selectedChannels.addListener(controller::onChangeSelectedChannels);

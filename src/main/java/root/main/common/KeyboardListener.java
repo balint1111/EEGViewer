@@ -29,6 +29,11 @@ public class KeyboardListener implements KeyEventDispatcher {
                         updateHandlerController.getModeProperty().set(Modes.NORMAL);
                     else if (updateHandlerController.getModeProperty().get().equals(Modes.NORMAL))
                         updateHandlerController.getModeProperty().set(Modes.BUTTERFLY);
+                } else if (e.getKeyCode() == KeyEvent.VK_P) {
+                    if (updateHandlerController.getPlayProperty().get())
+                        updateHandlerController.getPlayProperty().set(false);
+                    else
+                        updateHandlerController.getPlayProperty().set(true);
                 }
             } else if (e.getID() == KeyEvent.KEY_PRESSED) {
                 if (e.getKeyCode() == KeyEvent.VK_UP) {

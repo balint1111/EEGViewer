@@ -20,7 +20,7 @@ public class ChannelPickerDialog {
         //Stage init
         Stage stage = new Stage();
         stage.initModality(Modality.APPLICATION_MODAL);
-        stage.setTitle("Dialog");
+        stage.setTitle("Channel Picker");
 
         stage.addEventHandler(KeyEvent.KEY_RELEASED, event -> {
             if (event.getCode().equals(KeyCode.ENTER)) {
@@ -32,26 +32,29 @@ public class ChannelPickerDialog {
         layout.setPadding(new Insets(10, 10, 10, 10));
 
         //Scene setUp
-        Scene scene = new Scene(layout, 250, 150);
+        Scene scene = new Scene(layout, 500, 500);
         stage.setScene(scene);
 
         //object declarations
 
-        ListView<String> listView = new ListView<String>();
-        listView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        ListView<String> notDisplayedChannelsListView = new ListView<String>();
+        notDisplayedChannelsListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
-        ObservableList<String> list = listView.getItems();
+        ListView<String> displayedChannelListView = new ListView<String>();
+        displayedChannelListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
+        ObservableList<String> list = displayedChannelListView.getItems();
 
         list.addAll(channels);
 
         //layout addChildren
-        layout.getChildren().addAll(listView);
+        layout.getChildren().addAll(displayedChannelListView);
 
         //bindings
 
 
         stage.showAndWait();
-        return listView.getSelectionModel().getSelectedIndices();
+        return displayedChannelListView.getSelectionModel().getSelectedIndices();
     }
 
 //    private static void bindProperties(LineProperty lineProperty, ColorPicker colorPicker, DoubleField doubleField) {

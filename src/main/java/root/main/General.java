@@ -7,7 +7,6 @@ import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
@@ -16,15 +15,17 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import root.SpringJavaFxApplication;
 import root.main.fx.MainController;
 import root.main.fx.UpdateHandlerController;
-import root.main.fx.custom.ChannelPickerDialog;
-import root.main.fx.custom.Position;
-import root.main.fx.custom.ScrollProperty;
-import root.main.fx.custom.UpdateHandler;
+import root.main.fx.custom.*;
 import root.main.fx.custom.builders.PositionPropertyBuilder;
+import root.main.swing.ChannelPicker;
+import root.main.swing.CurrenValueWatcher;
+import root.main.swing.CurrentValueWatcher;
 
 import javax.annotation.PostConstruct;
+import javax.swing.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,6 +36,7 @@ import java.util.List;
 @Getter
 @RequestMapping("/control")
 public class General {
+    private final JFrame mainSwingFrame;
     private MainController mainController;
     private PositionPropertyBuilder positionPropertyBuilder;
 
@@ -50,6 +52,10 @@ public class General {
     private final DoubleProperty durationOfDataRecordProperty = new SimpleDoubleProperty();
 
     private ScrollProperty scrollBarValue;
+    private final IntegerProperty fpsProperty = new SimpleIntegerProperty(30);
+    private final DoubleProperty slowDownProperty = new SimpleDoubleProperty(1);
+
+    private final ObjectProperty<List<Float>> currentValuesProperty = new SimpleObjectProperty<>();
 
     public void setScrollBarValue(ScrollProperty scrollBarValue) {
         this.scrollBarValue = scrollBarValue;
@@ -63,9 +69,7 @@ public class General {
 
     private final UpdateHandlerController updateHandlerController;
 
-    private double amplitude = 1;
-
-    private Integer DEFAULT_PAGE_SIZE = 100;
+    private final Integer DEFAULT_PAGE_SIZE = 10;
 
     private final List<Color> colors = new ArrayList<>(Arrays.asList(
             Color.gray(0.05)
@@ -76,13 +80,15 @@ public class General {
 //            Color.valueOf("violet")
     ));
 
-    public General(@Lazy PositionPropertyBuilder positionPropertyBuilder,
+    public General(SpringJavaFxApplication mainSwingFrame,
+                   @Lazy PositionPropertyBuilder positionPropertyBuilder,
                    DataController dataController,
                    DataModel dataModel,
                    ConfigurableApplicationContext applicationContext,
                    AutowireCapableBeanFactory autowireCapableBeanFactory,
                    @Lazy UpdateHandlerController updateHandlerController
     ) {
+        this.mainSwingFrame = mainSwingFrame;
         this.positionPropertyBuilder = positionPropertyBuilder;
         this.dataController = dataController;
         this.dataModel = dataModel;
@@ -111,17 +117,13 @@ public class General {
 
     private void openNewFile(File file) {
         try {
+            updateHandlerController.getSelectedChannels().clear();
             dataModel.setEeg_file(EEG_File.build(file));
             durationOfDataRecordProperty.set((Double) dataModel.getEeg_file().getHeader().getExtraParameters().get("durationOfDataRecord"));
-            System.out.println("duratiom: " + durationOfDataRecordProperty.get());
-//            System.out.println(":" + dataModel.getEeg_file().getHeader().getExtraParameters().keySet());
             numberOfDataRecordsProperty.setValue(dataModel.getEeg_file().getHeader().getNumberOfDataRecords());
             numberOfSamplesProperty.setValue(dataModel.getEeg_file().getHeader().getNumberOfSamples().stream().max(Integer::compare).get());
 
             pickChannel();
-
-            updateHandlerController.getLineSpacingProperty().setValue(70);
-            updateHandlerController.getAmplitudeProperty().set(0.1);
 
             pageSizeProperty.setValue(DEFAULT_PAGE_SIZE);
 
@@ -151,8 +153,17 @@ public class General {
     }
 
     public void pickChannel() {
-        updateHandlerController.getSelectedChannels().setAll(ChannelPickerDialog.display(dataModel.getEeg_file().getHeader().getLabelsOfTheChannels()));
+//        updateHandlerController.getSelectedChannels().setAll(ChannelPickerDialog.display(dataModel.getEeg_file().getHeader().getLabelsOfTheChannels()));
+        ChannelPicker colorPicker = new ChannelPicker(mainSwingFrame, true);
+        applicationContext.getAutowireCapableBeanFactory().autowireBean(colorPicker);
+        colorPicker.setVisible(true);
         updateHandlerController.setColors(colors);
         dataController.showDataRecord();
+    }
+
+    public void openValueWatcher() {
+        CurrentValueWatcher valueWatcher = new CurrentValueWatcher(mainSwingFrame, false);
+        applicationContext.getAutowireCapableBeanFactory().autowireBean(valueWatcher);
+        valueWatcher.setVisible(true);
     }
 }

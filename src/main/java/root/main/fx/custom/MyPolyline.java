@@ -16,6 +16,7 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.Polyline;
 import lombok.Getter;
 import root.main.DataController;
+import root.main.common.enums.Modes;
 
 import java.io.IOException;
 import java.util.*;
@@ -88,8 +89,10 @@ public class MyPolyline extends HBox {
 
     private void nameLabelInit(DataController dataController, int channelNumber) {
         if (nameLabel != null) nameLabel.textFillProperty().bind(lineProperty.getStrokeProperty());
-        if (nameLabel != null)
+        if (nameLabel != null) {
             nameLabel.setText(dataController.getDataModel().getEeg_file().getHeader().getLabelsOfTheChannels().get(channelNumber));
+        }
+
     }
 
     private void initLineProperty(DoubleProperty controlVboxWidthProperty, DoubleProperty prefWidth) {

@@ -19,21 +19,21 @@ public class SpringJavaFxApplication extends JFrame {
     }
 
     public void initUI() {
-        try {
-            setTitle(TITLE);
-            setSize(new Dimension(WIDTH, HEIGHT));
+        setTitle(TITLE);
+        setSize(new Dimension(WIDTH, HEIGHT));
 
-            setLocationRelativeTo(null);
-            setVisible(true);
-            setFocusable(true);
-            setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        setVisible(true);
+        setFocusable(true);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+    }
+
+    public static void main(String[] args) {
+        try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
             e.printStackTrace();
         }
-    }
-
-    public static void main(String[] args) {
         ConfigurableApplicationContext applicationContext = SpringApplication.run(SpringJavaFxApplication.class);
         EventQueue.invokeLater(() -> {
             SpringJavaFxApplication ex = applicationContext.getBean(SpringJavaFxApplication.class);
