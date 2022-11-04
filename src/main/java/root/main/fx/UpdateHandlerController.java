@@ -164,7 +164,7 @@ public class UpdateHandlerController implements Initializable {
             for (int i = general.getScrollBarValue().get().getRecordProperty().get(); i <= general.getPageEndPosition().getRecordProperty().get(); i++) {
                 new MyLine(positionPropertyBuilder.build(new Position(i, 0)), updateHandler.viewportHeightProperty(), labels.prefWidthProperty(), backgroundLayer, timeLine,
                         horizontalResolution.divide(general.getPageSizeProperty().multiply(general.getNumberOfSamplesProperty())), general.getScrollBarValue().getPosition(),
-                        general.getPageEndPosition(), general.getNumberOfSamplesProperty(), new SimpleLongProperty(i * 1000l).multiply(1),
+                        general.getPageEndPosition(), general.getNumberOfSamplesProperty(), new SimpleLongProperty(i).multiply(general.getDurationOfDataRecordProperty()),
                         new ReadOnlyObjectWrapper<Paint>(Color.BLUE));
             }
         });
