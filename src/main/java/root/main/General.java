@@ -15,17 +15,15 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import root.SpringJavaFxApplication;
+import root.main.swing.MainWindow;
 import root.main.fx.MainController;
 import root.main.fx.UpdateHandlerController;
 import root.main.fx.custom.*;
 import root.main.fx.custom.builders.PositionPropertyBuilder;
 import root.main.swing.ChannelPicker;
-import root.main.swing.CurrenValueWatcher;
 import root.main.swing.CurrentValueWatcher;
 
 import javax.annotation.PostConstruct;
-import javax.swing.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,7 +34,7 @@ import java.util.List;
 @Getter
 @RequestMapping("/control")
 public class General {
-    private final JFrame mainSwingFrame;
+    private MainWindow mainSwingFrame;
     private MainController mainController;
     private PositionPropertyBuilder positionPropertyBuilder;
 
@@ -80,15 +78,13 @@ public class General {
 //            Color.valueOf("violet")
     ));
 
-    public General(SpringJavaFxApplication mainSwingFrame,
-                   @Lazy PositionPropertyBuilder positionPropertyBuilder,
+    public General(@Lazy PositionPropertyBuilder positionPropertyBuilder,
                    DataController dataController,
                    DataModel dataModel,
                    ConfigurableApplicationContext applicationContext,
                    AutowireCapableBeanFactory autowireCapableBeanFactory,
                    @Lazy UpdateHandlerController updateHandlerController
     ) {
-        this.mainSwingFrame = mainSwingFrame;
         this.positionPropertyBuilder = positionPropertyBuilder;
         this.dataController = dataController;
         this.dataModel = dataModel;
@@ -102,10 +98,15 @@ public class General {
         this.mainController = mainController;
     }
 
+    @Autowired
+    private void setMainSwingFrame(MainWindow mainSwingFrame) {
+        this.mainSwingFrame = mainSwingFrame;
+    }
+
 
     @PostConstruct
     public void postConstruct() {
-        System.out.println(getClass().getSimpleName() + " has been initialized");
+        log.info(getClass().getSimpleName() + " has been initialized");
         pageSizeProperty.addListener((observable, oldValue, newValue) -> {
             try {
                 dataController.showDataRecord();
@@ -119,13 +120,14 @@ public class General {
         try {
             updateHandlerController.getSelectedChannels().clear();
             dataModel.setEeg_file(EEG_File.build(file));
-            durationOfDataRecordProperty.set((Double) dataModel.getEeg_file().getHeader().getExtraParameters().get("durationOfDataRecord"));
+            durationOfDataRecordProperty.set((Double) dataModel.getEeg_file().getHeader().getExtraParameters().get("durationOfDataRecord") * 1000);
             numberOfDataRecordsProperty.setValue(dataModel.getEeg_file().getHeader().getNumberOfDataRecords());
             numberOfSamplesProperty.setValue(dataModel.getEeg_file().getHeader().getNumberOfSamples().stream().max(Integer::compare).get());
 
             pickChannel();
 
             pageSizeProperty.setValue(DEFAULT_PAGE_SIZE);
+            scrollBarValue.set(new Position(0, 1));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -158,7 +160,6 @@ public class General {
         applicationContext.getAutowireCapableBeanFactory().autowireBean(colorPicker);
         colorPicker.setVisible(true);
         updateHandlerController.setColors(colors);
-        dataController.showDataRecord();
     }
 
     public void openValueWatcher() {

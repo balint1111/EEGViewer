@@ -2,6 +2,8 @@ package root.main.fx;
 
 import com.sun.javafx.scene.control.DoubleField;
 import com.sun.javafx.scene.control.IntegerField;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Lazy;
 import root.main.fx.custom.MyScrollBar;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -21,6 +23,7 @@ import java.util.ResourceBundle;
 
 @Getter
 @Controller
+@Slf4j
 public class MainController implements Initializable {
 
     @FXML
@@ -46,13 +49,14 @@ public class MainController implements Initializable {
 
     public MainController(DataController dataController,
                           DataModel dataModel,
-                          ConfigurableApplicationContext applicationContext, General general) {
+                          ConfigurableApplicationContext applicationContext,
+                          @Lazy General general) {
         this.dataController = dataController;
         this.dataModel = dataModel;
         this.applicationContext = applicationContext;
         this.autowireCapableBeanFactory = applicationContext.getAutowireCapableBeanFactory();
         this.general = general;
-        System.out.println("MainController");
+        log.info(getClass().getSimpleName() + " has been initialized");
     }
 
     @SneakyThrows
@@ -63,8 +67,6 @@ public class MainController implements Initializable {
         Parent root = fxmlLoader.load();
         Scene scene = new Scene(root, 1200, 700);
         return scene;
-        //scene.getStylesheets().add("/style.css");
-//        scene.getStylesheets().add(BootstrapFX.bootstrapFXStylesheet());
     }
 
     @SneakyThrows

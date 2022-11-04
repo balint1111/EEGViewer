@@ -69,7 +69,7 @@ public class MyPolyline extends HBox {
         polyLineList = polyline.getPoints();
         polyline.setStrokeWidth(0.8d);
 
-        layoutYProperty().bind(updateHandler.getBaseOffsetProperty().add(updateHandler.getLineSpacingProperty().multiply(channelNumber + 1)));
+        layoutYProperty().bind(updateHandler.getBaseOffsetProperty().add(updateHandler.getLineSpacingProperty().multiply(updateHandler.getAmplitudeProperty()).multiply(channelNumber + 1)));
 
         DoubleProperty controlVboxWidthProperty = getControlVboxWidthProperty();
         DoubleProperty prefWidthProperty = updateHandler.getController().getGroup().prefWidthProperty();

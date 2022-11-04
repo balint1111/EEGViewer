@@ -53,6 +53,7 @@ public class ChannelPicker extends javax.swing.JDialog {
     public ChannelPicker(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        setLocation((int) ((Toolkit.getDefaultToolkit().getScreenSize().getWidth() - this.getWidth()) / 2), (int) ((Toolkit.getDefaultToolkit().getScreenSize().getHeight() - this.getHeight()) / 2));
         KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(e -> {
             if (e.getID() == KeyEvent.KEY_RELEASED) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {

@@ -2,17 +2,19 @@ package root.main.fx.custom;
 
 import javafx.scene.control.ScrollBar;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import root.main.General;
 
 @Getter
+@Slf4j
 public class MyScrollBar extends ScrollBar {
 
     private General general;
     private ScrollProperty scrollProperty;
 
     public MyScrollBar() {
-        System.out.println("scrollbar");
+        log.info(getClass().getSimpleName() + " has been initialized");
     }
 
     @Autowired
@@ -23,7 +25,6 @@ public class MyScrollBar extends ScrollBar {
                 general.getNumberOfSamplesProperty(),
                 () -> {
                     general.getDataController().jumpToPosition();
-                    general.getCurrentValuesProperty().set(general.getDataController().getDataModel().getDataAtPosition(scrollProperty.position));
                 });
         scrollProperty.setDoubleProperty(valueProperty());
         general.setScrollBarValue(scrollProperty);

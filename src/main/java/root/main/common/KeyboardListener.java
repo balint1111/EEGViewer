@@ -22,41 +22,43 @@ public class KeyboardListener implements KeyEventDispatcher {
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent e) {
-        Platform.runLater(() -> {
-            if (e.getID() == KeyEvent.KEY_RELEASED) {
-                if (e.getKeyCode() == KeyEvent.VK_B) {
-                    if (updateHandlerController.getModeProperty().get().equals(Modes.BUTTERFLY))
-                        updateHandlerController.getModeProperty().set(Modes.NORMAL);
-                    else if (updateHandlerController.getModeProperty().get().equals(Modes.NORMAL))
-                        updateHandlerController.getModeProperty().set(Modes.BUTTERFLY);
-                } else if (e.getKeyCode() == KeyEvent.VK_P) {
-                    if (updateHandlerController.getPlayProperty().get())
-                        updateHandlerController.getPlayProperty().set(false);
-                    else
-                        updateHandlerController.getPlayProperty().set(true);
-                }
-            } else if (e.getID() == KeyEvent.KEY_PRESSED) {
-                if (e.getKeyCode() == KeyEvent.VK_UP) {
-                    updateHandlerController.getAmplitudeProperty().set(updateHandlerController.getAmplitudeProperty().get() + 0.01);
-                } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-                    updateHandlerController.getAmplitudeProperty().set(updateHandlerController.getAmplitudeProperty().get() - 0.01);
-                } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-                    if ((general.getScrollBarValue().getPosition().getOffsetProperty().get() + 1) >= ((MinMaxIntegerProperty) general.getScrollBarValue().getPosition().getOffsetProperty()).getMax().get()) {
+        if (e.getID() == KeyEvent.KEY_RELEASED) {
+            if (e.getKeyCode() == KeyEvent.VK_B) {
+                updateHandlerController.butterflyToggle();
+                return true;
+            } else if (e.getKeyCode() == KeyEvent.VK_P) {
+                updateHandlerController.playToggle();
+                return true;
+            }
+        } else if (e.getID() == KeyEvent.KEY_PRESSED) {
+            if (e.getKeyCode() == KeyEvent.VK_UP) {
+                Platform.runLater(() -> updateHandlerController.getAmplitudeProperty().set(updateHandlerController.getAmplitudeProperty().get() + 0.01));
+                return true;
+            } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+                Platform.runLater(() -> updateHandlerController.getAmplitudeProperty().set(updateHandlerController.getAmplitudeProperty().get() - 0.01));
+                return true;
+            } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+                if ((general.getScrollBarValue().getPosition().getOffsetProperty().get() + 1) >= ((MinMaxIntegerProperty) general.getScrollBarValue().getPosition().getOffsetProperty()).getMax().get()) {
+                    Platform.runLater(() -> {
                         general.getScrollBarValue().getPosition().getOffsetProperty().set(0);
                         general.getScrollBarValue().getPosition().getRecordProperty().set(general.getScrollBarValue().getPosition().getRecordProperty().get() + 1);
-                    } else {
-                        general.getScrollBarValue().getPosition().getOffsetProperty().set(general.getScrollBarValue().getPosition().getOffsetProperty().get() + 1);
-                    }
-                } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-                    if ((general.getScrollBarValue().getPosition().getOffsetProperty().get() - 1) < 0) {
+                    });
+                } else {
+                    Platform.runLater(() -> general.getScrollBarValue().getPosition().getOffsetProperty().set(general.getScrollBarValue().getPosition().getOffsetProperty().get() + 1));
+                }
+                return true;
+            } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+                if ((general.getScrollBarValue().getPosition().getOffsetProperty().get() - 1) < 0) {
+                    Platform.runLater(() -> {
                         general.getScrollBarValue().getPosition().getOffsetProperty().set(((MinMaxIntegerProperty) general.getScrollBarValue().getPosition().getOffsetProperty()).getMax().get() - 1);
                         general.getScrollBarValue().getPosition().getRecordProperty().set(general.getScrollBarValue().getPosition().getRecordProperty().get() - 1);
-                    } else {
-                        general.getScrollBarValue().getPosition().getOffsetProperty().set(general.getScrollBarValue().getPosition().getOffsetProperty().get() - 1);
-                    }
+                    });
+                } else {
+                    Platform.runLater(() -> general.getScrollBarValue().getPosition().getOffsetProperty().set(general.getScrollBarValue().getPosition().getOffsetProperty().get() - 1));
                 }
+                return true;
             }
-        });
+        }
 
 
         return false;

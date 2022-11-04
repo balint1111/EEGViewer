@@ -12,6 +12,7 @@ import root.main.General;
 import root.main.common.Properties;
 
 import javax.swing.table.DefaultTableModel;
+import java.awt.*;
 import java.util.List;
 
 /**
@@ -34,15 +35,20 @@ public class CurrentValueWatcher extends javax.swing.JDialog {
         ObservableList<Integer> selectedChannels = general.getUpdateHandlerController().getSelectedChannels();
 
         tableInit(dtm, selectedChannels);
+        updateTable(dtm, selectedChannels, general.getCurrentValuesProperty().get());
         selectedChannels.addListener((ListChangeListener<? super Integer>) c -> {
             tableInit(dtm, selectedChannels);
         });
         general.getCurrentValuesProperty().addListener((observable, oldValue, newValue) -> {
-            for (int i = 0; i < selectedChannels.size(); i++) {
-                Integer channelNumber = selectedChannels.get(i);
-                dtm.setValueAt(newValue.get(channelNumber), i, 1);
-            }
+            updateTable(dtm, selectedChannels, newValue);
         });
+    }
+
+    private void updateTable(DefaultTableModel dtm, ObservableList<Integer> selectedChannels, List<Float> newValue) {
+        for (int i = 0; i < selectedChannels.size(); i++) {
+            Integer channelNumber = selectedChannels.get(i);
+            dtm.setValueAt(newValue.get(channelNumber), i, 1);
+        }
     }
 
     private void tableInit(DefaultTableModel dtm, ObservableList<Integer> selectedChannels) {
@@ -60,6 +66,7 @@ public class CurrentValueWatcher extends javax.swing.JDialog {
     public CurrentValueWatcher(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        setLocation((int) ((Toolkit.getDefaultToolkit().getScreenSize().getWidth() - this.getWidth()) / 2), (int) ((Toolkit.getDefaultToolkit().getScreenSize().getHeight() - this.getHeight()) / 2));
     }
 
     /**
@@ -75,6 +82,7 @@ public class CurrentValueWatcher extends javax.swing.JDialog {
         jTable1 = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Value Watcher");
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {

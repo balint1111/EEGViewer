@@ -13,14 +13,18 @@
     <Pane fx:id="timeLine" minHeight="30" viewOrder="-Infinity" style="-fx-background-color: grey"></Pane>
     <Pane fx:id="pane" prefWidth="${updateHandler.width}" prefHeight="${updateHandler.height}">
         <Pane fx:id="backgroundLayer" style="-fx-background-color: white" prefWidth="${pane.width}"
-              prefHeight="${pane.height}">
+              prefHeight="${pane.height}" viewOrder="1">
+            <Pane prefWidth="80" prefHeight="${updateHandler.height}" style="-fx-background-color: grey;" viewOrder="-Infinity">
+            </Pane>
         </Pane>
         <ScrollPane fx:id="scrollPane" prefWidth="${updateHandler.width}" prefHeight="${updateHandler.height}"
+                    onMouseClicked="#onClick" viewOrder="0"
                     style="-fx-background-color: transparent; -fx-background: transparent">
             <VBox>
 
                 <HBox>
-                    <Pane fx:id="labels" prefWidth="80" style="-fx-background-color: grey;" viewOrder="-Infinity">
+                    <Pane fx:id="labels" prefWidth="80"
+                          style="-fx-background-color: transparent;-fx-background: transparent" viewOrder="-Infinity">
                     </Pane>
 
                     <StackPane fx:id="stack">

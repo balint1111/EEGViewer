@@ -34,10 +34,10 @@ public class DataModel {
 
     @SneakyThrows
     public List<Float> getDataAtPosition(Position position) {
-            float[][] data = getDataRecordsFromTo(position.getRecordProperty().get(), position.getRecordProperty().get()).get(0).getData();
-            int maxOffset = Arrays.stream(data).map(floats -> floats.length).max(Integer::compareTo).get();
-            double offsetMultiplier = (double) position.getOffsetProperty().get() / (double) maxOffset;
-            return Arrays.stream(data).map(floats -> floats[(int)(floats.length * offsetMultiplier)]).collect(Collectors.toList());
+        float[][] data = getDataRecordsFromTo(position.getRecordProperty().get(), position.getRecordProperty().get()).get(0).getData();
+        int maxOffset = Arrays.stream(data).map(floats -> floats.length).max(Integer::compareTo).get();
+        double offsetMultiplier = (double) position.getOffsetProperty().get() / (double) maxOffset;
+        return Arrays.stream(data).map(floats -> floats[(int) (floats.length * offsetMultiplier)]).collect(Collectors.toList());
     }
 
     public List<DataRecord> getDataRecordsFromTo(int from, int to) throws Exception {

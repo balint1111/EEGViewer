@@ -28,4 +28,8 @@ public class Position {
         return Integer.compare(recordProperty.get(), c.recordProperty.get()) == 0
                 && Integer.compare(offsetProperty.get(), c.offsetProperty.get()) == 0;
     }
+
+    public Position getNormalizedPosition(int maxOffset) {
+        return new Position(recordProperty.get() + offsetProperty.get() / maxOffset, offsetProperty.get() % maxOffset);
+    }
 }

@@ -10,6 +10,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Line;
 import lombok.Getter;
 import org.apache.commons.lang3.time.DurationFormatUtils;
@@ -23,21 +24,17 @@ public class MyLine extends Line{
     private final Pane parentLabelPane;
     private final Label label;
 
-    public MyLine(PositionProperty positionProperty, DoubleProperty endYProperty, DoubleProperty baseOffset, Pane parentPane, Pane parentLabelPane, DoubleBinding pixelPerSample, Position firstVisible, Position lastVisible, IntegerProperty numberOfSamples, Long labelMs) {
+    public MyLine(PositionProperty positionProperty, DoubleProperty endYProperty, DoubleProperty baseOffset, Pane parentPane, Pane parentLabelPane, DoubleBinding pixelPerSample, Position firstVisible, Position lastVisible, IntegerProperty numberOfSamples, NumberBinding msProperty, ObjectProperty<Paint> strokeProperty) {
         super();
         this.positionProperty = positionProperty;
         this.parentPane = parentPane;
         this.parentLabelPane = parentLabelPane;
         this.label = new Label();
-        String formatStr;
-        if (labelMs < 60000) {
-            formatStr = "s";
-        } else if (labelMs < 3600000) {
-            formatStr = "m:s";
-        } else {
-            formatStr = "H:m:s";
-        }
-        label.setText(DurationFormatUtils.formatDuration(labelMs, formatStr));
+
+        msPropertyChange(null, null, msProperty.getValue());
+        msProperty.addListener(this::msPropertyChange);
+
+
         shouldBeVisible = new SimpleBooleanProperty(false);
         xPosition = new SimpleDoubleProperty();
         NumberBinding offsetFromStart = (positionProperty.getPosition().getRecordProperty().subtract(firstVisible.getRecordProperty())).multiply(numberOfSamples)
@@ -47,7 +44,7 @@ public class MyLine extends Line{
         label.layoutXProperty().bind(xPosition.subtract(label.widthProperty().divide(2)));
         label.layoutYProperty().set(0);
 
-        setStroke(Color.BLUE);
+        strokeProperty().bind(strokeProperty);
         startXProperty().bind(xPosition);
         endXProperty().bind(xPosition);
         startYProperty().set(0);
@@ -74,5 +71,26 @@ public class MyLine extends Line{
             }
 
         });
+    }
+
+    private void msPropertyChange(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+        String formatStr;
+        long labelMs = newValue.longValue();
+        if (labelMs < 60000) {
+            formatStr = "s";
+        } else if (labelMs < 3600000) {
+            formatStr = "m:s";
+        } else {
+            formatStr = "H:m:s";
+        }
+        if (labelMs % 1000 != 0) {
+            formatStr += ":SSS";
+        }
+        label.setText(DurationFormatUtils.formatDuration(labelMs, formatStr));
+    }
+
+    public void remove() {
+        parentPane.getChildren().remove(this);
+        parentLabelPane.getChildren().remove(label);
     }
 }

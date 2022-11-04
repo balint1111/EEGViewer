@@ -9,6 +9,7 @@ package root.main.swing;
 import javafx.application.Platform;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.util.StringUtils;
 import root.main.General;
 import root.main.fx.MainController;
 import root.main.common.Properties;
@@ -91,7 +92,7 @@ public class SwingController extends javax.swing.JPanel {
             }
         });
 
-        playToggleButton1.setText("Play");
+        playToggleButton1.setText("Play/Pause");
         playToggleButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 playToggleButton1ActionPerformed(evt);
@@ -142,7 +143,6 @@ public class SwingController extends javax.swing.JPanel {
         fpsSlider1.setMinimum(1);
         fpsSlider1.setMinorTickSpacing(5);
         fpsSlider1.setPaintTicks(true);
-        fpsSlider1.setSnapToTicks(true);
         fpsSlider1.setValue(60);
         fpsSlider1.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
@@ -152,9 +152,9 @@ public class SwingController extends javax.swing.JPanel {
 
         jLabel6.setText("FPS:");
 
-        fpsLabel1.setText("ssss");
+        fpsLabel1.setText("60");
 
-        slowdownLabel1.setText("asdfasfd");
+        slowdownLabel1.setText("1");
 
         jLabel4.setText("Slowdown:");
 
@@ -162,6 +162,7 @@ public class SwingController extends javax.swing.JPanel {
         slowdownSlider1.setMinimum(1);
         slowdownSlider1.setMinorTickSpacing(5);
         slowdownSlider1.setPaintTicks(true);
+        slowdownSlider1.setValue(1);
         slowdownSlider1.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 slowdownSlider1StateChanged(evt);
@@ -194,6 +195,11 @@ public class SwingController extends javax.swing.JPanel {
         amplitudeRangeList1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         amplitudeRangeList1.setPreferredSize(new java.awt.Dimension(42, 90));
         amplitudeRangeList1.setVisibleRowCount(5);
+        amplitudeRangeList1.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                amplitudeRangeList1ValueChanged(evt);
+            }
+        });
         jScrollPane3.setViewportView(amplitudeRangeList1);
 
         triggerBasedTrialsCheckBox1.setText("Trigger-trials");
@@ -251,14 +257,6 @@ public class SwingController extends javax.swing.JPanel {
                     .addComponent(openElectrodeFileButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(openHeadModelButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(firstPageButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(18, 18, 18)
-                        .addComponent(lastPageButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(prevPageButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(nextPageButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel6)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(fpsLabel1)
@@ -283,7 +281,15 @@ public class SwingController extends javax.swing.JPanel {
                             .addComponent(show3DVolumeCheckBox1)
                             .addComponent(jLabel7)
                             .addComponent(amplitudeRangeLabel1))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(prevPageButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(firstPageButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lastPageButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(nextPageButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -354,7 +360,7 @@ public class SwingController extends javax.swing.JPanel {
     }//GEN-LAST:event_firstPageButton1ActionPerformed
 
     private void playToggleButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playToggleButton1ActionPerformed
-        // TODO add your handling code here:
+        general.getUpdateHandlerController().playToggle();
     }//GEN-LAST:event_playToggleButton1ActionPerformed
 
     private void prevPageButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_prevPageButton1ActionPerformed
@@ -411,6 +417,15 @@ public class SwingController extends javax.swing.JPanel {
     private void show3DVolumeCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_show3DVolumeCheckBox1ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_show3DVolumeCheckBox1ActionPerformed
+
+    private void amplitudeRangeList1ValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_amplitudeRangeList1ValueChanged
+        String selectedValue = (String) amplitudeRangeList1.getModel().getElementAt(amplitudeRangeList1.getSelectedIndex());
+        int newLineSpacing = Integer.parseInt(selectedValue.replaceAll("[\\D]", "")) * 2;
+        if (selectedValue.contains("mV")) {
+            newLineSpacing *= 1000;
+        }
+        properties.getLineSpacingProperty().set(newLineSpacing);
+    }//GEN-LAST:event_amplitudeRangeList1ValueChanged
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

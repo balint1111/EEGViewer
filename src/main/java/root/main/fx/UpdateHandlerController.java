@@ -1,18 +1,25 @@
 package root.main.fx;
 
 import javafx.application.Platform;
+import javafx.beans.binding.DoubleBinding;
+import javafx.beans.binding.NumberBinding;
 import javafx.beans.property.*;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
@@ -75,6 +82,7 @@ public class UpdateHandlerController implements Initializable {
     private final DoubleProperty baseOffsetProperty = new SimpleDoubleProperty(0);
     private final DoubleProperty amplitudeProperty = new SimpleDoubleProperty(1);
     private final BooleanProperty playProperty = new SimpleBooleanProperty(false);
+    private ObjectProperty<MyLine> cursorProperty = new SimpleObjectProperty<>(null);
 
     private final General general;
 
@@ -92,6 +100,7 @@ public class UpdateHandlerController implements Initializable {
         this.dataController = dataController;
         this.positionPropertyBuilder = positionPropertyBuilder;
     }
+
 
     public void setYVectors(List<Double>[] yVectors) {
         synchronized (myPolylineList) {
@@ -128,11 +137,13 @@ public class UpdateHandlerController implements Initializable {
             for (int i = 0; i < selectedChannels.size(); i++) {
                 MyPolyline myPolyline = new MyPolyline(dataController, c.getList().get(i), group, updateHandler);
                 Label label = new Label(updateHandler.getController().getDataController().getDataModel().getEeg_file().getHeader().getLabelsOfTheChannels(c.getList().get(i)));
-                label.layoutYProperty().bind(updateHandler.getBaseOffsetProperty().add(updateHandler.getLineSpacingProperty().multiply(c.getList().get(i) + 1)).subtract(label.heightProperty().divide(2)));
+                label.layoutYProperty().bind(myPolyline.layoutYProperty().subtract(label.heightProperty().divide(2)));
                 label.visibleProperty().bind(modeProperty.isNotEqualTo(Modes.BUTTERFLY));
                 labels.getChildren().add(label);
             }
         }
+        cursorProperty.get().getLabel().setVisible(true);
+        positionChange.changed(null, null, null);
     }
 
     @Override
@@ -152,7 +163,9 @@ public class UpdateHandlerController implements Initializable {
         general.getPageEndPosition().getRecordProperty().addListener((observable, oldValue, newValue) -> {
             for (int i = general.getScrollBarValue().get().getRecordProperty().get(); i <= general.getPageEndPosition().getRecordProperty().get(); i++) {
                 new MyLine(positionPropertyBuilder.build(new Position(i, 0)), updateHandler.viewportHeightProperty(), labels.prefWidthProperty(), backgroundLayer, timeLine,
-                        horizontalResolution.divide(general.getPageSizeProperty().multiply(general.getNumberOfSamplesProperty())), general.getScrollBarValue().getPosition(), general.getPageEndPosition(), general.getNumberOfSamplesProperty(), i * 1000l);
+                        horizontalResolution.divide(general.getPageSizeProperty().multiply(general.getNumberOfSamplesProperty())), general.getScrollBarValue().getPosition(),
+                        general.getPageEndPosition(), general.getNumberOfSamplesProperty(), new SimpleLongProperty(i * 1000l).multiply(1),
+                        new ReadOnlyObjectWrapper<Paint>(Color.BLUE));
             }
         });
         playProperty.addListener((observable, oldValue, newValue) -> {
@@ -169,7 +182,53 @@ public class UpdateHandlerController implements Initializable {
                 }, playProperty::get, () -> general.getFpsProperty().get());
             }
         });
+        Position position = general.getScrollBarValue().getPosition();
+        cursorMsBinding = position.getRecordProperty().multiply(general.getDurationOfDataRecordProperty()).add(position.getOffsetProperty().multiply(general.getDurationOfDataRecordProperty().divide(general.getNumberOfSamplesProperty())));
+        cursorProperty.set(new MyLine(general.getScrollBarValue(), updateHandler.viewportHeightProperty(), labels.prefWidthProperty(), backgroundLayer, timeLine,
+                horizontalResolution.divide(general.getPageSizeProperty().multiply(general.getNumberOfSamplesProperty())), general.getScrollBarValue().getPosition(), general.getPageEndPosition(), general.getNumberOfSamplesProperty(),
+                cursorMsBinding,
+                new ReadOnlyObjectWrapper<Paint>(Color.ORANGE)));
+        cursorProperty.get().getLabel().setVisible(false);
+        cursorProperty.addListener((observable, oldValue, newValue) -> {
+            if (oldValue != null) {
+                oldValue.getPositionProperty().getPosition().getRecordProperty().removeListener(positionChange);
+                oldValue.getPositionProperty().getPosition().getOffsetProperty().removeListener(positionChange);
+            }
+            newValue.getPositionProperty().getPosition().getRecordProperty().addListener(positionChange);
+            newValue.getPositionProperty().getPosition().getOffsetProperty().addListener(positionChange);
+            positionChange.changed(null, null, null);
+        });
     }
+
+    public void playToggle() {
+        if (playProperty.get())
+            Platform.runLater(() -> playProperty.set(false));
+        else
+            Platform.runLater(() -> playProperty.set(true));
+    }
+
+    public void butterflyToggle() {
+        if (modeProperty.get().equals(Modes.BUTTERFLY))
+            Platform.runLater(() -> modeProperty.set(Modes.NORMAL));
+        else if (modeProperty.get().equals(Modes.NORMAL))
+            Platform.runLater(() -> modeProperty.set(Modes.BUTTERFLY));
+    }
+
+    private NumberBinding cursorMsBinding;
+
+    public void onClick(MouseEvent event) {
+        double xPosition = event.getSceneX() - labels.getWidth();
+        DoubleBinding pixelPerSample = horizontalResolution.divide(general.getPageSizeProperty().multiply(general.getNumberOfSamplesProperty()));
+        int sampleOffset = (int) (xPosition / pixelPerSample.get());
+        if (cursorProperty.get() != null) cursorProperty.get().remove();
+        Position position = positionPropertyBuilder.relative(general.getScrollBarValue().getPosition(), new Position(new ReadOnlyIntegerWrapper(sampleOffset / general.getNumberOfSamplesProperty().get()), new ReadOnlyIntegerWrapper(sampleOffset % general.getNumberOfSamplesProperty().get())));
+        cursorMsBinding = position.getRecordProperty().multiply(general.getDurationOfDataRecordProperty()).add(position.getOffsetProperty().multiply(general.getDurationOfDataRecordProperty().divide(general.getNumberOfSamplesProperty())));
+        cursorProperty.set(new MyLine(new PositionProperty(position), updateHandler.viewportHeightProperty(), labels.prefWidthProperty(), backgroundLayer, timeLine,
+                horizontalResolution.divide(general.getPageSizeProperty().multiply(general.getNumberOfSamplesProperty())), general.getScrollBarValue().getPosition(), general.getPageEndPosition(), general.getNumberOfSamplesProperty(),
+                cursorMsBinding,
+                new ReadOnlyObjectWrapper<>(Color.ORANGE)));
+    }
+
 
     @Autowired
     private void autowire(ConfigurableApplicationContext applicationContext) {
@@ -209,5 +268,11 @@ public class UpdateHandlerController implements Initializable {
             }
         });
         loopThread.start();
+    }
+
+    private ChangeListener<Number> positionChange = this::positionChange;
+
+    private void positionChange(ObservableValue<? extends Number> observable1, Number oldValue1, Number newValue1) {
+        general.getCurrentValuesProperty().set(general.getDataController().getDataModel().getDataAtPosition(cursorProperty.get().getPositionProperty().get().getNormalizedPosition(general.getNumberOfSamplesProperty().get())));
     }
 }

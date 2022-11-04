@@ -3,6 +3,7 @@ package root.main.fx.custom;
 import javafx.fxml.FXML;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import lombok.extern.slf4j.Slf4j;
 import root.main.common.enums.Modes;
 import root.main.fx.UpdateHandlerController;
 import root.main.fx.custom.MyPolyline;
@@ -21,6 +22,7 @@ import java.io.IOException;
 
 @Getter
 @Setter
+@Slf4j
 public class UpdateHandler extends VBox {
     @FXML
     public Pane timeline;
@@ -49,7 +51,7 @@ public class UpdateHandler extends VBox {
 
     public UpdateHandler() {
         super();
-        System.out.println("update Handler");
+        log.info(getClass().getSimpleName() + " has been initialized");
     }
 
     @Autowired

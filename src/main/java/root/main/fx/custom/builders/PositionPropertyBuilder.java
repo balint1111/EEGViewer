@@ -1,6 +1,7 @@
 package root.main.fx.custom.builders;
 
 import javafx.beans.binding.NumberBinding;
+import javafx.beans.property.SimpleIntegerProperty;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import root.main.General;

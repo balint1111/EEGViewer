@@ -45,16 +45,6 @@
                   <Component id="openElectrodeFileButton1" alignment="0" max="32767" attributes="0"/>
                   <Component id="openHeadModelButton1" alignment="0" max="32767" attributes="0"/>
                   <Group type="102" alignment="0" attributes="0">
-                      <Component id="firstPageButton1" max="32767" attributes="0"/>
-                      <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Component id="lastPageButton1" max="32767" attributes="0"/>
-                  </Group>
-                  <Group type="102" alignment="0" attributes="0">
-                      <Component id="prevPageButton1" max="32767" attributes="0"/>
-                      <EmptySpace max="32767" attributes="0"/>
-                      <Component id="nextPageButton1" max="32767" attributes="0"/>
-                  </Group>
-                  <Group type="102" alignment="0" attributes="0">
                       <Component id="jLabel6" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="32767" attributes="0"/>
                       <Component id="fpsLabel1" min="-2" max="-2" attributes="0"/>
@@ -85,6 +75,17 @@
                           <Component id="amplitudeRangeLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                  </Group>
+                  <Group type="102" attributes="0">
+                      <Group type="103" groupAlignment="1" attributes="0">
+                          <Component id="prevPageButton1" max="32767" attributes="0"/>
+                          <Component id="firstPageButton1" max="32767" attributes="0"/>
+                      </Group>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="lastPageButton1" max="32767" attributes="0"/>
+                          <Component id="nextPageButton1" max="32767" attributes="0"/>
+                      </Group>
                   </Group>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
@@ -176,7 +177,7 @@
     </Component>
     <Component class="javax.swing.JToggleButton" name="playToggleButton1">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Play"/>
+        <Property name="text" type="java.lang.String" value="Play/Pause"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="playToggleButton1ActionPerformed"/>
@@ -239,7 +240,6 @@
         <Property name="minimum" type="int" value="1"/>
         <Property name="minorTickSpacing" type="int" value="5"/>
         <Property name="paintTicks" type="boolean" value="true"/>
-        <Property name="snapToTicks" type="boolean" value="true"/>
         <Property name="value" type="int" value="60"/>
       </Properties>
       <Events>
@@ -253,12 +253,12 @@
     </Component>
     <Component class="javax.swing.JLabel" name="fpsLabel1">
       <Properties>
-        <Property name="text" type="java.lang.String" value="ssss"/>
+        <Property name="text" type="java.lang.String" value="60"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="slowdownLabel1">
       <Properties>
-        <Property name="text" type="java.lang.String" value="asdfasfd"/>
+        <Property name="text" type="java.lang.String" value="1"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel4">
@@ -272,6 +272,7 @@
         <Property name="minimum" type="int" value="1"/>
         <Property name="minorTickSpacing" type="int" value="5"/>
         <Property name="paintTicks" type="boolean" value="true"/>
+        <Property name="value" type="int" value="1"/>
       </Properties>
       <Events>
         <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="slowdownSlider1StateChanged"/>
@@ -334,6 +335,9 @@
             </Property>
             <Property name="visibleRowCount" type="int" value="5"/>
           </Properties>
+          <Events>
+            <EventHandler event="valueChanged" listener="javax.swing.event.ListSelectionListener" parameters="javax.swing.event.ListSelectionEvent" handler="amplitudeRangeList1ValueChanged"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>
