@@ -182,6 +182,7 @@ public class UpdateHandlerController implements Initializable {
                 }, playProperty::get, () -> general.getFpsProperty().get());
             }
         });
+
         Position position = general.getScrollBarValue().getPosition();
         cursorMsBinding = position.getRecordProperty().multiply(general.getDurationOfDataRecordProperty()).add(position.getOffsetProperty().multiply(general.getDurationOfDataRecordProperty().divide(general.getNumberOfSamplesProperty())));
         cursorProperty.set(new MyLine(general.getScrollBarValue(), updateHandler.viewportHeightProperty(), labels.prefWidthProperty(), backgroundLayer, timeLine,
@@ -198,6 +199,8 @@ public class UpdateHandlerController implements Initializable {
             newValue.getPositionProperty().getPosition().getOffsetProperty().addListener(positionChange);
             positionChange.changed(null, null, null);
         });
+        cursorProperty.get().getPositionProperty().getPosition().getRecordProperty().addListener(positionChange);
+        cursorProperty.get().getPositionProperty().getPosition().getOffsetProperty().addListener(positionChange);
     }
 
     public void playToggle() {

@@ -30,8 +30,7 @@ public class SwingController extends javax.swing.JPanel {
         mainController = general.getMainController();
         jFxIntegerField1.getMaxValue().bind(general.getNumberOfDataRecordsProperty());
         general.getPageSizeProperty().bindBidirectional(jFxIntegerField1.getProp());
-
-        jFxIntegerField2.getProp().bindBidirectional(properties.getLineSpacingProperty());
+        amplitudeRangeList1.setSelectionInterval(4, 4);
     }
 
 
@@ -80,7 +79,6 @@ public class SwingController extends javax.swing.JPanel {
         openVideoButton1 = new javax.swing.JButton();
         show3DVolumeCheckBox1 = new javax.swing.JCheckBox();
         jFxIntegerField1 = new custom.component.JFxIntegerField();
-        jFxIntegerField2 = new custom.component.JFxIntegerField();
 
         setMinimumSize(new java.awt.Dimension(0, 0));
         setPreferredSize(new java.awt.Dimension(250, 750));
@@ -233,8 +231,6 @@ public class SwingController extends javax.swing.JPanel {
             }
         });
 
-        jFxIntegerField2.setName(""); // NOI18N
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -246,9 +242,7 @@ public class SwingController extends javax.swing.JPanel {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jFxIntegerField1, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jFxIntegerField2, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jFxIntegerField1, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(10, 10, 10)
                         .addComponent(numChannelsLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -347,10 +341,7 @@ public class SwingController extends javax.swing.JPanel {
                         .addComponent(show3DVolumeCheckBox1)
                         .addGap(41, 41, 41)
                         .addComponent(openVideoButton1))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jFxIntegerField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jFxIntegerField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jFxIntegerField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -437,7 +428,6 @@ public class SwingController extends javax.swing.JPanel {
     private javax.swing.JLabel fpsLabel1;
     private javax.swing.JSlider fpsSlider1;
     private custom.component.JFxIntegerField jFxIntegerField1;
-    private custom.component.JFxIntegerField jFxIntegerField2;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;

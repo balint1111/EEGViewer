@@ -80,6 +80,7 @@ public class UpdateHandler extends VBox {
         scrollPane = controller.getScrollPane();
         initViewPortProperties();
 
+
         controller.getHorizontalResolution().bindBidirectional(horizontalResolution);
         horizontalResolution.bind(controller.getGroup().prefWidthProperty().subtract(2));
         controller.getLineSpacingProperty().bindBidirectional(lineSpacingProperty);
@@ -100,6 +101,7 @@ public class UpdateHandler extends VBox {
     private void initProps() {
         props.getBaseOffsetProperty().addListener((observable, oldValue, newValue) -> baseOffsetProperty.set(newValue.doubleValue()));
         props.getLineSpacingProperty().addListener((observable, oldValue, newValue) -> lineSpacingProperty.set(newValue.doubleValue()));
+        lineSpacingProperty.set(props.getLineSpacingProperty().get());
     }
 
 

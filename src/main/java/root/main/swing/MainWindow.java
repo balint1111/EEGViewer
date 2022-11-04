@@ -68,6 +68,7 @@ public class MainWindow extends javax.swing.JFrame {
 
         jPanel1 = new javax.swing.JPanel();
         jFXPanel1 = new javafx.embed.swing.JFXPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
         swingController1 = new root.main.swing.SwingController();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
@@ -84,7 +85,10 @@ public class MainWindow extends javax.swing.JFrame {
 
         jPanel1.setLayout(new java.awt.BorderLayout());
         jPanel1.add(jFXPanel1, java.awt.BorderLayout.CENTER);
-        jPanel1.add(swingController1, java.awt.BorderLayout.WEST);
+
+        jScrollPane1.setViewportView(swingController1);
+
+        jPanel1.add(jScrollPane1, java.awt.BorderLayout.WEST);
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.CENTER);
 
@@ -158,6 +162,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
     private root.main.swing.SwingController swingController1;
     // End of variables declaration//GEN-END:variables
 }

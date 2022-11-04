@@ -34,13 +34,17 @@ public class CurrentValueWatcher extends javax.swing.JDialog {
         DefaultTableModel dtm = (DefaultTableModel) jTable1.getModel();
         ObservableList<Integer> selectedChannels = general.getUpdateHandlerController().getSelectedChannels();
 
-        tableInit(dtm, selectedChannels);
-        updateTable(dtm, selectedChannels, general.getCurrentValuesProperty().get());
+        if (general.getDataModel().getEeg_file() != null) {
+            tableInit(dtm, selectedChannels);
+            updateTable(dtm, selectedChannels, general.getCurrentValuesProperty().get());
+        }
         selectedChannels.addListener((ListChangeListener<? super Integer>) c -> {
             tableInit(dtm, selectedChannels);
         });
         general.getCurrentValuesProperty().addListener((observable, oldValue, newValue) -> {
-            updateTable(dtm, selectedChannels, newValue);
+            if (oldValue != null) {
+                updateTable(dtm, selectedChannels, newValue);
+            }
         });
     }
 
@@ -57,6 +61,7 @@ public class CurrentValueWatcher extends javax.swing.JDialog {
         for (Integer channelNumber : selectedChannels) {
             dtm.addRow(new Object [] {labelsOfTheChannels.get(channelNumber), 0f});
         }
+        updateTable(dtm, selectedChannels, general.getCurrentValuesProperty().get());
     }
 
 

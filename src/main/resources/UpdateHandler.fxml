@@ -18,7 +18,7 @@
             </Pane>
         </Pane>
         <ScrollPane fx:id="scrollPane" prefWidth="${updateHandler.width}" prefHeight="${updateHandler.height}"
-                    onMouseClicked="#onClick" viewOrder="0"
+                    onMousePressed="#onClick" onMouseReleased="#onClick" viewOrder="0"
                     style="-fx-background-color: transparent; -fx-background: transparent">
             <VBox>
 
