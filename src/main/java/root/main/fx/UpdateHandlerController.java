@@ -135,7 +135,7 @@ public class UpdateHandlerController implements Initializable {
             myPolylineList.clear();
             labels.getChildren().clear();
             for (int i = 0; i < selectedChannels.size(); i++) {
-                MyPolyline myPolyline = new MyPolyline(dataController, c.getList().get(i), group, updateHandler);
+                MyPolyline myPolyline = new MyPolyline(i , group, updateHandler);
                 Label label = new Label(updateHandler.getController().getDataController().getDataModel().getEeg_file().getHeader().getLabelsOfTheChannels(c.getList().get(i)));
                 label.layoutYProperty().bind(myPolyline.layoutYProperty().subtract(label.heightProperty().divide(2)));
                 label.visibleProperty().bind(modeProperty.isNotEqualTo(Modes.BUTTERFLY));

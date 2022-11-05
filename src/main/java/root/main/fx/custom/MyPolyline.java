@@ -57,19 +57,18 @@ public class MyPolyline extends HBox {
 
     private UpdateHandler updateHandler;
 
-    public MyPolyline(DataController dataController,
-                      Integer channelNumber,
+    public MyPolyline(Integer selectionNumber,
                       Pane parent,
                       UpdateHandler updateHandler
     ) {
         this.updateHandler = updateHandler;
-        this.dataController = dataController;
-        this.channelNumber = channelNumber;
+        this.dataController = updateHandler.getController().getDataController();
+        this.channelNumber = updateHandler.getSelectedChannels().get(selectionNumber);
         load(parent);
         polyLineList = polyline.getPoints();
         polyline.setStrokeWidth(0.8d);
 
-        layoutYProperty().bind(updateHandler.getBaseOffsetProperty().add(updateHandler.getLineSpacingProperty().multiply(updateHandler.getAmplitudeProperty()).multiply(channelNumber + 1)));
+        layoutYProperty().bind(updateHandler.getBaseOffsetProperty().add(updateHandler.getLineSpacingProperty().multiply(updateHandler.getAmplitudeProperty()).multiply(selectionNumber + 1)));
 
         DoubleProperty controlVboxWidthProperty = getControlVboxWidthProperty();
         DoubleProperty prefWidthProperty = updateHandler.getController().getGroup().prefWidthProperty();
@@ -77,12 +76,13 @@ public class MyPolyline extends HBox {
         Tooltip t = new Tooltip(dataController.getDataModel().getEeg_file().getHeader().getLabelsOfTheChannels().get(channelNumber));
         Tooltip.install(polyline, t);
         initLineProperty(controlVboxWidthProperty, prefWidthProperty);
-        //lineInit();
+        lineInit();
         nameLabelInit(dataController, channelNumber);
 //        setStyleClasses();
     }
 
     private void lineInit() {
+        line.visibleProperty().bind(updateHandler.getController().getProperties().getZeroLineVisibleProperty());
         line.strokeProperty().bindBidirectional(lineProperty.getStrokeProperty());
         line.endXProperty().bind(lineProperty.getHorizontalResolution());
     }

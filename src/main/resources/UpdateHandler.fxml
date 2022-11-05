@@ -17,7 +17,7 @@
             <Pane prefWidth="80" prefHeight="${updateHandler.height}" style="-fx-background-color: grey;" viewOrder="-Infinity">
             </Pane>
         </Pane>
-        <ScrollPane fx:id="scrollPane" prefWidth="${updateHandler.width}" prefHeight="${updateHandler.height}"
+        <ScrollPane fx:id="scrollPane" prefWidth="${updateHandler.width}" prefHeight="${updateHandler.height-50-30}"
                     onMousePressed="#onClick" onMouseReleased="#onClick" viewOrder="0"
                     style="-fx-background-color: transparent; -fx-background: transparent">
             <VBox>
