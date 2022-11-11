@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class LineProperty {
+public class MyPolyLineProperty {
     private ObjectProperty<Paint> strokeProperty;
     private DoubleProperty amplitude;
     private BooleanProperty buttonDisable;

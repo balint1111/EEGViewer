@@ -9,7 +9,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -124,7 +123,7 @@ public class UpdateHandlerController implements Initializable {
             for (int i = 0; i < myPolylineList.size(); i++) {
                 Color color = colors.get(i % colors.size());
                 if (color != null)
-                    myPolylineList.get(i).getLineProperty().getStrokeProperty().setValue(color);
+                    myPolylineList.get(i).getMyPolyLineProperty().getStrokeProperty().setValue(color);
             }
         }
     }

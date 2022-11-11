@@ -130,7 +130,7 @@ public class Util {
         for (int i = 0; i < channelsOriginalRes.length; i++) {
             int finalI = i;
             function.apply(i).ifPresent(myPolyline -> {
-                List<Double> downSampledChannel = Util.downSample(channelsOriginalRes[myPolyline.getChannelNumber()], myPolyline.getLineProperty().getHorizontalResolution().get());
+                List<Double> downSampledChannel = Util.downSample(channelsOriginalRes[myPolyline.getChannelNumber()], myPolyline.getMyPolyLineProperty().getHorizontalResolution().get());
                 downSampledChannels[finalI] = downSampledChannel;
             });
         }

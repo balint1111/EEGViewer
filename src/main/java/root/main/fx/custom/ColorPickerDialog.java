@@ -11,11 +11,10 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import root.main.fx.custom.LineProperty;
 
 public class ColorPickerDialog {
 
-    public static LineProperty display(LineProperty lineProperty) {
+    public static MyPolyLineProperty display(MyPolyLineProperty myPolyLineProperty) {
 
         //Stage init
         Stage stage = new Stage();
@@ -46,20 +45,20 @@ public class ColorPickerDialog {
         button.setOnAction(e -> stage.close());
 
         //bindings
-        bindProperties(lineProperty, colorPicker, doubleField);
+        bindProperties(myPolyLineProperty, colorPicker, doubleField);
 
 
         stage.showAndWait();
-        return lineProperty;
+        return myPolyLineProperty;
     }
 
-    private static void bindProperties(LineProperty lineProperty, ColorPicker colorPicker, DoubleField doubleField) {
+    private static void bindProperties(MyPolyLineProperty myPolyLineProperty, ColorPicker colorPicker, DoubleField doubleField) {
         //colorBinding
-        colorPicker.setValue((Color) lineProperty.getStrokeProperty().getValue());
+        colorPicker.setValue((Color) myPolyLineProperty.getStrokeProperty().getValue());
         colorPicker.setOnAction(e  -> {
-            lineProperty.getStrokeProperty().setValue(colorPicker.getValue());
+            myPolyLineProperty.getStrokeProperty().setValue(colorPicker.getValue());
         });
         //ScaleY binding
-        doubleField.valueProperty().bindBidirectional(lineProperty.getAmplitude());
+        doubleField.valueProperty().bindBidirectional(myPolyLineProperty.getAmplitude());
     }
 }
