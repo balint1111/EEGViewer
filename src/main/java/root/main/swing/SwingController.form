@@ -237,7 +237,7 @@
         <Component class="javax.swing.JList" name="amplitudeRangeList1">
           <Properties>
             <Property name="model" type="javax.swing.ListModel" editor="org.netbeans.modules.form.editors2.ListModelEditor">
-              <StringArray count="14">
+              <StringArray count="13">
                 <StringItem index="0" value="+/- 5 uV"/>
                 <StringItem index="1" value="+/- 10 uV"/>
                 <StringItem index="2" value="+/- 20 uV"/>
@@ -247,11 +247,10 @@
                 <StringItem index="6" value="+/- 500 uV"/>
                 <StringItem index="7" value="+/- 1 mV"/>
                 <StringItem index="8" value="+/- 2 mV"/>
-                <StringItem index="9" value="+/- 5 mV"/>
-                <StringItem index="10" value="+/- 10 mV"/>
-                <StringItem index="11" value="+/- 20 mV"/>
-                <StringItem index="12" value="+/- 50 mV"/>
-                <StringItem index="13" value="+/- 100 mV"/>
+                <StringItem index="9" value="+/- 10 mV"/>
+                <StringItem index="10" value="+/- 20 mV"/>
+                <StringItem index="11" value="+/- 50 mV"/>
+                <StringItem index="12" value="+/- 100 mV"/>
               </StringArray>
             </Property>
             <Property name="selectionMode" type="int" value="0"/>
