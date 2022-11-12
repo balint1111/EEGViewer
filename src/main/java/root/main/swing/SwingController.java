@@ -151,7 +151,7 @@ public class SwingController extends javax.swing.JPanel {
         });
 
         amplitudeRangeList1.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "+/- 5 uV", "+/- 10 uV", "+/- 20 uV", "+/- 50 uV", "+/- 100 uV", "+/- 200 uV", "+/- 500 uV", "+/- 1 mV", "+/- 2 mV", "+/- 10 mV", "+/- 20 mV", "+/- 50 mV", "+/- 100 mV" };
+            String[] strings = { "+/- 5 uV", "+/- 10 uV", "+/- 20 uV", "+/- 50 uV", "+/- 100 uV", "+/- 200 uV", "+/- 500 uV", "+/- 1 mV", "+/- 2 mV" };
             public int getSize() { return strings.length; }
             public Object getElementAt(int i) { return strings[i]; }
         });
