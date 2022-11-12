@@ -27,15 +27,11 @@
           <Group type="102" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="dipoleSimulatorButton1" alignment="0" max="32767" attributes="0"/>
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="10" pref="10" max="-2" attributes="0"/>
                       <Component id="numChannelsLabel1" max="32767" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="eegHeaderInfoButton1" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="57" max="-2" attributes="0"/>
                   </Group>
-                  <Component id="openElectrodeFileButton1" alignment="0" max="32767" attributes="0"/>
-                  <Component id="openHeadModelButton1" alignment="0" max="32767" attributes="0"/>
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="jLabel6" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="32767" attributes="0"/>
@@ -51,21 +47,14 @@
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="slowdownSlider1" pref="0" max="32767" attributes="0"/>
                   </Group>
-                  <Component id="openMRIButton1" alignment="0" max="32767" attributes="0"/>
                   <Component id="open3DViewButton1" alignment="0" max="32767" attributes="0"/>
-                  <Component id="openVideoButton1" alignment="0" max="32767" attributes="0"/>
                   <Component id="playToggleButton1" alignment="0" max="32767" attributes="0"/>
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="openEEGFileButton1" pref="137" max="32767" attributes="0"/>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="triggerBasedTrialsCheckBox1" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="93" max="-2" attributes="0"/>
                   </Group>
                   <Group type="102" attributes="0">
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="show3DVolumeCheckBox1" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel7" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="amplitudeRangeLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
-                      </Group>
+                      <Component id="amplitudeRangeLabel1" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                   </Group>
                   <Group type="102" attributes="0">
@@ -94,17 +83,9 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="openEEGFileButton1" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="triggerBasedTrialsCheckBox1" alignment="3" min="-2" max="-2" attributes="0"/>
-              </Group>
-              <EmptySpace type="unrelated" max="-2" attributes="0"/>
-              <Component id="jLabel7" min="-2" max="-2" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="numChannelsLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="eegHeaderInfoButton1" alignment="3" min="-2" max="-2" attributes="0"/>
-              </Group>
+              <Component id="openEEGFileButton1" min="-2" max="-2" attributes="0"/>
+              <EmptySpace min="-2" max="-2" attributes="0"/>
+              <Component id="numChannelsLabel1" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="jFxIntegerField1" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -141,21 +122,9 @@
                   <Component id="prevPageButton1" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="nextPageButton1" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace max="-2" attributes="0"/>
-              <Component id="dipoleSimulatorButton1" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="-2" pref="22" max="-2" attributes="0"/>
-              <Component id="openElectrodeFileButton1" min="-2" max="-2" attributes="0"/>
-              <EmptySpace type="separate" max="-2" attributes="0"/>
-              <Component id="openHeadModelButton1" min="-2" max="-2" attributes="0"/>
-              <EmptySpace type="separate" max="-2" attributes="0"/>
-              <Component id="openMRIButton1" min="-2" max="-2" attributes="0"/>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Component id="open3DViewButton1" min="-2" max="-2" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
-              <Component id="show3DVolumeCheckBox1" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="-2" pref="41" max="-2" attributes="0"/>
-              <Component id="openVideoButton1" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="72" max="32767" attributes="0"/>
+              <EmptySpace pref="273" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -209,19 +178,6 @@
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="openEEGFileButton1ActionPerformed"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JButton" name="openElectrodeFileButton1">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="Open electrode file..."/>
-      </Properties>
-    </Component>
-    <Component class="javax.swing.JButton" name="openHeadModelButton1">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="Open head model file..."/>
-      </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="openHeadModelButton1ActionPerformed"/>
-      </Events>
-    </Component>
     <Component class="javax.swing.JLabel" name="amplitudeRangeLabel1">
       <Properties>
         <Property name="text" type="java.lang.String" value="Signal amplitude range:"/>
@@ -272,29 +228,7 @@
         <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="slowdownSlider1StateChanged"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JLabel" name="jLabel7">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="Number of channels:"/>
-      </Properties>
-    </Component>
     <Component class="javax.swing.JLabel" name="numChannelsLabel1">
-    </Component>
-    <Component class="javax.swing.JButton" name="openMRIButton1">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="CT/MRI Viewer"/>
-      </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="openMRIButton1ActionPerformed"/>
-      </Events>
-    </Component>
-    <Component class="javax.swing.JButton" name="eegHeaderInfoButton1">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="Info"/>
-        <Property name="enabled" type="boolean" value="false"/>
-      </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="eegHeaderInfoButton1ActionPerformed"/>
-      </Events>
     </Component>
     <Container class="javax.swing.JScrollPane" name="jScrollPane3">
 
@@ -335,42 +269,12 @@
         </Component>
       </SubComponents>
     </Container>
-    <Component class="javax.swing.JCheckBox" name="triggerBasedTrialsCheckBox1">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="Trigger-trials"/>
-      </Properties>
-    </Component>
-    <Component class="javax.swing.JButton" name="dipoleSimulatorButton1">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="Open dipole simulator"/>
-      </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="dipoleSimulatorButton1ActionPerformed"/>
-      </Events>
-    </Component>
     <Component class="javax.swing.JButton" name="open3DViewButton1">
       <Properties>
-        <Property name="text" type="java.lang.String" value="3D Model Viewer"/>
+        <Property name="text" type="java.lang.String" value="Current Value Watcher"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="open3DViewButton1ActionPerformed"/>
-      </Events>
-    </Component>
-    <Component class="javax.swing.JButton" name="openVideoButton1">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="Video Viewer"/>
-      </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="openVideoButton1ActionPerformed"/>
-      </Events>
-    </Component>
-    <Component class="javax.swing.JCheckBox" name="show3DVolumeCheckBox1">
-      <Properties>
-        <Property name="selected" type="boolean" value="true"/>
-        <Property name="text" type="java.lang.String" value="show 3D volume"/>
-      </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="show3DVolumeCheckBox1ActionPerformed"/>
       </Events>
     </Component>
     <Component class="custom.component.JFxIntegerField" name="jFxIntegerField1">

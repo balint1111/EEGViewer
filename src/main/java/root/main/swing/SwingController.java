@@ -58,8 +58,6 @@ public class SwingController extends javax.swing.JPanel {
         nextPageButton1 = new javax.swing.JButton();
         lastPageButton1 = new javax.swing.JButton();
         openEEGFileButton1 = new javax.swing.JButton();
-        openElectrodeFileButton1 = new javax.swing.JButton();
-        openHeadModelButton1 = new javax.swing.JButton();
         amplitudeRangeLabel1 = new javax.swing.JLabel();
         fpsSlider1 = new javax.swing.JSlider();
         jLabel6 = new javax.swing.JLabel();
@@ -67,17 +65,10 @@ public class SwingController extends javax.swing.JPanel {
         slowdownLabel1 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         slowdownSlider1 = new javax.swing.JSlider();
-        jLabel7 = new javax.swing.JLabel();
         numChannelsLabel1 = new javax.swing.JLabel();
-        openMRIButton1 = new javax.swing.JButton();
-        eegHeaderInfoButton1 = new javax.swing.JButton();
         jScrollPane3 = new javax.swing.JScrollPane();
         amplitudeRangeList1 = new javax.swing.JList();
-        triggerBasedTrialsCheckBox1 = new javax.swing.JCheckBox();
-        dipoleSimulatorButton1 = new javax.swing.JButton();
         open3DViewButton1 = new javax.swing.JButton();
-        openVideoButton1 = new javax.swing.JButton();
-        show3DVolumeCheckBox1 = new javax.swing.JCheckBox();
         jFxIntegerField1 = new custom.component.JFxIntegerField();
         jLabel1 = new javax.swing.JLabel();
 
@@ -126,15 +117,6 @@ public class SwingController extends javax.swing.JPanel {
             }
         });
 
-        openElectrodeFileButton1.setText("Open electrode file...");
-
-        openHeadModelButton1.setText("Open head model file...");
-        openHeadModelButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                openHeadModelButton1ActionPerformed(evt);
-            }
-        });
-
         amplitudeRangeLabel1.setText("Signal amplitude range:");
 
         fpsSlider1.setMajorTickSpacing(20);
@@ -168,33 +150,10 @@ public class SwingController extends javax.swing.JPanel {
             }
         });
 
-        jLabel7.setText("Number of channels:");
-
-        openMRIButton1.setText("CT/MRI Viewer");
-        openMRIButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                openMRIButton1ActionPerformed(evt);
-            }
-        });
-
-        eegHeaderInfoButton1.setText("Info");
-        eegHeaderInfoButton1.setEnabled(false);
-        eegHeaderInfoButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                eegHeaderInfoButton1ActionPerformed(evt);
-            }
-        });
-
         amplitudeRangeList1.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = {"+/- 5 uV", "+/- 10 uV", "+/- 20 uV", "+/- 50 uV", "+/- 100 uV", "+/- 200 uV", "+/- 500 uV", "+/- 1 mV", "+/- 2 mV", "+/- 5 mV", "+/- 10 mV", "+/- 20 mV", "+/- 50 mV", "+/- 100 mV"};
-
-            public int getSize() {
-                return strings.length;
-            }
-
-            public Object getElementAt(int i) {
-                return strings[i];
-            }
+            String[] strings = { "+/- 5 uV", "+/- 10 uV", "+/- 20 uV", "+/- 50 uV", "+/- 100 uV", "+/- 200 uV", "+/- 500 uV", "+/- 1 mV", "+/- 2 mV", "+/- 5 mV", "+/- 10 mV", "+/- 20 mV", "+/- 50 mV", "+/- 100 mV" };
+            public int getSize() { return strings.length; }
+            public Object getElementAt(int i) { return strings[i]; }
         });
         amplitudeRangeList1.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         amplitudeRangeList1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -207,34 +166,10 @@ public class SwingController extends javax.swing.JPanel {
         });
         jScrollPane3.setViewportView(amplitudeRangeList1);
 
-        triggerBasedTrialsCheckBox1.setText("Trigger-trials");
-
-        dipoleSimulatorButton1.setText("Open dipole simulator");
-        dipoleSimulatorButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                dipoleSimulatorButton1ActionPerformed(evt);
-            }
-        });
-
-        open3DViewButton1.setText("3D Model Viewer");
+        open3DViewButton1.setText("Current Value Watcher");
         open3DViewButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 open3DViewButton1ActionPerformed(evt);
-            }
-        });
-
-        openVideoButton1.setText("Video Viewer");
-        openVideoButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                openVideoButton1ActionPerformed(evt);
-            }
-        });
-
-        show3DVolumeCheckBox1.setSelected(true);
-        show3DVolumeCheckBox1.setText("show 3D volume");
-        show3DVolumeCheckBox1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                show3DVolumeCheckBox1ActionPerformed(evt);
             }
         });
 
@@ -243,117 +178,89 @@ public class SwingController extends javax.swing.JPanel {
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
-                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(dipoleSimulatorButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addGroup(layout.createSequentialGroup()
-                                                .addGap(10, 10, 10)
-                                                .addComponent(numChannelsLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(eegHeaderInfoButton1))
-                                        .addComponent(openElectrodeFileButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(openHeadModelButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addGroup(layout.createSequentialGroup()
-                                                .addComponent(jLabel6)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                .addComponent(fpsLabel1)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(fpsSlider1, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addGroup(layout.createSequentialGroup()
-                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                                        .addComponent(jLabel4)
-                                                        .addComponent(slowdownLabel1))
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                                .addComponent(slowdownSlider1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                                        .addComponent(openMRIButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(open3DViewButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(openVideoButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(playToggleButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addGroup(layout.createSequentialGroup()
-                                                .addComponent(openEEGFileButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                                .addComponent(triggerBasedTrialsCheckBox1))
-                                        .addGroup(layout.createSequentialGroup()
-                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                        .addComponent(show3DVolumeCheckBox1)
-                                                        .addComponent(jLabel7)
-                                                        .addComponent(amplitudeRangeLabel1))
-                                                .addGap(0, 0, Short.MAX_VALUE))
-                                        .addGroup(layout.createSequentialGroup()
-                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                                        .addComponent(prevPageButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                        .addComponent(firstPageButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                                .addGap(18, 18, 18)
-                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                        .addComponent(lastPageButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                        .addComponent(nextPageButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                                        .addComponent(jScrollPane3)
-                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                .addGap(18, 18, 18)
-                                                .addComponent(jFxIntegerField1, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addContainerGap())
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(numChannelsLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(57, 57, 57))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel6)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(fpsLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(fpsSlider1, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel4)
+                            .addComponent(slowdownLabel1))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(slowdownSlider1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                    .addComponent(open3DViewButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(playToggleButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(openEEGFileButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE)
+                        .addGap(93, 93, 93))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(amplitudeRangeLabel1)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(prevPageButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(firstPageButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lastPageButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(nextPageButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addComponent(jScrollPane3)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jFxIntegerField1, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
-                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(openEEGFileButton1)
-                                        .addComponent(triggerBasedTrialsCheckBox1))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jLabel7)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(numChannelsLabel1)
-                                        .addComponent(eegHeaderInfoButton1))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(jFxIntegerField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(jLabel1))
-                                .addGap(11, 11, 11)
-                                .addComponent(amplitudeRangeLabel1)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(playToggleButton1)
-                                .addGap(18, 18, 18)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addGroup(layout.createSequentialGroup()
-                                                .addComponent(jLabel4)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(slowdownLabel1))
-                                        .addComponent(slowdownSlider1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(18, 18, 18)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jLabel6)
-                                        .addComponent(fpsSlider1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(fpsLabel1))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(firstPageButton1)
-                                        .addComponent(lastPageButton1))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(prevPageButton1)
-                                        .addComponent(nextPageButton1))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(dipoleSimulatorButton1)
-                                .addGap(22, 22, 22)
-                                .addComponent(openElectrodeFileButton1)
-                                .addGap(18, 18, 18)
-                                .addComponent(openHeadModelButton1)
-                                .addGap(18, 18, 18)
-                                .addComponent(openMRIButton1)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(open3DViewButton1)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(show3DVolumeCheckBox1)
-                                .addGap(41, 41, 41)
-                                .addComponent(openVideoButton1)
-                                .addContainerGap(72, Short.MAX_VALUE))
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(openEEGFileButton1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(numChannelsLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jFxIntegerField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1))
+                .addGap(11, 11, 11)
+                .addComponent(amplitudeRangeLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(playToggleButton1)
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(slowdownLabel1))
+                    .addComponent(slowdownSlider1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel6)
+                    .addComponent(fpsSlider1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(fpsLabel1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(firstPageButton1)
+                    .addComponent(lastPageButton1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(prevPageButton1)
+                    .addComponent(nextPageButton1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(open3DViewButton1)
+                .addContainerGap(273, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -387,10 +294,6 @@ public class SwingController extends javax.swing.JPanel {
         Platform.runLater(() -> general.open());
     }//GEN-LAST:event_openEEGFileButton1ActionPerformed
 
-    private void openHeadModelButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openHeadModelButton1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_openHeadModelButton1ActionPerformed
-
     private void fpsSlider1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fpsSlider1StateChanged
         general.getFpsProperty().setValue(fpsSlider1.getValue());
         fpsLabel1.setText(Integer.valueOf(fpsSlider1.getValue()).toString());
@@ -401,30 +304,9 @@ public class SwingController extends javax.swing.JPanel {
         slowdownLabel1.setText(Integer.valueOf(slowdownSlider1.getValue()).toString());
     }//GEN-LAST:event_slowdownSlider1StateChanged
 
-    private void openMRIButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openMRIButton1ActionPerformed
-
-        // TODO add your handling code here:
-    }//GEN-LAST:event_openMRIButton1ActionPerformed
-
-    private void eegHeaderInfoButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_eegHeaderInfoButton1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_eegHeaderInfoButton1ActionPerformed
-
-    private void dipoleSimulatorButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dipoleSimulatorButton1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_dipoleSimulatorButton1ActionPerformed
-
     private void open3DViewButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_open3DViewButton1ActionPerformed
         Platform.runLater(general::openValueWatcher);
     }//GEN-LAST:event_open3DViewButton1ActionPerformed
-
-    private void openVideoButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openVideoButton1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_openVideoButton1ActionPerformed
-
-    private void show3DVolumeCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_show3DVolumeCheckBox1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_show3DVolumeCheckBox1ActionPerformed
 
     private void amplitudeRangeList1ValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_amplitudeRangeList1ValueChanged
         String selectedValue = (String) amplitudeRangeList1.getModel().getElementAt(amplitudeRangeList1.getSelectedIndex());
@@ -439,8 +321,6 @@ public class SwingController extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel amplitudeRangeLabel1;
     private javax.swing.JList amplitudeRangeList1;
-    private javax.swing.JButton dipoleSimulatorButton1;
-    private javax.swing.JButton eegHeaderInfoButton1;
     private javax.swing.JButton firstPageButton1;
     private javax.swing.JLabel fpsLabel1;
     private javax.swing.JSlider fpsSlider1;
@@ -448,22 +328,15 @@ public class SwingController extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JButton lastPageButton1;
     private javax.swing.JButton nextPageButton1;
     private javax.swing.JLabel numChannelsLabel1;
     private javax.swing.JButton open3DViewButton1;
     private javax.swing.JButton openEEGFileButton1;
-    private javax.swing.JButton openElectrodeFileButton1;
-    private javax.swing.JButton openHeadModelButton1;
-    private javax.swing.JButton openMRIButton1;
-    private javax.swing.JButton openVideoButton1;
     private javax.swing.JToggleButton playToggleButton1;
     private javax.swing.JButton prevPageButton1;
-    private javax.swing.JCheckBox show3DVolumeCheckBox1;
     private javax.swing.JLabel slowdownLabel1;
     private javax.swing.JSlider slowdownSlider1;
-    private javax.swing.JCheckBox triggerBasedTrialsCheckBox1;
     // End of variables declaration//GEN-END:variables
 }
