@@ -46,7 +46,7 @@ public class JFormattedTextFieldProperty extends SimpleDoubleProperty {
             try {
                 String text = e.getDocument().getText(0, e.getDocument().getLength()).replaceAll(" ", "");
                 if (StringUtils.hasText(text)) {
-                    setValue(Integer.valueOf(text));
+                    setValue(Double.valueOf(text.replaceAll(",",".")));
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();

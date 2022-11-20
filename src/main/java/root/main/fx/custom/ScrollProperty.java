@@ -37,11 +37,11 @@ public class ScrollProperty extends PositionProperty {
     }
 
 
-    private void doublePropertyChange(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+    public void doublePropertyChange(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
         if (!recursive) {
             recursive = true;
-            position.getRecordProperty().set(newValue.intValue());
-            position.getOffsetProperty().set((int) (((newValue.doubleValue() - newValue.intValue())
+            position.getRecordProperty().set(doubleProperty.getValue().intValue());
+            position.getOffsetProperty().set((int) (((doubleProperty.getValue().doubleValue() - doubleProperty.getValue().intValue())
                     / (1d / (double) ((MinMaxIntegerProperty) position.getOffsetProperty()).getMax().get())))
             );
         } else {

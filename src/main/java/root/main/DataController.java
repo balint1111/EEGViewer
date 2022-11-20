@@ -48,45 +48,45 @@ public class DataController {
 
     @SneakyThrows
     public void showDataRecord() {
-
         //interupt the thread if running
         if (thread != null && !thread.isInterrupted()) {
             thread.interrupt();
         }
 
+
         if (backgroundExecutor.getQueue().isEmpty()) {
             backgroundExecutor.execute(() -> {
                 try {
-                    thread = Thread.currentThread();
+                    if (backgroundExecutor.getQueue().isEmpty()) {
+                        thread = Thread.currentThread();
 //                    preLoadInterrupt();
-                    ScrollProperty scrollProperty = Optional.ofNullable(general.getScrollBarValue()).orElseThrow(() -> new DataControllerException("scrollBarValue is Null"));
-                    int offset = scrollProperty.getPosition().getOffsetProperty().get();
-                    int from = scrollProperty.getPosition().getRecordProperty().get();
-                    int to = from + general.getPageSizeProperty().get() - 1 + (offset != 0 ? 1 : 0);
-                    if ((to - from) < 0) return;
+                        ScrollProperty scrollProperty = Optional.ofNullable(general.getScrollBarValue()).orElseThrow(() -> new DataControllerException("scrollBarValue is Null"));
+                        int offset = scrollProperty.getPosition().getOffsetProperty().get();
+                        int from = scrollProperty.getPosition().getRecordProperty().get();
+                        int to = from + general.getPageSizeProperty().get() - 1 + (offset != 0 ? 1 : 0);
+                        if ((to - from) < 0) return;
 //                    System.out.println("from: " + from + " to: " + to);
 
+                        if (Thread.interrupted()) throw new InterruptedException();
+                        List<DataRecord> dataRecordsFromTo = dataModel.getDataRecordsFromTo(from, to);
+                        if (Thread.interrupted()) throw new InterruptedException();
+                        List<Double>[] downSampledChannels;
 
-                    List<DataRecord> dataRecordsFromTo = dataModel.getDataRecordsFromTo(from, to);
-                    if (Thread.interrupted()) throw new InterruptedException();
-                    List<Double>[] downSampledChannels;
-
-                    synchronized (updateHandlerController.getMyPolylineList()) {
-                        float[][] channelsOriginalRes = Util.dataRecordsRepackage(dataRecordsFromTo, i -> updateHandlerController.getMyPolylineList().stream().anyMatch(myPolyline -> myPolyline.getChannelNumber().equals(i)));
-                        if (offset != 0)
-                            Util.offsetData(channelsOriginalRes, offset, dataModel.getEeg_file().getHeader().getNumberOfSamples());
-                        dataRecordsFromTo = null;
-                        if (Thread.interrupted()) throw new InterruptedException();
-                        downSampledChannels = Util.getLists(channelsOriginalRes, (i) -> updateHandlerController.getMyPolylineList().stream().filter(myPolyline -> myPolyline.getChannelNumber().equals(i)).findFirst());
-                        channelsOriginalRes = null;
-                        if (Thread.interrupted()) throw new InterruptedException();
-                        updateHandlerController.setYVectors(downSampledChannels);
-                        downSampledChannels = null;
-                        if (Thread.interrupted()) throw new InterruptedException();
-                        updateHandlerController.update();
+                        synchronized (updateHandlerController.getMyPolylineList()) {
+                            float[][] channelsOriginalRes = Util.dataRecordsRepackage(dataRecordsFromTo, i -> updateHandlerController.getMyPolylineList().stream().anyMatch(myPolyline -> myPolyline.getChannelNumber().equals(i)));
+                            if (offset != 0)
+                                Util.offsetData(channelsOriginalRes, offset, dataModel.getEeg_file().getHeader().getNumberOfSamples());
+                            dataRecordsFromTo = null;
+                            if (Thread.interrupted()) throw new InterruptedException();
+                            downSampledChannels = Util.getLists(channelsOriginalRes, (i) -> updateHandlerController.getMyPolylineList().stream().filter(myPolyline -> myPolyline.getChannelNumber().equals(i)).findFirst());
+                            channelsOriginalRes = null;
+                            if (Thread.interrupted()) throw new InterruptedException();
+                            updateHandlerController.setYVectors(downSampledChannels);
+                            downSampledChannels = null;
+                            if (Thread.interrupted()) throw new InterruptedException();
+                            updateHandlerController.update();
+                        }
                     }
-
-
                     //asyncExecutor.preLoadAroundPage(3);
                 } catch (InterruptedException e) {
 //                    log.info("Thread: " + Thread.currentThread() + " interrupted");
@@ -100,7 +100,6 @@ public class DataController {
             });
         }
     }
-
 
 
     @SneakyThrows

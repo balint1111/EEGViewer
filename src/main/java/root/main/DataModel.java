@@ -76,6 +76,10 @@ public class DataModel {
 
 
     public DataModel(int maxQueueSize) {
+        setMaxQueueSize(maxQueueSize);
+    }
+
+    public void setMaxQueueSize(int maxQueueSize) {
         queue = MinMaxPriorityQueue.<DataRecord>orderedBy((o1, o2) -> o1.getLastRequestTime().compareTo(o2.getLastRequestTime()) * -1).maximumSize(maxQueueSize).create();
     }
 }

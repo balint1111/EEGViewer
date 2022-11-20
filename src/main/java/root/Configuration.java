@@ -1,5 +1,6 @@
 package root;
 
+import org.apache.tomcat.util.threads.TaskQueue;
 import org.springframework.context.annotation.Bean;
 import root.main.DataController;
 import root.main.DataModel;
@@ -19,6 +20,6 @@ public class Configuration {
 
     @Bean
     ThreadPoolExecutor backgroundExecutor() {
-        return new ThreadPoolExecutor( 1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>() );
+        return new ThreadPoolExecutor( 1, 1, 0L, TimeUnit.MILLISECONDS, new TaskQueue() );
     }
 }

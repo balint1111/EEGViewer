@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.binding.NumberBinding;
 import javafx.beans.property.*;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
@@ -24,7 +25,9 @@ public class MyLine extends Line{
     private final Pane parentLabelPane;
     private final Label label;
 
-    public MyLine(PositionProperty positionProperty, DoubleProperty endYProperty, DoubleProperty baseOffset, Pane parentPane, Pane parentLabelPane, DoubleBinding pixelPerSample, Position firstVisible, Position lastVisible, IntegerProperty numberOfSamples, NumberBinding msProperty, ObjectProperty<Paint> strokeProperty) {
+    private ChangeListener<Boolean> shouldBeVisibleListener = this::shouldBeVisibleListener;
+
+    public MyLine(PositionProperty positionProperty, DoubleProperty endYProperty, DoubleProperty baseOffset, Pane parentPane, Pane parentLabelPane, DoubleBinding pixelPerSample, Position firstVisible, Position lastVisible, IntegerProperty numberOfSamples, NumberBinding msProperty, ObjectProperty<Color> strokeProperty, DoubleProperty strokeWidthProperty) {
         super();
         this.positionProperty = positionProperty;
         this.parentPane = parentPane;
@@ -41,16 +44,18 @@ public class MyLine extends Line{
                 .add(positionProperty.getPosition().getOffsetProperty()).subtract(firstVisible.getOffsetProperty());
         xPosition.bind(baseOffset.add(offsetFromStart.multiply(pixelPerSample)));
 
+
         label.layoutXProperty().bind(xPosition.subtract(label.widthProperty().divide(2)));
         label.layoutYProperty().set(0);
 
         strokeProperty().bind(strokeProperty);
+        strokeWidthProperty().bind(strokeWidthProperty);
         startXProperty().bind(xPosition);
         endXProperty().bind(xPosition);
         startYProperty().set(0);
         endYProperty().bind(endYProperty);
 
-        shouldBeVisible.addListener(this::shouldBeVisibleListener);
+        shouldBeVisible.addListener(shouldBeVisibleListener);
         shouldBeVisible.bind(positionProperty.greaterThanOrEqual(firstVisible).and(positionProperty.lessThanOrEqual(lastVisible)));
 
     }
@@ -92,5 +97,6 @@ public class MyLine extends Line{
     public void remove() {
         parentPane.getChildren().remove(this);
         parentLabelPane.getChildren().remove(label);
+        shouldBeVisible.removeListener(shouldBeVisibleListener);
     }
 }

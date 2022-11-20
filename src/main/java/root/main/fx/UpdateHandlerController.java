@@ -11,6 +11,7 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.MouseEvent;
@@ -18,7 +19,6 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
@@ -32,10 +32,12 @@ import root.main.fx.custom.*;
 import root.main.fx.custom.builders.PositionPropertyBuilder;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 
 @Getter
@@ -134,7 +136,7 @@ public class UpdateHandlerController implements Initializable {
             myPolylineList.clear();
             labels.getChildren().clear();
             for (int i = 0; i < selectedChannels.size(); i++) {
-                MyPolyline myPolyline = new MyPolyline(i , group, updateHandler);
+                MyPolyline myPolyline = new MyPolyline(i, group, updateHandler);
                 Label label = new Label(updateHandler.getController().getDataController().getDataModel().getEeg_file().getHeader().getLabelsOfTheChannels(c.getList().get(i)));
                 label.layoutYProperty().bind(myPolyline.layoutYProperty().subtract(label.heightProperty().divide(2)));
                 label.visibleProperty().bind(modeProperty.isNotEqualTo(Modes.BUTTERFLY));
@@ -159,14 +161,8 @@ public class UpdateHandlerController implements Initializable {
         autowireCapableBeanFactory.autowireBean(myScrollBar);
         applicationContext.getBeanFactory().registerSingleton(myScrollBar.getClass().getCanonicalName(), myScrollBar);
 
-        general.getPageEndPosition().getRecordProperty().addListener((observable, oldValue, newValue) -> {
-            for (int i = general.getScrollBarValue().get().getRecordProperty().get(); i <= general.getPageEndPosition().getRecordProperty().get(); i++) {
-                new MyLine(positionPropertyBuilder.build(new Position(i, 0)), updateHandler.viewportHeightProperty(), labels.prefWidthProperty(), backgroundLayer, timeLine,
-                        horizontalResolution.divide(general.getPageSizeProperty().multiply(general.getNumberOfSamplesProperty())), general.getScrollBarValue().getPosition(),
-                        general.getPageEndPosition(), general.getNumberOfSamplesProperty(), new SimpleLongProperty(i).multiply(general.getDurationOfDataRecordProperty()),
-                        new ReadOnlyObjectWrapper<Paint>(Color.BLUE));
-            }
-        });
+        properties.getTimeResolutionProperty().addListener(this::timeResolutionUpdate);
+        general.getPageEndPosition().getRecordProperty().addListener(this::timeResolutionUpdate);
         playProperty.addListener((observable, oldValue, newValue) -> {
             if (newValue.equals(true)) {
                 loop((targetFps) -> {
@@ -187,7 +183,7 @@ public class UpdateHandlerController implements Initializable {
         cursorProperty.set(new MyLine(general.getScrollBarValue(), updateHandler.viewportHeightProperty(), labels.prefWidthProperty(), backgroundLayer, timeLine,
                 horizontalResolution.divide(general.getPageSizeProperty().multiply(general.getNumberOfSamplesProperty())), general.getScrollBarValue().getPosition(), general.getPageEndPosition(), general.getNumberOfSamplesProperty(),
                 cursorMsBinding,
-                new ReadOnlyObjectWrapper<Paint>(Color.ORANGE)));
+                new ReadOnlyObjectWrapper<Color>(Color.ORANGE), new ReadOnlyDoubleWrapper(1)));
         cursorProperty.get().getLabel().setVisible(false);
         cursorProperty.addListener((observable, oldValue, newValue) -> {
             if (oldValue != null) {
@@ -228,7 +224,7 @@ public class UpdateHandlerController implements Initializable {
         cursorProperty.set(new MyLine(new PositionProperty(position), updateHandler.viewportHeightProperty(), labels.prefWidthProperty(), backgroundLayer, timeLine,
                 horizontalResolution.divide(general.getPageSizeProperty().multiply(general.getNumberOfSamplesProperty())), general.getScrollBarValue().getPosition(), general.getPageEndPosition(), general.getNumberOfSamplesProperty(),
                 cursorMsBinding,
-                new ReadOnlyObjectWrapper<>(Color.ORANGE)));
+                new ReadOnlyObjectWrapper<>(Color.ORANGE), new ReadOnlyDoubleWrapper(1)));
     }
 
 
@@ -276,5 +272,18 @@ public class UpdateHandlerController implements Initializable {
 
     private void positionChange(ObservableValue<? extends Number> observable1, Number oldValue1, Number newValue1) {
         general.getCurrentValuesProperty().set(general.getDataController().getDataModel().getDataAtPosition(cursorProperty.get().getPositionProperty().get().getNormalizedPosition(general.getNumberOfSamplesProperty().get())));
+    }
+
+    private void timeResolutionUpdate(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+        List<Node> children = new ArrayList<>(backgroundLayer.getChildren());
+        children.forEach(node -> {
+            if (node.getClass().equals(MyLine.class) && node != cursorProperty.get()) ((MyLine) node).remove();
+        });
+        for (int i = general.getScrollBarValue().get().getRecordProperty().get() / properties.getTimeResolutionProperty().get() * properties.getTimeResolutionProperty().get(); i <= general.getPageEndPosition().getRecordProperty().get(); i += properties.getTimeResolutionProperty().get()) {
+            new MyLine(positionPropertyBuilder.build(new Position(i, 0)), updateHandler.viewportHeightProperty(), labels.prefWidthProperty(), backgroundLayer, timeLine,
+                    horizontalResolution.divide(general.getPageSizeProperty().multiply(general.getNumberOfSamplesProperty())), general.getScrollBarValue().getPosition(),
+                    general.getPageEndPosition(), general.getNumberOfSamplesProperty(), new SimpleLongProperty(i).multiply(general.getDurationOfDataRecordProperty()),
+                    properties.getTimeVerticalLineColorProperty(), properties.getTimeVerticalLineWidthProperty());
+        }
     }
 }

@@ -67,7 +67,12 @@
             <artifactId>h2</artifactId>
             <scope>runtime</scope>
         </dependency>
-<!--        <dependency>-->
+        <dependency>
+            <groupId>com.github.Drumber</groupId>
+            <artifactId>ColorPicker</artifactId>
+            <version>v0.4</version>
+        </dependency>
+        <!--        <dependency>-->
 <!--            <groupId>org.mapstruct</groupId>-->
 <!--            <artifactId>mapstruct</artifactId>-->
 <!--            <version>1.4.2.Final</version>-->

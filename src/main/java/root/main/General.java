@@ -15,6 +15,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import root.main.common.Properties;
 import root.main.swing.MainWindow;
 import root.main.fx.MainController;
 import root.main.fx.UpdateHandlerController;
@@ -22,6 +23,7 @@ import root.main.fx.custom.*;
 import root.main.fx.custom.builders.PositionPropertyBuilder;
 import root.main.swing.ChannelPicker;
 import root.main.swing.CurrentValueWatcher;
+import root.main.swing.SettingsWindow;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
@@ -66,6 +68,7 @@ public class General {
     public UpdateHandler updateHandler;
 
     private final UpdateHandlerController updateHandlerController;
+    private Properties properties;
 
     private final Integer DEFAULT_PAGE_SIZE = 10;
 
@@ -83,14 +86,15 @@ public class General {
                    DataModel dataModel,
                    ConfigurableApplicationContext applicationContext,
                    AutowireCapableBeanFactory autowireCapableBeanFactory,
-                   @Lazy UpdateHandlerController updateHandlerController
-    ) {
+                   @Lazy UpdateHandlerController updateHandlerController,
+                   Properties properties) {
         this.positionPropertyBuilder = positionPropertyBuilder;
         this.dataController = dataController;
         this.dataModel = dataModel;
         this.applicationContext = applicationContext;
         this.autowireCapableBeanFactory = autowireCapableBeanFactory;
         this.updateHandlerController = updateHandlerController;
+        this.properties = properties;
     }
 
     @Autowired
@@ -114,6 +118,7 @@ public class General {
                 log.error("Something is not initialized");
             }
         });
+        properties.getMaxQueueSizeProperty().addListener((observable, oldValue, newValue) -> dataModel.setMaxQueueSize(newValue.intValue()));
     }
 
     private void openNewFile(File file) {
@@ -160,6 +165,13 @@ public class General {
         applicationContext.getAutowireCapableBeanFactory().autowireBean(colorPicker);
         colorPicker.setVisible(true);
         updateHandlerController.setColors(colors);
+    }
+
+    public void openSettings() {
+//        updateHandlerController.getSelectedChannels().setAll(ChannelPickerDialog.display(dataModel.getEeg_file().getHeader().getLabelsOfTheChannels()));
+        SettingsWindow settingsWindow = new SettingsWindow(mainSwingFrame, false);
+        applicationContext.getAutowireCapableBeanFactory().autowireBean(settingsWindow);
+        settingsWindow.setVisible(true);
     }
 
     public void openValueWatcher() {
