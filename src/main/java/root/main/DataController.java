@@ -2,6 +2,7 @@ package root.main;
 
 import javafx.application.Platform;
 import lombok.Data;
+import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,25 +22,26 @@ import java.util.Optional;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.function.Supplier;
 
-@Data
+@Getter
 @Slf4j
 @Component
 public class DataController {
 
     private UpdateHandlerController updateHandlerController;
     private DataModel dataModel;
-    private AsyncExecutor asyncExecutor;
+    //    private AsyncExecutor asyncExecutor;
     private ThreadPoolExecutor backgroundExecutor;
     private General general;
     private Thread thread = new Thread();
 
     @Autowired
-    private void init(AsyncExecutor asyncExecutor,
-                      ThreadPoolExecutor backgroundExecutor,
-                      @Lazy General general,
-                      @Lazy DataModel dataModel,
-                      @Lazy UpdateHandlerController updateHandlerController) {
-        this.asyncExecutor = asyncExecutor;
+    private void init(
+//            AsyncExecutor asyncExecutor,
+            ThreadPoolExecutor backgroundExecutor,
+            @Lazy General general,
+            @Lazy DataModel dataModel,
+            @Lazy UpdateHandlerController updateHandlerController) {
+//        this.asyncExecutor = asyncExecutor;
         this.backgroundExecutor = backgroundExecutor;
         this.general = general;
         this.dataModel = dataModel;
@@ -107,7 +109,7 @@ public class DataController {
         showDataRecord();
     }
 
-    public void preLoadAroundPage(int numberOfPages) throws Exception {
+//    public void preLoadAroundPage(int numberOfPages) throws Exception {
 //        int range = to - from + 1;
 //        int loadFrom1 = from - (numberOfPages * range);
 //        int loadTo1 = from - 1;
@@ -115,19 +117,19 @@ public class DataController {
 //        int loadTo2 = to + (numberOfPages * range);
 //        preLoadDataRecord(loadFrom1, loadTo1);
 //        preLoadDataRecord(loadFrom2, loadTo2);
-    }
+//    }
 
-    private Boolean preLoadRunning = false;
+//    private Boolean preLoadRunning = false;
 
-    private void preLoadInterrupt() {
-        preLoadRunning = false;
-    }
+//    private void preLoadInterrupt() {
+//        preLoadRunning = false;
+//    }
 
-    public void preLoadDataRecord(int from, int to) throws Exception {
-        preLoadRunning = true;
-        dataModel.getDataRecordsFromTo(from, to);
-        preLoadRunning = false;
-    }
+//    public void preLoadDataRecord(int from, int to) throws Exception {
+//        preLoadRunning = true;
+//        dataModel.getDataRecordsFromTo(from, to);
+//        preLoadRunning = false;
+//    }
 
 
 }

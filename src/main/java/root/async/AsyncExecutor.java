@@ -19,9 +19,9 @@ public class AsyncExecutor {
 
     @Async
     public void preLoadAroundPage(int numberOfPages) throws Exception {
-        System.out.println("asyncExecution");
-        dataController.preLoadAroundPage(numberOfPages);
-        System.out.println("end");
+//        System.out.println("asyncExecution");
+//        dataController.preLoadAroundPage(numberOfPages);
+//        System.out.println("end");
     }
 
 }
