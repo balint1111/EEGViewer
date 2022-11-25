@@ -59,10 +59,12 @@ public class MyPolyline extends HBox {
                       UpdateHandler updateHandler
     ) {
         this.channelNumber = updateHandler.getSelectedChannels().get(selectionNumber);
+        this.updateHandler = updateHandler;
         DataController dataController = updateHandler.getController().getDataController();
         load(parent);
         polyLineList = polyline.getPoints();
-        polyline.setStrokeWidth(0.8d);
+        polyline.strokeWidthProperty().bind(updateHandler.getProps().getPolylineStrokeWidthProperty());
+        polyline.strokeProperty().bind(updateHandler.getProps().getPolyLineColorProperty());
 
         layoutYProperty().bind(updateHandler.getBaseOffsetProperty().add(updateHandler.getLineSpacingProperty().multiply(updateHandler.getAmplitudeProperty()).multiply(selectionNumber + 1)));
 

@@ -1,14 +1,11 @@
 package root.main;
 
-import javafx.application.Platform;
-import lombok.Data;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
-import root.async.AsyncExecutor;
 import root.exceptions.DataControllerException;
 import root.exceptions.DataModelException;
 import root.main.common.DataRecord;
@@ -20,7 +17,6 @@ import java.nio.channels.ClosedByInterruptException;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.function.Supplier;
 
 @Getter
 @Slf4j
@@ -80,7 +76,7 @@ public class DataController {
                                 Util.offsetData(channelsOriginalRes, offset, dataModel.getEeg_file().getHeader().getNumberOfSamples());
                             dataRecordsFromTo = null;
                             if (Thread.interrupted()) throw new InterruptedException();
-                            downSampledChannels = Util.getLists(channelsOriginalRes, (i) -> updateHandlerController.getMyPolylineList().stream().filter(myPolyline -> myPolyline.getChannelNumber().equals(i)).findFirst());
+                            downSampledChannels = Util.downSampleAndRepackage(channelsOriginalRes, (i) -> updateHandlerController.getMyPolylineList().stream().filter(myPolyline -> myPolyline.getChannelNumber().equals(i)).findFirst());
                             channelsOriginalRes = null;
                             if (Thread.interrupted()) throw new InterruptedException();
                             updateHandlerController.setYVectors(downSampledChannels);

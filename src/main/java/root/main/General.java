@@ -164,7 +164,7 @@ public class General {
         ChannelPicker colorPicker = new ChannelPicker(mainSwingFrame, true);
         applicationContext.getAutowireCapableBeanFactory().autowireBean(colorPicker);
         colorPicker.setVisible(true);
-        updateHandlerController.setColors(colors);
+//        updateHandlerController.setColors(colors);
     }
 
     public void openSettings() {

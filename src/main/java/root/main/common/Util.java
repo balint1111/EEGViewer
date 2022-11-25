@@ -125,7 +125,7 @@ public class Util {
         return finalList;
     }
 
-    public static List<Double>[] getLists(float[][] channelsOriginalRes, Function<Integer, Optional<MyPolyline>> function) {
+    public static List<Double>[] downSampleAndRepackage(float[][] channelsOriginalRes, Function<Integer, Optional<MyPolyline>> function) {
         List<Double>[] downSampledChannels = new ArrayList[channelsOriginalRes.length];
         for (int i = 0; i < channelsOriginalRes.length; i++) {
             int finalI = i;

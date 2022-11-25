@@ -12,7 +12,7 @@
          style="-fx-background-color: grey">
     <Pane fx:id="timeLine" minHeight="30" viewOrder="-Infinity" style="-fx-background-color: grey"></Pane>
     <Pane fx:id="pane" prefWidth="${updateHandler.width}" prefHeight="${updateHandler.height}">
-        <Pane fx:id="backgroundLayer" style="-fx-background-color: white" prefWidth="${pane.width}"
+        <Pane fx:id="backgroundLayer" prefWidth="${pane.width}"
               prefHeight="${pane.height}" viewOrder="1">
             <Pane prefWidth="80" prefHeight="${updateHandler.height}" style="-fx-background-color: grey;" viewOrder="-Infinity">
             </Pane>

@@ -11,13 +11,13 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +37,6 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 
 @Getter
@@ -120,15 +119,15 @@ public class UpdateHandlerController implements Initializable {
         }
     }
 
-    public void setColors(List<Color> colors) {
-        synchronized (myPolylineList) {
-            for (int i = 0; i < myPolylineList.size(); i++) {
-                Color color = colors.get(i % colors.size());
-                if (color != null)
-                    myPolylineList.get(i).getMyPolyLineProperty().getStrokeProperty().setValue(color);
-            }
-        }
-    }
+//    public void setColors(List<Color> colors) {
+//        synchronized (myPolylineList) {
+//            for (int i = 0; i < myPolylineList.size(); i++) {
+//                Color color = colors.get(i % colors.size());
+//                if (color != null)
+//                    myPolylineList.get(i).getMyPolyLineProperty().getStrokeProperty().setValue(color);
+//            }
+//        }
+//    }
 
     public void onChangeSelectedChannels(ListChangeListener.Change<? extends Integer> c) {
         group.getChildren().clear();
@@ -150,6 +149,9 @@ public class UpdateHandlerController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         updateHandler.init();
+
+        backgroundLayer.backgroundProperty().bindBidirectional(properties.getBackgroundProperty());
+
         pixelPerMilliSecond.bind(horizontalResolution.divide(general.getDurationOfDataRecordProperty().multiply(general.getNumberOfDataRecordsProperty())));
         updateHandler.addEventFilter(ScrollEvent.SCROLL, this::shiftDownFilter);
         stack.prefWidthProperty().bind(viewportWidthProperty.subtract(labels.prefWidthProperty()));
@@ -283,7 +285,7 @@ public class UpdateHandlerController implements Initializable {
             new MyLine(positionPropertyBuilder.build(new Position(i, 0)), updateHandler.viewportHeightProperty(), labels.prefWidthProperty(), backgroundLayer, timeLine,
                     horizontalResolution.divide(general.getPageSizeProperty().multiply(general.getNumberOfSamplesProperty())), general.getScrollBarValue().getPosition(),
                     general.getPageEndPosition(), general.getNumberOfSamplesProperty(), new SimpleLongProperty(i).multiply(general.getDurationOfDataRecordProperty()),
-                    properties.getTimeVerticalLineColorProperty(), properties.getTimeVerticalLineWidthProperty());
+                    properties.getTimeVerticalLineColorProperty(), properties.getTimeStrokeWidthProperty());
         }
     }
 }
