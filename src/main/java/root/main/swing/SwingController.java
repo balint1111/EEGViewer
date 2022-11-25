@@ -71,6 +71,7 @@ public class SwingController extends javax.swing.JPanel {
         open3DViewButton1 = new javax.swing.JButton();
         jFxIntegerField1 = new custom.component.JFxIntegerField();
         jLabel1 = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
 
         setMinimumSize(new java.awt.Dimension(0, 0));
         setPreferredSize(new java.awt.Dimension(250, 750));
@@ -175,6 +176,13 @@ public class SwingController extends javax.swing.JPanel {
 
         jLabel1.setText("Displayed secounds:");
 
+        jButton1.setText("Butterfly on/off");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -204,9 +212,6 @@ public class SwingController extends javax.swing.JPanel {
                         .addComponent(openEEGFileButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE)
                         .addGap(93, 93, 93))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(amplitudeRangeLabel1)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(prevPageButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(firstPageButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -218,7 +223,11 @@ public class SwingController extends javax.swing.JPanel {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
-                        .addComponent(jFxIntegerField1, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jFxIntegerField1, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(amplitudeRangeLabel1)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -236,7 +245,9 @@ public class SwingController extends javax.swing.JPanel {
                 .addComponent(amplitudeRangeLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jButton1)
+                .addGap(9, 9, 9)
                 .addComponent(playToggleButton1)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -260,7 +271,7 @@ public class SwingController extends javax.swing.JPanel {
                     .addComponent(nextPageButton1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(open3DViewButton1)
-                .addContainerGap(273, Short.MAX_VALUE))
+                .addContainerGap(248, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -317,6 +328,10 @@ public class SwingController extends javax.swing.JPanel {
         properties.getLineSpacingProperty().set(newLineSpacing);
     }//GEN-LAST:event_amplitudeRangeList1ValueChanged
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        mainController.getUpdateHandlerController().butterflyToggle();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel amplitudeRangeLabel1;
@@ -324,6 +339,7 @@ public class SwingController extends javax.swing.JPanel {
     private javax.swing.JButton firstPageButton1;
     private javax.swing.JLabel fpsLabel1;
     private javax.swing.JSlider fpsSlider1;
+    private javax.swing.JButton jButton1;
     private custom.component.JFxIntegerField jFxIntegerField1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel4;
