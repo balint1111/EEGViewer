@@ -185,7 +185,7 @@ public class UpdateHandlerController implements Initializable {
         cursorProperty.set(new MyLine(general.getScrollBarValue(), updateHandler.viewportHeightProperty(), labels.prefWidthProperty(), backgroundLayer, timeLine,
                 horizontalResolution.divide(general.getPageSizeProperty().multiply(general.getNumberOfSamplesProperty())), general.getScrollBarValue().getPosition(), general.getPageEndPosition(), general.getNumberOfSamplesProperty(),
                 cursorMsBinding,
-                new ReadOnlyObjectWrapper<Color>(Color.ORANGE), new ReadOnlyDoubleWrapper(1)));
+                new ReadOnlyObjectWrapper<Color>(Color.RED), new ReadOnlyDoubleWrapper(1)));
         cursorProperty.get().getLabel().setVisible(false);
         cursorProperty.addListener((observable, oldValue, newValue) -> {
             if (oldValue != null) {
@@ -226,7 +226,7 @@ public class UpdateHandlerController implements Initializable {
         cursorProperty.set(new MyLine(new PositionProperty(position), updateHandler.viewportHeightProperty(), labels.prefWidthProperty(), backgroundLayer, timeLine,
                 horizontalResolution.divide(general.getPageSizeProperty().multiply(general.getNumberOfSamplesProperty())), general.getScrollBarValue().getPosition(), general.getPageEndPosition(), general.getNumberOfSamplesProperty(),
                 cursorMsBinding,
-                new ReadOnlyObjectWrapper<>(Color.ORANGE), new ReadOnlyDoubleWrapper(1)));
+                new ReadOnlyObjectWrapper<>(Color.RED), new ReadOnlyDoubleWrapper(1)));
     }
 
 

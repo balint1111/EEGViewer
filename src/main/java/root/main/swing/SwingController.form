@@ -279,7 +279,7 @@
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel1">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Displayed secounds:"/>
+        <Property name="text" type="java.lang.String" value="Displayed seconds:"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JButton" name="jButton1">

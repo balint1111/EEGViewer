@@ -174,7 +174,7 @@ public class SwingController extends javax.swing.JPanel {
             }
         });
 
-        jLabel1.setText("Displayed secounds:");
+        jLabel1.setText("Displayed seconds:");
 
         jButton1.setText("Butterfly on/off");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
