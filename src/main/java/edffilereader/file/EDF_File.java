@@ -11,8 +11,12 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.channels.ClosedByInterruptException;
 import java.nio.channels.FileChannel;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -32,7 +36,7 @@ public class EDF_File extends EEG_File {
 
         header.setFileChannel(new FileInputStream(filename).getChannel());
         FileChannel fileChannel = header.getFileChannel();
-        header.setmBuffer(fileChannel.map(FileChannel.MapMode.READ_ONLY,0, fileChannel.size()));
+        header.setmBuffer(fileChannel.map(FileChannel.MapMode.READ_ONLY, 0, fileChannel.size()));
 
         readHeader();
     }
@@ -45,7 +49,7 @@ public class EDF_File extends EEG_File {
 
         header.setFileChannel(new FileInputStream(file).getChannel());
         FileChannel fileChannel = header.getFileChannel();
-        header.setmBuffer(fileChannel.map(FileChannel.MapMode.READ_ONLY,0, fileChannel.size()));
+        header.setmBuffer(fileChannel.map(FileChannel.MapMode.READ_ONLY, 0, fileChannel.size()));
 
         readHeader();
     }
@@ -187,6 +191,28 @@ public class EDF_File extends EEG_File {
             }
         }
         return data;
+    }
+
+    @SneakyThrows
+    public List<Annotation> getAnnotations() {
+        List<Annotation> annotations = new ArrayList<>();
+        int channelNumber = header.getLabelsOfTheChannels().indexOf("EDF Annotations");
+        int n = header.getNumberOfSample(channelNumber);
+        int startInRecord = getStartInRecord(channelNumber);
+        int toRecord = header.getNumberOfDataRecords();
+//        int toRecord = 10;
+        int fromRecord = 0;
+
+        for (int dataRecordNumber = fromRecord; dataRecordNumber < toRecord; dataRecordNumber++) {
+            int start = getHeader().getStartData() + dataRecordNumber * getHeader().getDataRecordSize() + startInRecord;
+
+            ByteBuffer buffer = ByteBuffer.allocate(SAMPLE_LENGTH * n);
+            header.getFileChannel().read(buffer, start);
+
+            annotations.add(Annotation.fromBinary(buffer.array(), ByteOrder.LITTLE_ENDIAN));
+        }
+        annotations.removeIf(Objects::isNull);
+        return annotations;
     }
 
     private Integer getStartInRecord(int channelNumber) {

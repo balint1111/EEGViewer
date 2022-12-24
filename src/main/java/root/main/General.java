@@ -1,5 +1,7 @@
 package root.main;
 
+import edffilereader.file.Annotation;
+import edffilereader.file.EDF_File;
 import edffilereader.file.EEG_File;
 import javafx.beans.property.*;
 import javafx.event.ActionEvent;
@@ -125,6 +127,9 @@ public class General {
         try {
             updateHandlerController.getSelectedChannels().clear();
             dataModel.setEeg_file(EEG_File.build(file));
+            for (Annotation annotation : ((EDF_File) dataModel.getEeg_file()).getAnnotations()) {
+                System.out.println("onSet: " + annotation.getOnset() + "duration: " + annotation.getDuration() + " description: " + annotation.getDescription());
+            }
             durationOfDataRecordProperty.set((Double) dataModel.getEeg_file().getHeader().getExtraParameters().get("durationOfDataRecord") * 1000);
             numberOfDataRecordsProperty.setValue(dataModel.getEeg_file().getHeader().getNumberOfDataRecords());
             numberOfSamplesProperty.setValue(dataModel.getEeg_file().getHeader().getNumberOfSamples().stream().max(Integer::compare).get());
